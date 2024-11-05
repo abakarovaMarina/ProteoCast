@@ -1,0 +1,7 @@
+Django==5.1.3
+djangorestframework==3.14.0
+gunicorn==20.1.0
+psycopg2-binary==2.9.6  # If using PostgreSQL
+requests==2.31.0
+numpy==1.23.5
+pandas==1.5.3
