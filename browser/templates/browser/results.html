@@ -1,0 +1,34 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resutls</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'browser/styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Results for "{{ query }}"</h1>
+    </header>
+    
+    <div class="results-container">
+        {% if results %}
+            <ul>
+                {% for result in results %}
+                    <li>
+                        <h3>{{ result.title }}</h3>
+                        <p>{{ result.description }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Results not found"{{ query }}".</p>
+        {% endif %}
+    </div>
+    
+    <footer>
+        <p>Sorbonne Universite; 2024</p>
+    </footer>
+</body>
+</html>

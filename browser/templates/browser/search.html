@@ -1,0 +1,26 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'browser/styles.css' %}"> 
+</head>
+<body>
+    <header>
+        <h1>MarinaWebServer</h1>
+        <p>Browser</p>
+    </header>
+    <div class="search-container">
+        <h2>Please provide a PDBId</h2>
+        <form method="GET" action="{% url 'results' %}">
+            <input type="text" name="q" placeholder="Search...">
+            <input type="submit" value="go">
+        </form>
+    </div>
+    <footer>
+        <p>Sorbonne Universite; 2024</p>
+    </footer>
+</body>
+</html>
