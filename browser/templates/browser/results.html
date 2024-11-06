@@ -10,7 +10,13 @@
 </head>
 <body>
     <header>
-        <h1>Results for "{{ query }}"</h1>
+        <div class="header-content">
+            <div class="header-text">
+                <h1>Results for {{ query }}</h1>
+                <p>ProteoCast</p>
+            </div>
+            <a href="{% url 'download_file' query %}" class="download-button">Download Results</a>
+        </div>
     </header>
     
     <div class="results-container">

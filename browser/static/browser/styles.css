@@ -1,5 +1,4 @@
-﻿
-body {
+﻿body {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -13,11 +12,22 @@ body {
 /* Header */
 header {
     width: 100%;
-    text-align: center;
     background-color: #343a40;
     color: #ffffff;
     padding: 20px 0;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.header-text {
+    text-align: left;
 }
 
 header h1 {
@@ -31,69 +41,32 @@ header p {
     color: #adb5bd;
 }
 
-/* Footer */
-footer {
-    width: 100%;
-    text-align: center;
-    background-color: #343a40;
-    color: #ffffff;
-    padding: 15px 0;
-    font-size: 0.9em;
-    position: absolute;
-    bottom: 0;
-}
-
-
-.search-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 1;
-    text-align: center;
-}
-
-.search-container form {
-    display: flex;
-    align-items: center;
-    margin-top: 30px;
-}
-
-
-input[type="text"] {
-    width: 300px;
-    padding: 12px;
-    font-size: 16px;
-    border: 1px solid #ced4da;
-    border-radius: 5px 0 0 5px;
-    outline: none;
-}
-
-input[type="submit"] {
-    padding: 12px 20px;
-    font-size: 16px;
-    color: #ffffff;
+.download-button {
+    display: inline-block;
+    padding: 10px 20px;
     background-color: #007bff;
-    border: none;
-    border-radius: 0 5px 5px 0;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
 }
 
-input[type="submit"]:hover {
+.download-button:hover {
     background-color: #0056b3;
 }
+
 .results-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 50px;
+    margin: 20px;
 }
 
 .heatmap {
     width: 80%; /* Adjust the width as needed */
     height: 600px; /* Adjust the height as needed */
     border: 1px solid #ccc;
-    padding: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 0px;
+    box-shadow: 0 0 0px rgba(0, 0, 0, 0.1);
 }
