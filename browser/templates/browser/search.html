@@ -4,21 +4,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Búsqueda</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'browser/styles.css' %}"> 
+    <title>Search</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'browser/styles.css' %}">
 </head>
 <body>
     <header>
-        <h1>ProteoCast</h1>
-        <p>Browser</p>
+        <div class="header-content">
+            <div class="header-left">
+                <h1>Search for a FBpp ID</h1>
+                <p>ProteoCast</p>
+            </div>
+            <div class="header-right">
+                <nav class="nav-links">
+                    <a href="/contact" target="_blank">Contact Us</a>
+                    <a href="/documentation" target="_blank">Documentation</a>
+                    <a href="/citations" target="_blank">Citations</a>
+                </nav>
+                <form action="{% url 'results' %}" method="get" class="search-form">
+                    <input type="text" name="q" placeholder="Enter FBpp ID" value="{{ query }}">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+        </div>
     </header>
-    <div class="search-container">
-        <h2>Please provide a FBpp ID</h2>
-        <form method="GET" action="{% url 'results' %}">
-            <input type="text" name="q" placeholder="Search...">
-            <input type="submit" value="go">
-        </form>
+
+    <!-- Contenedor para el texto centrado -->
+    <div class="centered-text">
+        <p>Put your text here.</p>
     </div>
+
     <footer>
         <p>Sorbonne Universite; 2024</p>
     </footer>
