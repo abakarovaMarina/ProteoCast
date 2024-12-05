@@ -1,0 +1,63 @@
+﻿<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>PDBe Molstar - Basic</title>
+
+    <!-- Molstar CSS & JS -->
+    <link rel="stylesheet" type="text/css" href="https://www.ebi.ac.uk/pdbe/pdb-component-library/css/pdbe-molstar-3.1.0.css">
+    <script type="text/javascript" src="https://www.ebi.ac.uk/pdbe/pdb-component-library/js/pdbe-molstar-plugin-3.1.0.js"></script>
+
+    <style>
+        #myViewer {
+            float: left;
+            width: 300px;
+            height: 300px;
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+    <h4>PDBe Mol* JS</h4>
+
+    <!-- Molstar container -->
+    <div id="myViewer"></div>
+
+    <script>
+        var viewerInstance = new PDBeMolstarPlugin();
+        var options = {
+            customData: {
+                url: '/Users/Usuario/Documents/WebServer/Droso_GEMMEwebsite-main/browser/static/jobs/FBpp0301274/FBpp0301274.pdb',
+                format: 'pdb'
+            },
+            alphafoldView: true,
+            bgColor: { r: 255, g: 255, b: 255 },
+            hideCanvasControls: ['selection', 'animation', 'controlToggle', 'controlInfo']
+        };
+
+        var viewerContainer = document.getElementById('myViewer');
+        viewerInstance.render(viewerContainer, options);
+
+        // Función para colorear los residuos
+        function colorResidues(residueData) {
+            viewerInstance.visual.select({
+                data: residueData.map(function(residue) {
+                    return { residue_number: residue.number, color: residue.color };
+                })
+            });
+        };
+
+        window.onload = function() {
+            setTimeout(function() {
+                // Aquí debes pasar los datos de residuos reales a colorResidues
+                // Por ejemplo:
+                colorResidues([
+                    { number: 1, color: 'red' },
+                    { number: 2, color: 'blue' },
+                    { number: 3, color: 'green' }
+                ]);
+            }, 1000); // Un pequeño retraso para garantizar que el visor cargue primero
+        };
+    </script>
+</body>
+</html>

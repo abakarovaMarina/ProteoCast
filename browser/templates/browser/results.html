@@ -1,12 +1,64 @@
 ﻿{% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results</title>
+
+    <!-- Molstar CSS & JS -->
+    <link rel="stylesheet" type="text/css" href="https://www.ebi.ac.uk/pdbe/pdb-component-library/css/pdbe-molstar-3.1.0.css">
+    <script type="text/javascript" src="https://www.ebi.ac.uk/pdbe/pdb-component-library/js/pdbe-molstar-plugin-3.1.0.js"></script>
+
+    <!-- CSS personalizadas -->
     <link rel="stylesheet" type="text/css" href="{% static 'browser/styles.css' %}">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/molstar@latest/build/viewer/molstar.css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/molstar@latest/build/viewer/molstar.js"></script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .main-content {
+            flex-grow: 1;
+            width: 100%;
+        }
+        .results-container {
+            display: flex;
+            flex-direction: column; 
+            align-items: center;   
+            margin: 20px;
+            gap: 20px;
+            width: 90%;
+        }
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            background-color: #f1f1f1;
+            position: relative;
+            bottom: 0;
+        }
+        #myViewer {
+            float: left;
+            width: 1000px;
+            height: 450px;
+            margin-top: 80px;
+            position: relative;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -17,35 +69,69 @@
             </div>
         </div>
     </header>
-    
-    <div class="results-container">
-        {% if heatmap_html %}
-            <a href="{% url 'download_file' fbpp_id=query %}" class="download-button">Download Results</a>
-            <div class="heatmap">{{ heatmap_html|safe }}</div>
-        {% else %}
-            <p>No results found.</p>
-        {% endif %}
 
-        <div class="images-flex-container">
-            {% if image_url_1 %}
-                <div class="image-container">
-                    <h2>Image 1: FBpp0301274_GMM.png</h2>
-                    <img src="{{ image_url_1 }}" alt="FBpp0301274_GMM" class="result-image">
-                </div>
+    <div class="main-content">
+        <div class="results-container">
+            {% if heatmap_html %}
+                <a href="{% url 'download_file' fbpp_id=query %}" class="download-button">Download Results</a>
+                <div class="heatmap">{{ heatmap_html|safe }}</div>
+            {% else %}
+                <p>No results found.</p>
             {% endif %}
 
-            {% if image_url_2 %}
-                <div class="image-container">
-                    <h2>Image 2: GMM.png</h2>
-                    <img src="{{ image_url_2 }}" alt="GMM" class="result-image">
-                </div>
-            {% endif %}
+            <div class="images-flex-container">
+                {% if image_url_1 %}
+                    <div class="image-container">
+                        <h2>Image 1: GMM</h2>
+                        <img src="{{ image_url_1 }}" alt="GMM" class="result-image">
+                    </div>
+                {% endif %}
+            </div>
         </div>
+
+        <!-- Molstar Viewer Container -->
+        <div id="myViewer"></div>
+
+        <script>
+            // Crear el contenedor para el visor
+            var viewerInstance = new PDBeMolstarPlugin();
+
+            var options = {
+                customData: {
+                    url: "{% static 'jobs/' %}{{ query }}/{{ query }}.pdb",  // URL del archivo PDB
+                    format: 'pdb'
+                },
+                alphafoldView: true,  // Activar vista AlphaFold si es necesario
+                bgColor: { r: 255, g: 255, b: 255 },  // Fondo blanco
+                hideCanvasControls: ['selection', 'animation', 'controlToggle', 'controlInfo']  // Controles ocultos
+            };
+
+            var viewerContainer = document.getElementById('myViewer');
+            viewerInstance.render(viewerContainer, options);
+
+            // Función para colorear los residuos
+            function colorResidues(residueData) {
+                viewerInstance.visual.select({
+                    data: residueData.map(function(residue) {
+                        return { residue_number: residue.number, color: residue.color };
+                    })
+                });
+            }
+
+            window.onload = function() {
+                setTimeout(function() {
+                    // Ejemplo de cómo colorear residuos (esto debe adaptarse a los datos reales)
+                    colorResidues([
+                        { number: 1, color: 'red' },
+                        { number: 2, color: 'blue' },
+                        { number: 3, color: 'green' }
+                    ]);
+                }, 1000); // Un pequeño retraso para garantizar que el visor cargue primero
+            };
+        </script>
     </div>
-    
     <footer>
         <p>Sorbonne Universite; 2024</p>
     </footer>
 </body>
 </html>
-

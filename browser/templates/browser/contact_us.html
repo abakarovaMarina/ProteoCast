@@ -1,0 +1,58 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citation</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'browser/styles.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .main-content {
+            flex-grow: 1;
+            width: 100%;
+        }
+        .results-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px;
+            gap: 20px;
+            width: 90%;
+        }
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            background-color: #f1f1f1;
+            position: relative;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Contact us</h1>
+    </header>
+    <div class="content">
+        <p>Provide proper citations for referencing this platform:</p>
+        <ul>
+            <li><b>APA Style:</b> Author, Year, Title. Retrieved from URL</li>
+            <li><b>MLA Style:</b> Author. "Title." Year, URL.</li>
+            <li><b>Chicago Style:</b> Author. Title. Accessed Year. URL.</li>
+        </ul>
+    </div>
+    <footer>
+        <p>ProteoCast © 2024</p>
+    </footer>
+</body>
+
