@@ -110,4 +110,9 @@ def download_folder(request, fbpp_id):
     
     response = FileResponse(open(zip_path, 'rb'))
     response['Content-Disposition'] = f'attachment; filename="{fbpp_id}.zip"'
+
+    # Delete the zip file after sending the response
+    response['delete_zip'] = zip_path
+    if os.path.exists(zip_path):
+        os.remove(zip_path) 
     return response
