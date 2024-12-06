@@ -23,14 +23,14 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
+            line-height: 1;
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-        }
+        } 
         .main-content {
             flex-grow: 1;
             width: 100%;
@@ -43,11 +43,22 @@
             gap: 20px;
             width: 90%;
         }
+
+        .heatmap {
+            margin-bottom: 20px; /* Add margin bottom to create space */
+        }
+        .image-container {
+            margin-top: 20px; /* Add margin top to create space */
+        }
+        .image-container {
+            margin-bottom: 50px; /* Add margin top to create space */
+        }
         footer {
             width: 100%;
+            height: 50px;
             text-align: center;
             padding: 10px;
-            background-color: #f1f1f1;
+            background-color: #3d81c5;
             position: relative;
             bottom: 0;
         }
@@ -59,39 +70,53 @@
             position: relative;
         }
     </style>
+
+
 </head>
 <body>
     <header>
-        <div class="header-content">
+        <div class="header-content" style="display: flex; justify-content: space-between; align-items: center;">
             <div class="header-text">
-                <h1>Results for {{ query }}</h1>
-                <p>ProteoCast</p>
+                <h1>ProteoCast for {{ query }}</h1>
             </div>
+            <a href="{% url 'download_file' fbpp_id=query %}" class="download-button" style="margin-right: 20px;">
+                <button style="padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: white; border-radius: 12px; border: 1px solid #ccc;">
+                    <img src="{% static 'browser/images/download_icon.png' %}" alt="Download Icon" style="width: 43px; height: 40px; vertical-align: middle; margin-right: 2px;">
+                    Download Results
+                </button>
+            </a>
         </div>
     </header>
 
     <div class="main-content">
         <div class="results-container">
             {% if heatmap_html %}
-                <a href="{% url 'download_file' fbpp_id=query %}" class="download-button">Download Results</a>
-                <div class="heatmap">{{ heatmap_html|safe }}</div>
+            
+            <div class="heatmap">
+                <h2>Mutational Landscape</h2>
+                <p>The following matrix represents the predicted effects of all possible mutations (rows) at each position (columns) of a protein sequence</p>
+                {{ heatmap_html|safe }}
+            </div>
             {% else %}
-                <p>No results found.</p>
+            <p>No results found.</p>
             {% endif %}
 
             <div class="images-flex-container">
-                {% if image_url_1 %}
-                    <div class="image-container">
-                        <h2>Image 1: GMM</h2>
-                        <img src="{{ image_url_1 }}" alt="GMM" class="result-image">
-                    </div>
-                {% endif %}
+                <h2 style="margin-left: 3cm;">GMM profile</h2>
+                <p style="margin-left: 3cm;">To better interpret mutational landscapes, we use a Gaussian Mixture Model (GMM) to cluster mutation effect scores into distinct categories, such as tolerant, intermediate, and sensitive mutations. The GMM identifies patterns in the distribution of mutational effects by modeling the data as a mixture of Gaussian distributions</p>
+
+            {% if image_url_1 %}
+                <div class="image-container" style="margin-left: 2cm; margin-top:1cm;">
+                <img src="{{ image_url_1 }}" alt="GMM" class="result-image">
+                </div>
+            {% endif %}
             </div>
         </div>
-
+        <h2 style="margin-bottom:1.5cm; margin-left: 3cm;"> 3D Protein Structure </h2>
+        
         <!-- Molstar Viewer Container -->
-        <div id="myViewer"></div>
-
+        <div id="myViewer" style="margin-left: 3cm;"></div>
+            
         <script>
             // Crear el contenedor para el visor
             var viewerInstance = new PDBeMolstarPlugin();
@@ -131,7 +156,7 @@
         </script>
     </div>
     <footer>
-        <p>Sorbonne Universite; 2024</p>
+        <p> ProteoCast </p>
     </footer>
 </body>
 </html>

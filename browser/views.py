@@ -5,6 +5,9 @@ from django.shortcuts import render
 from django.conf import settings
 from django.http import HttpResponse, FileResponse
 import numpy as np
+import shutil
+from io import BytesIO
+import zipfile
 
 
 
@@ -57,15 +60,15 @@ def results_view(request):
     fig = px.imshow(
         df,
         color_continuous_scale=reversed_oranges,
-        title=f"GEMME mutational landscape for {fbpp_id}",
+        #title=f"GEMME mutational landscape for {fbpp_id}",
         labels={'x': 'Position', 'y': 'Mutations', 'color': 'GEMME Score'},
     )
 
     fig.update_traces(
         customdata=customdata,
         hovertemplate=(
-            "%{customdata[1]}%{customdata[0]}%{customdata[2]}<br>"
-            "%{customdata[3]:.2f}<extra></extra>"
+            "Mutation : %{customdata[1]}%{customdata[0]}%{customdata[2]}<br>"
+            "Score : %{customdata[3]:.2f}<extra></extra>"
         )
     )
 
@@ -97,11 +100,14 @@ def results_view(request):
     })
 
 
-def download_file(request, fbpp_id):
-    file_path = f"jobs/{fbpp_id}/{fbpp_id}_normPred_evolCombi.txt"
-    if not os.path.exists(file_path):
-        return HttpResponse("File not found.")
+def download_folder(request, fbpp_id):
+    folder_path = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}')
+    if not os.path.exists(folder_path):
+        return HttpResponse("Folder not found.")
     
-    response = FileResponse(open(file_path, 'rb'))
-    response['Content-Disposition'] = f'attachment; filename="{fbpp_id}_normPred_evolCombi.txt"'
+    zip_path = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}.zip')
+    shutil.make_archive(zip_path.replace('.zip', ''), 'zip', folder_path)
+    
+    response = FileResponse(open(zip_path, 'rb'))
+    response['Content-Disposition'] = f'attachment; filename="{fbpp_id}.zip"'
     return response

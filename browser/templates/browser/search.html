@@ -6,13 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search</title>
     <link rel="stylesheet" type="text/css" href="{% static 'browser/styles.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .main-content {
+            flex-grow: 1;
+            width: 100%;
+        }
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            background-color: #3d81c5;
+            position: relative;
+            bottom: 0;
+        }
+        
+    </style>
 </head>
 <body>
     <header>
         <div class="header-content">
             <div class="header-left">
-                <h1>Search for a FBpp ID</h1>
-                <p>ProteoCast</p>
+                <h1>ProteoCast for <em>Drosophila melanogaster</em></h1>
+
             </div>
             <div class="header-right">
                 <nav class="nav-links">
@@ -28,11 +53,19 @@
         </div>
     </header>
     <div class="centered-text">
-        <p>Put your text here.</p>
-    </div>
+        <p>ProteoCast is a evolutionary-based method to predict protein variant effects. Here we provide Drosophila melanogaster proteins.</p>
+        <p>We utilize a combination of proteomics, genomics, and computational biology techniques to achieve high-resolution insights into protein dynamics. Our team is dedicated to advancing the field of proteomics and contributing valuable data to the scientific community.</p>
+        <p>Explore our database to find detailed information on FBpp IDs, including protein sequences, structures, and functional annotations. Join us in our mission to decode the proteome of Drosophila melanogaster and its impact on biological research.</p>
+        <div class="image-text-container">
+            <img src="{% static 'browser/images/ProteoCast_overview.jpg' %}" alt="ProteoCast Logo" class="centered-image" style="width: 50%; height: auto;">
+            <div class="text-next-to-image">
+            <p>Segmentation  GMM .</p>
+            </div>
+        </div>
+        </div>
 
     <footer>
-        <p>Sorbonne Universite; 2024</p>
+        <p> ProteoCast</p>
     </footer>
 </body>
 </html>
