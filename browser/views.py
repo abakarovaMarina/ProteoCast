@@ -9,8 +9,6 @@ import shutil
 from io import BytesIO
 import zipfile
 
-
-
 def contact_us(request):
     return render(request, 'browser/contact_us.html')
 
