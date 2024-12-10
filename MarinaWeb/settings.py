@@ -23,9 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-g#l!_eqdg@#+%ypy+)debm*7vo1w^=a0ap^-*w(p8i$fc!#%v!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['proteocast.ijm.fr', 'www.proteocast.ijm.fr', '127.0.0.1']
+
 
 
 # Application definition
@@ -66,8 +67,8 @@ ROOT_URLCONF = 'MarinaWeb.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],  # Usualmente vacío a menos que tengas una carpeta de plantillas global
-        'APP_DIRS': True,  # Asegúrate de que esté en True para buscar plantillas en las aplicaciones
+        'DIRS': [],  # Usualmente vacï¿½o a menos que tengas una carpeta de plantillas global
+        'APP_DIRS': True,  # Asegï¿½rate de que estï¿½ en True para buscar plantillas en las aplicaciones
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
