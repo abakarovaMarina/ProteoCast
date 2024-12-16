@@ -27,8 +27,6 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['proteocast.ijm.fr', 'www.proteocast.ijm.fr', '127.0.0.1']
 
-
-
 # Application definition
 
 INSTALLED_APPS = [

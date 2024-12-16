@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload and Create MSA</title>
+    <title>Search</title>
     <link rel="stylesheet" type="text/css" href="{% static 'browser/styles.css' %}">
     <style>
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.5;
+            line-height: 1;
             margin: 0;
             padding: 0;
             display: flex;
@@ -17,12 +17,10 @@
             align-items: center;
             min-height: 100vh;
         }
-
         .main-content {
             flex-grow: 1;
             width: 100%;
         }
-
         footer {
             width: 100%;
             text-align: center;
@@ -30,47 +28,6 @@
             background-color: #3d81c5;
             position: relative;
             bottom: 0;
-        }
-
-        .upload-section {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .upload-section input[type="file"] {
-            margin-bottom: 5px;
-        }
-
-        .upload-section button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 10px;
-            border: none;
-            cursor: pointer;
-            margin: 5px;
-        }
-
-        .upload-section button:hover {
-            background-color: #45a049;
-        }
-
-        .instructions {
-            margin-bottom: 5px;
-            text-align: center;
-        }
-
-        .instructions p {
-            font-size: 1.2em;
-            color: #333;
-        }
-
-        .instructions a {
-            color: #4CAF50;
-            text-decoration: none;
-        }
-
-        .instructions a:hover {
-            text-decoration: underline;
         }
     </style>
 </head>
@@ -82,9 +39,9 @@
             </div>
             <div class="header-right">
                 <nav class="nav-links">
-                    <a href="/contact">Contact Us</a>
-                    <a href="/documentation">Documentation</a>
-                    <a href="/citations">Citations</a>
+                    <a href="/contact" target="_blank">Contact Us</a>
+                    <a href="/documentation" target="_blank">Documentation</a>
+                    <a href="/citations" target="_blank">Citations</a>
                 </nav>
                 <form action="{% url 'results' %}" method="get" class="search-form">
                     <input type="text" name="q" placeholder="Enter FBpp ID" value="{{ query }}">
@@ -93,19 +50,13 @@
             </div>
         </div>
     </header>
-
-    <div class="instructions">
-        <p>To run a new job, please upload a MSA (Multiple Sequence Alignment) using the button below. You can create your MSA at <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb" target="_blank">MMseqs2</a>.</p>
-    </div>
-
     <div class="upload-section">
         <form id="uploadForm" enctype="multipart/form-data">
             <input type="file" name="file" id="fileInput" required>
-            <button type="submit">Upload MSA File</button>
+            <button type="submit">Upload File</button>
         </form>
         <div id="uploadStatus"></div>
     </div>
-
     <script>
         document.getElementById('uploadForm').addEventListener('submit', async function (event) {
             event.preventDefault();
@@ -122,7 +73,7 @@
                     method: 'POST',
                     body: formData,
                     headers: {
-                        'X-CSRFToken': '{{ csrf_token }}'
+                        'X-CSRFToken': '{{ csrf_token }}' // CSRF token for security
                     }
                 });
                 const result = await response.json();
@@ -138,15 +89,15 @@
         });
     </script>
     <div class="centered-text">
-        <p>ProteoCast is a evolutionary-based method to predict protein variant effects. Here we provide Drosophila melanogaster proteins.</p>
+        <p>ProteoCast is an evolutionary-based method to predict protein variant effects. Here we provide data for <em>Drosophila melanogaster</em> proteins.</p>
         <p>We utilize a combination of proteomics, genomics, and computational biology techniques to achieve high-resolution insights into protein dynamics. Our team is dedicated to advancing the field of proteomics and contributing valuable data to the scientific community.</p>
-        <p>Explore our database to find detailed information on FBpp IDs, including protein sequences, structures, and functional annotations. Join us in our mission to decode the proteome of Drosophila melanogaster and its impact on biological research.</p>
+        <p>Explore our database to find detailed information on FBpp IDs, including protein sequences, structures, and functional annotations. Join us in our mission to decode the proteome of <em>Drosophila melanogaster</em> and its impact on biological research.</p>
         <div class="image-text-container">
             <img src="{% static 'browser/images/ProteoCast_overview.jpg' %}" alt="ProteoCast Logo" class="centered-image" style="width: 50%; height: auto;">
         </div>
     </div>
     <footer>
-        <p> ProteoCast</p>
+        <p>ProteoCast - Predicting protein variant effects</p>
     </footer>
 </body>
 </html>

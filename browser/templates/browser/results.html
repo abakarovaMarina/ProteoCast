@@ -1,7 +1,7 @@
 ﻿{% load static %}
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,20 +38,44 @@
         .results-container {
             display: flex;
             flex-direction: column; 
-            align-items: center;   
+            align-items: flex-start;   
             margin: 20px;
             gap: 20px;
             width: 90%;
         }
-
-        .heatmap {
-            margin-bottom: 20px; /* Add margin bottom to create space */
+        .images-flex-container {
+           display: flex;
+           flex-direction: column;
+           align-items: flex-start; 
+           margin-top: 20px;
+        }
+        .results-container h2,
+        .results-container p {
+            margin-left: 0; 
+            text-align: left;
+        }
+        .images-flex-container h2,
+        .images-flex-container p {
+            margin-left: 0; /* Quita el margen izquierdo */
+            text-align: left; /* Alinea los títulos a la izquierda */
+        }
+        .heatmap { 
+            height: auto;
+            margin: 10px 0; 
+            padding-left: 20px; 
+            display: block;
         }
         .image-container {
-            margin-top: 20px; /* Add margin top to create space */
+            display: flex;
+            justify-content: flex-start; 
+            margin: 20px auto; 
         }
-        .image-container {
-            margin-bottom: 50px; /* Add margin top to create space */
+        .result-image {
+            max-width: 50%;
+            height: auto;
+            margin: 10px 0; 
+            padding-left: 20px; 
+            display: block;
         }
         footer {
             width: 100%;
@@ -100,10 +124,18 @@
             {% else %}
             <p>No results found.</p>
             {% endif %}
-
-            <div class="images-flex-container">
-                <h2 style="margin-left: 3cm;">GMM profile</h2>
-                <p style="margin-left: 3cm;">To better interpret mutational landscapes, we use a Gaussian Mixture Model (GMM) to cluster mutation effect scores into distinct categories, such as tolerant, intermediate, and sensitive mutations. The GMM identifies patterns in the distribution of mutational effects by modeling the data as a mixture of Gaussian distributions</p>
+            <div class="images-flex-container" style="margin-left: 0.5cm; margin-top:1cm;">
+                <h2>MSA Representation</h2>
+                <p>To better interpret mutational landscapes, we use a Gaussian Mixture Model (GMM) to cluster mutation effect scores into distinct categories, such as tolerant, intermediate, and sensitive mutations. The GMM iden>
+            {% if fig_msarep %}
+                <div class="image-container" style="margin-left: 2cm; margin-top:1cm;">
+                <img src="{{ fig_msarep }}" alt="Segmentation" class="result-image">
+                </div>
+            {% endif %}
+            </div>
+            <div class="images-flex-container" style="margin-left: 0.5cm; margin-top:1cm;">
+                <h2>GMM profile</h2>
+                <p>To better interpret mutational landscapes, we use a Gaussian Mixture Model (GMM) to cluster mutation effect scores into distinct categories, such as tolerant, intermediate, and sensitive mutations. The GMM identifies patterns in the distribution of mutational effects by modeling the data as a mixture of Gaussian distributions</p>
 
             {% if image_url_1 %}
                 <div class="image-container" style="margin-left: 2cm; margin-top:1cm;">
@@ -112,49 +144,62 @@
             {% endif %}
             </div>
         </div>
-        <h2 style="margin-bottom:1.5cm; margin-left: 3cm;"> 3D Protein Structure </h2>
+        <h2 style="margin-bottom:1cm; margin-left: 0.5cm;"> 3D Protein Structure </h2>
         
         <!-- Molstar Viewer Container -->
-        <div id="myViewer" style="margin-left: 3cm;"></div>
+        <div id="myViewer" style="margin-left: 2cm;"></div>
             
         <script>
-            // Crear el contenedor para el visor
             var viewerInstance = new PDBeMolstarPlugin();
 
             var options = {
                 customData: {
-                    url: "{% static 'jobs/' %}{{ query }}/{{ query }}.pdb",  // URL del archivo PDB
-                    format: 'pdb'
+                   url: "{% static 'jobs/' %}{{ query }}/{{ query }}.pdb",
+                   format: 'pdb'
                 },
-                alphafoldView: true,  // Activar vista AlphaFold si es necesario
-                bgColor: { r: 255, g: 255, b: 255 },  // Fondo blanco
-                hideCanvasControls: ['selection', 'animation', 'controlToggle', 'controlInfo']  // Controles ocultos
+                alphafoldView: true,
+                bgColor: { r: 255, g: 255, b: 255 },
+                hideCanvasControls: ['selection', 'animation', 'controlToggle', 'controlInfo'],
+                layoutIsExpanded: false
             };
 
             var viewerContainer = document.getElementById('myViewer');
             viewerInstance.render(viewerContainer, options);
 
-            // Función para colorear los residuos
             function colorResidues(residueData) {
                 viewerInstance.visual.select({
-                    data: residueData.map(function(residue) {
-                        return { residue_number: residue.number, color: residue.color };
-                    })
+                   data: residueData.map(function(residue) {
+                      return { residue_number: residue.residue_number, color: `rgb(${residue.color.r}, ${residue.color.g}, ${residue.color.b})` };
+                   })
                 });
             }
-
+      
             window.onload = function() {
-                setTimeout(function() {
-                    // Ejemplo de cómo colorear residuos (esto debe adaptarse a los datos reales)
-                    colorResidues([
-                        { number: 1, color: 'red' },
-                        { number: 2, color: 'blue' },
-                        { number: 3, color: 'green' }
-                    ]);
-                }, 1000); // Un pequeño retraso para garantizar que el visor cargue primero
-            };
+               var residueFileUrl = "{% static 'jobs/' %}{{ query }}/residue_colors.txt";
+
+               setTimeout(function() {
+                   fetch(residueFileUrl)
+                      .then(response => response.json()) // .json() es la función correcta para parsear la respuesta como JSON
+                      .then(data => {
+                           colorResidues(data);
+                       })
+                       .catch(error => console.error("Error loading residue file:", error));
+               }, 2000);
+           };
         </script>
-    </div>
+
+        <div class="results-container">
+            <div class="images-flex-container" style="margin-left: 0.5cm; margin-top:1cm;">
+                <h2>Segmentation profile</h2>
+                <p>To better interpret mutational landscapes, we use a Gaussian Mixture Model (GMM) to cluster mutation effect scores into distinct categories, such as tolerant, intermediate, and sensitive mutations. The GMM identifies patterns in the distribution of mutational effects by modeling the data as a mixture of Gaussian distributions</p>
+
+            {% if fig_segmentation %}
+                <div class="image-container" style="margin-left: 2cm; margin-top:1cm;">
+                <img src="{{ fig_segmentation }}" alt="Segmentation" class="result-image">
+                </div>
+            {% endif %}
+            </div>
+        </div>
     <footer>
         <p> ProteoCast </p>
     </footer>
