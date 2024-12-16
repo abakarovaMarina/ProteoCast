@@ -15,6 +15,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
 from datetime import datetime
+import subprocess 
 
 def contact_us(request):
     return render(request, 'browser/contact_us.html')
@@ -33,22 +34,27 @@ def upload_file(request):
     if request.method == 'POST' and 'file' in request.FILES:
         uploaded_file = request.FILES['file']
         now = datetime.now()
-        folder_name = 'jobs/'+now.strftime('%Y-%m-%d_%H-%M-%S')
+        folder_name = 'jobs/' + now.strftime('%Y-%m-%d_%H-%M-%S')
         folder_path = os.path.join(settings.BASE_DIR, 'browser', 'static', folder_name)
-        
-        try:
-            os.makedirs(folder_path, exist_ok=True)
-            
-            os.chmod(folder_path, 0o755)  
-        except PermissionError:
-            return JsonResponse({'error': 'Permission denied: unable to create directory.'}, status=500)
-        except Exception as e:
-            return JsonResponse({'error': f'Error creating directory: {str(e)}'}, status=500)
-        
-        file_storage = FileSystemStorage(location=folder_path)
-        filename = file_storage.save(uploaded_file.name, uploaded_file)
-        return JsonResponse({'message': 'File uploaded successfully', 'file_path': os.path.join(folder_name, filename)})
-    
+
+        # Crear el directorio con permisos adecuados
+        os.makedirs(folder_path, exist_ok=True)
+        subprocess.run(['sudo', 'mkdir', '-p', folder_path], check=True)
+        subprocess.run(['sudo', 'chown', '-R', 'www-data:www-data', folder_path], check=True)
+
+        # Ruta completa para el archivo subido
+        file_path = os.path.join(folder_path, uploaded_file.name)
+
+        # Guardar el archivo directamente en la nueva ubicación
+        with open(file_path, 'wb+') as destination:
+            for chunk in uploaded_file.chunks():
+                destination.write(chunk)
+
+        return JsonResponse({
+            'message': 'File uploaded and moved successfully',
+            'file_path': os.path.join(folder_name, uploaded_file.name)  # Ruta relativa para el cliente
+        })
+
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def results_view(request):
@@ -177,15 +183,15 @@ def download_folder(request, fbpp_id):
     if not os.path.exists(folder_path):
         return HttpResponse("Folder not found.")
     
-    zip_path = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}.zip')
-    shutil.make_archive(zip_path.replace('.zip', ''), 'zip', folder_path)
+#    zip_path = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}.zip')
+#    shutil.make_archive(zip_path.replace('.zip', ''), 'zip', folder_path)
     
     response = FileResponse(open(zip_path, 'rb'))
     response['Content-Disposition'] = f'attachment; filename="{fbpp_id}.zip"' 
 
     # Delete the zip file after sending the response
-    response['delete_zip'] = zip_path
-    if os.path.exists(zip_path):
-        os.remove(zip_path) 
+#    response['delete_zip'] = zip_path
+#    if os.path.exists(zip_path):
+#        os.remove(zip_path) 
     return response
 
