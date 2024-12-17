@@ -76,7 +76,7 @@ header {
 
 /* Footer */
 footer {
-    background-color: #343a40;
+    background-color: #f1f1f1;
     color: white;
     text-align: center;
     padding: 10px;
@@ -108,7 +108,7 @@ footer {
 
 body {
     padding-bottom: 50px;
-    font-family: Arial, sans-serif;
+    font-family: Montserrat, sans-serif;
     height: auto;
 }
 
