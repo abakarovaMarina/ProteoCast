@@ -30,13 +30,14 @@ def citation(request):
 def search_view(request):
     return render(request, 'browser/search.html')
 
-def job_running(request, job_id):
-    return render(request, 'job_running.html', {'job_id': job_id})
-
 def drosophiladb(request):
     return render(request, 'browser/drosophiladb.html')
 
-DATA = '/data/Drosophila_ProteoCast/'
+def job_running(request, job_id):
+    return render(request, 'job_running.html', {'job_id': job_id})
+
+
+DATA = '/Users/manchuta/Documents/GitHub/Droso_GEMMEwebsite/browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
 
 
 @csrf_exempt
@@ -97,39 +98,49 @@ def results_view(request):
     prot_name = request.GET.get('q').lower()
     if not prot_name:
         return HttpResponse(f'Please provide a protein name.')
-
+    alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y","-",'x']
+    alph = [i.upper() for i in alph]
     mapping_file_path = f'{DATA}mapping_database.csv'
     if not os.path.exists(mapping_file_path):
         return HttpResponse("Mapping file not found.")
     
     mapping_df = pd.read_csv(mapping_file_path, index_col=0)
+    
     mapping_df['fbpp_low'] = mapping_df.index.str.lower()
     mapping_df['pr_sym'] = mapping_df['Protein_symbol'].str.lower()
+    
+
     if prot_name[:4]=='fbpp':
-        id_folder = mapping_df.loc[mapping_df['fbpp_low']==prot_name, 'id']
-        FBpp_id =mapping_df.loc[mapping_df['fbpp_low']==prot_name].index[0]
+        
+        id_folder = mapping_df.loc[mapping_df['fbpp_low']==prot_name, 'id'].item()
+        FBpp_id =mapping_df.loc[mapping_df['id']==id_folder].index[0]
     else:
         id_folder = mapping_df.loc[mapping_df['pr_sym']==prot_name, 'id']
         FBpp_id =mapping_df.loc[mapping_df['fbpp_low']==prot_name].index[0]
+   
     
-
     ### Confidence values
-    proteocast_path = f'{DATA}{id_folder}/{FBpp_id}_ProteoCast.csv'
+    proteocast_path = f'{DATA}{id_folder}/4.{FBpp_id}_ProteoCast.csv'
+    if not os.path.exists(proteocast_path):
+        return HttpResponse("ProteoCast file  found.")
+    
+    
     df_proteocast = pd.read_csv(proteocast_path)
     df_proteocast['GEMME_LocalConfidence'] = df_proteocast['GEMME_LocalConfidence'].replace({True:1, False:0})
-    confidence_values = df_proteocast.groupby('Residue')['GEMME_LocalConfidence'].apply(lambda x: x.iloc[0]).tolist().reshape(1, -1)
-
-    positions = list(range(1, len(seq) + 1))
-    mutations = list(df.index)
-    df = pd.DataFrame(np.array(df_proteocast['GEMME_score']).reshape(20, -1))
+    confidence_values = np.array(df_proteocast.groupby('Residue')['GEMME_LocalConfidence'].apply(lambda x: x.iloc[0]).tolist()).reshape(1, -1)
+    
+    
+    df = pd.DataFrame(np.array(df_proteocast['GEMME_score']).reshape(20, -1, order='F'))
     df_mut = pd.DataFrame(np.array(df_proteocast['Mutation']).reshape(20, -1, order='F'))
+
+    
 
     # Custom color scale for confidence
     confidence_colorscale = [
         [0, 'white'],  # Low confidence - white
         [1, 'darkblue']  # High confidence - dark blue
     ]
-
+    
     fig = make_subplots(
         rows=2, cols=1,
         shared_xaxes=True,
@@ -138,17 +149,17 @@ def results_view(request):
     )
 
     heatmap_main = go.Heatmap(
-        z=df.values,  
+        z=df.values[::-1],  # Reverse the order of rows
         x=list(range(1, df.shape[1] + 1)),  
-        y=list(df.index), 
+        y=alph[::-1],  # Reverse the order of y-axis labels
         colorscale=px.colors.sequential.Oranges[::-1], 
-        #colorbar=dict(title="GEMME Score"), 
-        customdata=df_mut.values,  
+        customdata=df_mut.values[::-1],  # Reverse the order of custom data
         hovertemplate=(
-            "Position: %{customdata[1]}%{x}%{customdata[2]}<br>"
+            "Position: %{customdata}<br>"
             "Score: %{z:.2f}<extra></extra>"
         ),
     )
+    
     fig.add_trace(heatmap_main, row=1, col=1)
 
     heatmap_confidence = go.Heatmap(
@@ -158,9 +169,9 @@ def results_view(request):
        hoverinfo='skip',  
     )  
     fig.add_trace(heatmap_confidence, row=2, col=1)
-
+    
     scatter_border = go.Scatter(
-       x=[0, len(seq), len(seq), 0, 0],
+       x=[0, df.shape[1], df.shape[1], 0, 0],
        y=[-0.5, -0.5, 0.5, 0.5, -0.5],
        mode="lines",
        line=dict(color="black", width=2), 
@@ -169,7 +180,7 @@ def results_view(request):
     )
     fig.add_trace(scatter_border, row=2, col=1)
 
-    fig.update_layout(
+    '''fig.update_layout(
         title_x=1,
         autosize=False,
         width=1500,
@@ -184,27 +195,27 @@ def results_view(request):
             title="GEMME Score",
             tickvals=[-8, -4, 0], 
         ),
-    )
+    )'''
     fig.update_yaxes(visible=False, row=2, col=1)
     heatmap_html = fig.to_html(full_html=False)
 
-    image_path_1 = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}/{fbpp_id}_GMM.jpg')
-    pdb_path_1 = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}/{fbpp_id}.pdb')
-    fig_path_3  = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}/3.{fbpp_id}_msaRepresentation.jpg')
-    fig_path_4  = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}/9.{fbpp_id}_SegProfile.png')
-    image_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}_GMM.jpg' if os.path.exists(image_path_1) else None
-    pdb_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}.pdb' if os.path.exists(pdb_path_1) else None
-    fig_msarep = f'/static/jobs/{fbpp_id}/3.{fbpp_id}_msaRepresentation.jpg' if os.path.exists(fig_path_3) else None
-    fig_segmentation = f'/static/jobs/{fbpp_id}/9.{fbpp_id}_SegProfile.png' if os.path.exists(fig_path_4) else None
+    image_path_1 = f'{DATA}{id_folder}/6.{FBpp_id}_GMM.jpg'
+    pdb_path_1 = f'{DATA}{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
+    fig_path_3  = f'{DATA}{id_folder}/3.{FBpp_id}_msaRepresentation.jpg'
+    fig_path_4  = f'{DATA}{id_folder}/9.{FBpp_id}_SegProfile.png'
+    #image_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}_GMM.jpg' if os.path.exists(image_path_1) else None
+    #pdb_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}.pdb' if os.path.exists(pdb_path_1) else None
+    #fig_msarep = f'/static/jobs/{fbpp_id}/3.{fbpp_id}_msaRepresentation.jpg' if os.path.exists(fig_path_3) else None
+    #fig_segmentation = f'/static/jobs/{fbpp_id}/9.{fbpp_id}_SegProfile.png' if os.path.exists(fig_path_4) else None
     
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
-        'query': fbpp_id,
-        'file_path': full_path,
-        'image_url_1': image_url_1,
-        'pdb_url_1': pdb_url_1,
-        'fig_msarep': fig_msarep,
-        'fig_segmentation' : fig_segmentation,
+        'query': prot_name,
+        'file_path': f'{DATA}{id_folder}',
+        'image_url_1': image_path_1,
+        'pdb_url_1': pdb_path_1,
+        'fig_msarep': fig_path_3,
+        'fig_segmentation' : fig_path_4,
     })
 
 def download_folder(request, fbpp_id):
@@ -215,12 +226,12 @@ def download_folder(request, fbpp_id):
 #    zip_path = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}.zip')
 #    shutil.make_archive(zip_path.replace('.zip', ''), 'zip', folder_path)
     
-    response = FileResponse(open(zip_path, 'rb'))
-    response['Content-Disposition'] = f'attachment; filename="{fbpp_id}.zip"' 
+    #response = FileResponse(open(zip_path, 'rb'))
+    #response['Content-Disposition'] = f'attachment; filename="{fbpp_id}.zip"' 
 
     # Delete the zip file after sending the response
 #    response['delete_zip'] = zip_path
 #    if os.path.exists(zip_path):
 #        os.remove(zip_path) 
-    return response
+    #return response
 
