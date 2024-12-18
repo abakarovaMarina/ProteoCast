@@ -11,7 +11,6 @@ import zipfile
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from django.http import JsonResponse
-from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
 from datetime import datetime
@@ -36,6 +35,8 @@ def job_running(request, job_id):
 
 def drosophiladb(request):
     return render(request, 'browser/drosophiladb.html')
+
+
 @csrf_exempt
 def upload_file(request):
     if request.method == 'POST' and 'file' in request.FILES:
@@ -92,12 +93,21 @@ def upload_file_2(request):
 
 def results_view(request):
     fbpp_id = request.GET.get('q')
+    print(fbpp_id)
     if not fbpp_id:
+        print('here')
         return HttpResponse("Please provide a FBpp ID.")
 
+    mapping_file_path = '/data/Drosophila_ProteoCast/mapping_database.csv'
+    if not os.path.exists(mapping_file_path):
+        return HttpResponse("Mapping file not found.")
+    
+    mapping_df = pd.read_csv(mapping_file_path, index_col=0)
+    print(mapping_df)
+
+    ### Confidence values
     path = f'jobs/{fbpp_id}/Sensitivity_Confidence.csv'
     full_path = os.path.join(settings.BASE_DIR, 'browser', 'static', path)
-
     conf_df = pd.read_csv(full_path)
     confidence_values = conf_df['Confidence'].values.reshape(1, -1)
 
@@ -111,8 +121,8 @@ def results_view(request):
                 if '>' not in line:
                     seq += line
 
-    path = f'jobs/{fbpp_id}/{fbpp_id}_normPred_evolCombi.txt'
-    full_path = os.path.join(settings.BASE_DIR, 'browser', 'static', path)
+    full_path = f'/data/Drosophila_ProteoCast/jobs/{fbpp_id}/{fbpp_id}_normPred_evolCombi.txt'
+    #full_path = os.path.join(settings.BASE_DIR, 'browser', 'static', path)
     if not os.path.exists(full_path):
         return HttpResponse("File not found.")
 
@@ -201,6 +211,7 @@ def results_view(request):
     pdb_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}.pdb' if os.path.exists(pdb_path_1) else None
     fig_msarep = f'/static/jobs/{fbpp_id}/3.{fbpp_id}_msaRepresentation.jpg' if os.path.exists(fig_path_3) else None
     fig_segmentation = f'/static/jobs/{fbpp_id}/9.{fbpp_id}_SegProfile.png' if os.path.exists(fig_path_4) else None
+    
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
         'query': fbpp_id,
