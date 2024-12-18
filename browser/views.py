@@ -93,8 +93,8 @@ def upload_file_2(request):
 
 def results_view(request):
     fbpp_id = request.GET.get('q').lower()
-    if fbpp_id:
-        return HttpResponse(f'Please provide a FBpp ID.{fbpp_id}')
+    if not fbpp_id:
+        return HttpResponse(f'Please provide a FBpp ID.')
 
     mapping_file_path = '/data/Drosophila_ProteoCast/mapping_database.csv'
     if not os.path.exists(mapping_file_path):
@@ -103,9 +103,9 @@ def results_view(request):
     mapping_df = pd.read_csv(mapping_file_path, index_col=0)
     mapping_df.index = mapping_df.index.str.lower()
     mapping_df['Protein_symbol'] = mapping_df['Protein_symbol'].str.lower()
-    if mapping_df is not None:
-       return HttpResponse("mapping is read", mapping_df) 
-    print(mapping_df)
+    id_folder = mapping_df.loc[fbpp_id, 'id'] 
+    if fbpp_id in mapping_df.index:
+       return HttpResponse(f'FBpp exists in mapping file is read {id_folder}') 
 
     ### Confidence values
     path = f'jobs/{fbpp_id}/Sensitivity_Confidence.csv'
