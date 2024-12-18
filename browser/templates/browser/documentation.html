@@ -37,20 +37,27 @@
             background-color: #f1f1f1;
             position: relative;
             bottom: 0;
+            color: grey;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1 style="font-size: 2em; text-align: left;"><a href="{% url 'search' %}">ProteoCast</a> Documentation</h1>
-    </header>
-    <div class="content">
-        <ul>
-            <li><b>Bulk data download :</b> https://zenodo.org/records/10995110 </li>
-            <li><b>MLA Style:</b> Author. "Title." Year, URL.</li>
-            <li><b>Chicago Style:</b> Author. Title. Accessed Year. URL.</li>
-        </ul>
+    <h1 style="font-size: 2em; text-align: left;">
+        <a href="{% url 'search' %}" style="text-decoration: none;">ProteoCast</a> 
+        <span style="font-size: 0.8em; color: gray;">Documentation</span>
+    </h1>
+
+    <div class="centered-text">
+        <p>ProteoCast is a evolutionary-based method to predict protein variant effects. Here we provide Drosophila melanogaster proteins.</p>
+        <p>We utilize a combination of proteomics, genomics, and computational biology techniques to achieve high-resolution insights into protein dynamics. Our team is dedicated to advancing the field of proteomics and contributing valuable data to the scientific community.</p>
+        <p>Explore our database to find detailed information on FBpp IDs, including protein sequences, structures, and functional annotations. Join us in our mission to decode the proteome of Drosophila melanogaster and its impact on biological research.</p>
+        <div class="image-text-container">
+            <img src="{% static 'images/ProteoCast_overview.jpg' %}" alt="ProteoCast Logo" class="centered-image" style="width: 50%; height: auto;">
+        </div>
+        <li><b>Bulk data download :</b> https://zenodo.org/records/10995110 </li>
     </div>
+
+
     <footer>
         <p>ProteoCast - This website is free and open to all users and there is no login requirement.</p>
     </footer>

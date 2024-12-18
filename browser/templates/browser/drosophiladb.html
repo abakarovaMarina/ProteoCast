@@ -37,13 +37,17 @@
             background-color: #f1f1f1;
             position: relative;
             bottom: 0;
+            color: grey;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1 style="font-size: 2em; text-align: left;"><a href="{% url 'search' %}">ProteoCast</a> for <em>Drosophila melanogaster</h1>
-    </header>
+
+    <h1 style="font-size: 2em; text-align: left;">
+        <a href="{% url 'search' %}" style="text-decoration: none;">ProteoCast</a> 
+        <span style="font-size: 0.8em; color: gray;"> for <em>Drosophila melanogaster</span>
+    </h1>
+
     <div class="content">
         <ul>
             <li><b>GEMME:</b> Laine, E.; Karami, Y.; Carbone, A. GEMME: A Simple and Fast Global Epistatic Model Predicting Mutational Effects. Mol. Biol. Evol. 2019, 36 (11), 2604–2619. <a href="https://doi.org/10.1093/molbev/msz179" target="_blank">https://doi.org/10.1093/molbev/msz179</a>.</li>
