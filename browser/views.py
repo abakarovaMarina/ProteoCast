@@ -36,6 +36,8 @@ def job_running(request, job_id):
 def drosophiladb(request):
     return render(request, 'browser/drosophiladb.html')
 
+DATA = '/data/Drosophila_ProteoCast/'
+
 
 @csrf_exempt
 def upload_file(request):
@@ -92,54 +94,35 @@ def upload_file_2(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def results_view(request):
-    fbpp_id = request.GET.get('q').lower()
-    if not fbpp_id:
-        return HttpResponse(f'Please provide a FBpp ID.')
+    prot_name = request.GET.get('q').lower()
+    if not prot_name:
+        return HttpResponse(f'Please provide a protein name.')
 
-    mapping_file_path = '/data/Drosophila_ProteoCast/mapping_database.csv'
+    mapping_file_path = f'{DATA}mapping_database.csv'
     if not os.path.exists(mapping_file_path):
         return HttpResponse("Mapping file not found.")
     
     mapping_df = pd.read_csv(mapping_file_path, index_col=0)
-    mapping_df.index = mapping_df.index.str.lower()
-    mapping_df['Protein_symbol'] = mapping_df['Protein_symbol'].str.lower()
-    id_folder = mapping_df.loc[fbpp_id, 'id'] 
-    if fbpp_id in mapping_df.index:
-       return HttpResponse(f'FBpp exists in mapping file is read {id_folder}') 
+    mapping_df['fbpp_low'] = mapping_df.index.str.lower()
+    mapping_df['pr_sym'] = mapping_df['Protein_symbol'].str.lower()
+    if prot_name[:4]=='fbpp':
+        id_folder = mapping_df.loc[mapping_df['fbpp_low']==prot_name, 'id']
+        FBpp_id =mapping_df.loc[mapping_df['fbpp_low']==prot_name].index[0]
+    else:
+        id_folder = mapping_df.loc[mapping_df['pr_sym']==prot_name, 'id']
+        FBpp_id =mapping_df.loc[mapping_df['fbpp_low']==prot_name].index[0]
+    
 
     ### Confidence values
-    path = f'jobs/{fbpp_id}/Sensitivity_Confidence.csv'
-    full_path = os.path.join(settings.BASE_DIR, 'browser', 'static', path)
-    conf_df = pd.read_csv(full_path)
-    confidence_values = conf_df['Confidence'].values.reshape(1, -1)
-
-    seq = ''
-    fasta = f'jobs/{fbpp_id}/{fbpp_id}.fasta'
-    full_fasta = os.path.join(settings.BASE_DIR, 'browser', 'static', fasta)
-    if os.path.exists(full_fasta):
-        with open(full_fasta) as fst:
-            for line in fst:
-                line = line.rstrip('\n')
-                if '>' not in line:
-                    seq += line
-
-    full_path = f'/data/Drosophila_ProteoCast/jobs/{fbpp_id}/{fbpp_id}_normPred_evolCombi.txt'
-    #full_path = os.path.join(settings.BASE_DIR, 'browser', 'static', path)
-    if not os.path.exists(full_path):
-        return HttpResponse("File not found.")
-
-    df = pd.read_csv(full_path, skiprows=1, sep=' ', header=None, index_col=0)
+    proteocast_path = f'{DATA}{id_folder}/{FBpp_id}_ProteoCast.csv'
+    df_proteocast = pd.read_csv(proteocast_path)
+    df_proteocast['GEMME_LocalConfidence'] = df_proteocast['GEMME_LocalConfidence'].replace({True:1, False:0})
+    confidence_values = df_proteocast.groupby('Residue')['GEMME_LocalConfidence'].apply(lambda x: x.iloc[0]).tolist().reshape(1, -1)
 
     positions = list(range(1, len(seq) + 1))
     mutations = list(df.index)
-
-    customdata = np.empty((df.shape[0], df.shape[1], 4), dtype=object) 
-    for row_idx, mutation in enumerate(mutations):
-        for col_idx in range(df.shape[1]):
-            position = positions[col_idx]
-            native_residue = seq[col_idx]
-            gemme_score = df.iloc[row_idx, col_idx]
-            customdata[row_idx, col_idx] = [position, native_residue, mutation.upper(), gemme_score]
+    df = pd.DataFrame(np.array(df_proteocast['GEMME_score']).reshape(20, -1))
+    df_mut = pd.DataFrame(np.array(df_proteocast['Mutation']).reshape(20, -1, order='F'))
 
     # Custom color scale for confidence
     confidence_colorscale = [
@@ -156,11 +139,11 @@ def results_view(request):
 
     heatmap_main = go.Heatmap(
         z=df.values,  
-        x=list(range(1, len(seq) + 1)),  
+        x=list(range(1, df.shape[1] + 1)),  
         y=list(df.index), 
         colorscale=px.colors.sequential.Oranges[::-1], 
-        colorbar=dict(title="GEMME Score"), 
-        customdata=customdata,  
+        #colorbar=dict(title="GEMME Score"), 
+        customdata=df_mut.values,  
         hovertemplate=(
             "Position: %{customdata[1]}%{x}%{customdata[2]}<br>"
             "Score: %{z:.2f}<extra></extra>"
