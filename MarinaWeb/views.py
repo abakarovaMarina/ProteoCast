@@ -12,5 +12,6 @@ def documentation(request):
 
 def citation(request):
     return render(request, 'browser/citation.html')
+
 def drosophiladb(request):
     return render(request, 'browser/drosophiladb.html')

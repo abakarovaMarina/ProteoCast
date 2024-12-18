@@ -93,9 +93,7 @@ def upload_file_2(request):
 
 def results_view(request):
     fbpp_id = request.GET.get('q')
-    print(fbpp_id)
     if not fbpp_id:
-        print('here')
         return HttpResponse("Please provide a FBpp ID.")
 
     mapping_file_path = '/data/Drosophila_ProteoCast/mapping_database.csv'
@@ -103,6 +101,8 @@ def results_view(request):
         return HttpResponse("Mapping file not found.")
     
     mapping_df = pd.read_csv(mapping_file_path, index_col=0)
+    if mapping_df is not None:
+       return HttpResponse("mapping is read", mapping_df) 
     print(mapping_df)
 
     ### Confidence values
