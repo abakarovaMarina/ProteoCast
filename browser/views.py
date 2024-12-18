@@ -93,8 +93,8 @@ def upload_file_2(request):
 
 def results_view(request):
     fbpp_id = request.GET.get('q')
-    if not fbpp_id:
-        return HttpResponse("Please provide a FBpp ID.")
+    if fbpp_id:
+        return HttpResponse("Please is provided a FBpp ID.")
 
     mapping_file_path = '/data/Drosophila_ProteoCast/mapping_database.csv'
     if not os.path.exists(mapping_file_path):
