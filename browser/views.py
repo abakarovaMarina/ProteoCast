@@ -211,22 +211,25 @@ def results_view(request):
         return HttpResponse("PDB file  found.")
     if not os.path.exists(fig_path_3):
         return HttpResponse("MSA file  found.")
-    if os.path.exists(fig_path_4):
+    if not os.path.exists(fig_path_4):
         return HttpResponse("Seg file  found.")
      
     #image_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}_GMM.jpg' if os.path.exists(image_path_1) else None
     #pdb_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}.pdb' if os.path.exists(pdb_path_1) else None
     #fig_msarep = f'/static/jobs/{fbpp_id}/3.{fbpp_id}_msaRepresentation.jpg' if os.path.exists(fig_path_3) else None
     #fig_segmentation = f'/static/jobs/{fbpp_id}/9.{fbpp_id}_SegProfile.png' if os.path.exists(fig_path_4) else None
-    
+    image_url_1 = image_path_1
+    pdb_url_1 = pdb_path_1
+    fig_msarep = fig_path_3 
+    fig_segmentation = fig_path_4 
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
-        'query': prot_name,
+        'query': id_folder,
         'file_path': f'{DATA}{id_folder}',
-        'image_url_1': image_path_1,
-        'pdb_url_1': pdb_path_1,
-        'fig_msarep': fig_path_3,
-        'fig_segmentation' : fig_path_4,
+        'image_url_1': image_url_1,
+        'pdb_url_1': pdb_url_1,
+        'fig_msarep': fig_msarep,
+        'fig_segmentation' : fig_segmentation,
     })
 
 def download_folder(request, fbpp_id):
