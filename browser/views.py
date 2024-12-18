@@ -38,7 +38,7 @@ def job_running(request, job_id):
 
 
 DATA = '/Users/manchuta/Documents/GitHub/Droso_GEMMEwebsite/browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
-DATA = '/data/Drosophila_ProteoCast/'
+#DATA = '/data/Drosophila_ProteoCast/'
 
 @csrf_exempt
 def upload_file(request):
@@ -98,7 +98,7 @@ def results_view(request):
     prot_name = request.GET.get('q').lower()
     if not prot_name:
         return HttpResponse(f'Please provide a protein name.')
-    alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y","-",'x'][::-1]
+    alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y"][::-1]
     alph = [i.upper() for i in alph]
     mapping_file_path = f'{DATA}mapping_database.csv'
     if not os.path.exists(mapping_file_path):
@@ -149,11 +149,11 @@ def results_view(request):
     )
 
     heatmap_main = go.Heatmap(
-        z=df.values,  # Reverse the order of rows
+        z=df.values[::-1],  # Reverse the order of rows
         x=list(range(1, df.shape[1] + 1)),  
-        y=alph[::-1],  # Reverse the order of y-axis labels
+        y=alph,  # Reverse the order of y-axis labels
         colorscale=px.colors.sequential.Oranges[::-1], 
-        customdata=df_mut.values,  # Reverse the order of custom data
+        customdata=df_mut.values[::-1],  # Reverse the order of custom data
         hovertemplate=(
             "Position: %{customdata}<br>"
             "Score: %{z:.2f}<extra></extra>"
@@ -187,8 +187,8 @@ def results_view(request):
         height=600,
         xaxis=dict(
             tickmode="array",
-            tickvals=list(range(0, df.shape[0], 10)),  
-            ticktext=[str(i) for i in range(1,df.shape[0]+1, 10)],
+            tickvals=list(range(0, df.shape[1]+1, 10)),  
+            ticktext=[str(i) for i in range(0,df.shape[1]+1, 10)],
         ),
         yaxis=dict(title="Mutations"),
         coloraxis_colorbar=dict(
@@ -196,6 +196,7 @@ def results_view(request):
             tickvals=[-8, -4, 0], 
         ),
     )
+
     fig.update_yaxes(visible=False, row=2, col=1)
     heatmap_html = fig.to_html(full_html=False)
 
