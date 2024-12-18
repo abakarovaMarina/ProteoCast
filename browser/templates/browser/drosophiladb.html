@@ -50,8 +50,8 @@
 
         /* Adjust image size relative to screen */
         img {
-            max-width: 90%;  /* Maximum width: 90% of the viewport width */
-            max-height: 90%; /* Maximum height: 90% of the viewport height */
+            max-width: 120%;  /* Maximum width: 90% of the viewport width */
+            max-height: 120%; /* Maximum height: 90% of the viewport height */
             object-fit: contain; /* Ensures the image maintains aspect ratio */
         }
     </style>
@@ -71,10 +71,22 @@
     </header>
 
     <div class="content" style="color: black;">
-        <p>Here we provide <b>ProteoCast</b> predictions and visualization for <em>Drosophila melanogaster</em> proteome, including all protein isoforms (proteoforms) resulting from alternative splicing.</p>
-        <p>Try it out with your favorite protein. Provide <a href="https://flybase.org/" target="_blank">FlyBase</a> protein ID (FBpp) or proteoform symbol (i.e. yki-PA) in the top-right search dialog.</p>
-        <p>For more information, please refer to the <a href="{% url 'documentation' %}">documentation</a>.</p>
-        <p> How it works: </p>
+        <p> Here we provide <b>ProteoCast</b> predictions and visualization for <em>Drosophila melanogaster</em> proteome, including all protein isoforms (proteoforms) resulting from alternative splicing.</p>
+        <p> Try it out with your favorite protein. Provide <a href="https://flybase.org/" target="_blank">FlyBase</a> protein ID (FBpp) or proteoform symbol (i.e. yki-PA) in the top-right search dialog.</p>
+        <p> You can download the whole archive from <a href="https://doi.org/10.5281/zenodo.10995110"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.10995110.svg" alt="DOI"></a> (approx. 4GB)</p>
+        <p> For more information and resources, please refer to the <a href="{% url 'documentation' %}">documentation</a>.</p>
+        <p> <b>How it works: </b></p>
+        <ul>
+            <li>
+                <u>Proteome-wide predictions</u> are made by using the <a href = "https://www.nature.com/articles/s41592-022-01488-1">CollabFold (<a href = "https://www.nature.com/articles/s41592-022-01488-1">Mirdita et al., 2022</a>) implementation of <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb" target="_blank">MMseqs2</a> (<a href = "https://www.nature.com/articles/nbt.3988">Steinegger and Söding, 2017</a>)
+                to generate Multiple Sequences Alignements (MSA). These MSA are then used as an input to <a href = "http://www.lcqb.upmc.fr/GEMME/Home.html">GEMME</a> (<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6805226/">Laine et al., 2019</a>). 
+                GEMME outputs Mutational Landscapes for each proteoform. 
+            </li>
+            <br>
+            <li>
+                <u>Classification of our proteom-wide predictions</u> using Gaussian Mixture Models into missense mutations potentially <span style="color: red">impactful</span>, <span style="color: rgb(209, 126, 140)">uncertain</span> or <span style="color: rgb(18, 176, 224)">neutral</span>.
+            </li>
+        </ul>
         <div class="image-text-container">
         <img src="{% static 'browser/images/ProteoCast_overview.jpg' %}" alt="ProteoCast Logo" class="centered-image" style="width: 50%; height: auto;">
         </div>
