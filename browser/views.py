@@ -38,7 +38,7 @@ def job_running(request, job_id):
 
 
 DATA = '/Users/manchuta/Documents/GitHub/Droso_GEMMEwebsite/browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
-#DATA = '/data/Drosophila_ProteoCast/'
+DATA = '/data/Drosophila_ProteoCast/'
 
 @csrf_exempt
 def upload_file(request):
@@ -229,7 +229,7 @@ def results_view(request):
     })
 
 def download_folder(request, fbpp_id):
-    folder_path = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}')
+    folder_path = 
     if not os.path.exists(folder_path):
         return HttpResponse("Folder not found.")
     
