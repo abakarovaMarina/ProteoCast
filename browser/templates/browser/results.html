@@ -127,15 +127,7 @@
             {% else %}
             <p>No results found.</p>
             {% endif %}
-            <div class="images-flex-container" style="margin-left: 0.5cm; margin-top:1cm;">
-                <h2>MSA Representation</h2>
-                <p>To better interpret mutational landscapes, we use a Gaussian Mixture Model (GMM) to cluster mutation effect scores into distinct categories, such as tolerant, intermediate, and sensitive mutations. The GMM iden>
-            {% if fig_msarep %}
-                <div class="image-container" style="margin-left: 2cm; margin-top:1cm;">
-                <img src="{{ fig_msarep }}" alt="Segmentation" class="result-image">
-                </div>
-            {% endif %}
-            </div>
+            
             <div class="images-flex-container" style="margin-left: 0.5cm; margin-top:1cm;">
                 <h2>GMM profile</h2>
                 <p>To better interpret mutational landscapes, we use a Gaussian Mixture Model (GMM) to cluster mutation effect scores into distinct categories, such as tolerant, intermediate, and sensitive mutations. The GMM identifies patterns in the distribution of mutational effects by modeling the data as a mixture of Gaussian distributions</p>
@@ -201,7 +193,16 @@
                 <img src="{{ fig_segmentation }}" alt="Segmentation" class="result-image">
                 </div>
             {% endif %}
+        </div>
+        <div class="images-flex-container" style="margin-left: 0.5cm; margin-top:1cm;">
+            <h2>MSA Representation</h2>
+            <p>To better interpret mutational landscapes, we use a Gaussian Mixture Model (GMM) to cluster mutation effect scores into distinct categories, such as tolerant, intermediate, and sensitive mutations. The GMM iden>
+        {% if fig_msarep %}
+            <div class="image-container" style="margin-left: 2cm; margin-top:1cm;">
+            <img src="{{ fig_msarep }}" alt="Segmentation" class="result-image">
             </div>
+        {% endif %}
+        </div>
         </div>
     <footer>
         <p> ProteoCast - This website is free and open to all users and there is no login requirement. </p>
