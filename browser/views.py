@@ -34,6 +34,8 @@ def search_view(request):
 def job_running(request, job_id):
     return render(request, 'job_running.html', {'job_id': job_id})
 
+def drosophiladb(request):
+    return render(request, 'browser/drosophiladb.html')
 @csrf_exempt
 def upload_file(request):
     if request.method == 'POST' and 'file' in request.FILES:

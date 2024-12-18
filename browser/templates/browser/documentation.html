@@ -6,9 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Documentation</title>
     <link rel="stylesheet" type="text/css" href="{% static 'browser/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Comfortaa, sans-serif;
+            font-family: Montserrat, sans-serif;
             line-height: 1.6;
             margin: 0;
             padding: 0;
@@ -41,10 +42,9 @@
 </head>
 <body>
     <header>
-        <h1>Documentation</h1>
+        <h1 style="font-size: 2em; text-align: left;"><a href="{% url 'search' %}">ProteoCast</a> Documentation</h1>
     </header>
     <div class="content">
-        <p>Provide proper citations for referencing this platform:</p>
         <ul>
             <li><b>Bulk data download :</b> https://zenodo.org/records/10995110 </li>
             <li><b>MLA Style:</b> Author. "Title." Year, URL.</li>
