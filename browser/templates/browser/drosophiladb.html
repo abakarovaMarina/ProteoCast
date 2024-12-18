@@ -12,7 +12,7 @@
             font-family: Montserrat, sans-serif;
             line-height: 1;
             margin: 0;
-            padding: 0 20px;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -53,14 +53,16 @@
                 <button type="submit">Search</button>
             </form>
         </div>
-        <div class="content" style="color: black;">
-            <p>Here we provide <b>ProteoCast</b> predictions and visualization for <em>Drosophila melanogaster</em> proteome.</p>
-            <p>Try it out with your favorite protein. Provide <a href="https://flybase.org/" target="_blank">FlyBase</a> ID (FBpp) or proteoform symbol (yki-PA) in the search form on the top.</p>
-            <div class="image-text-container">
-            <img src="{% static 'browser/images/ProteoCast_overview.jpg' %}" alt="ProteoCast Logo" class="centered-image" style="width: 50%; height: auto;">
-            </div>
-        </div>
     </header>
+
+    <div class="content" style="color: black;">
+        <p>Here we provide <b>ProteoCast</b> predictions and visualization for <em>Drosophila melanogaster</em> proteome.</p>
+        <p>Try it out with your favorite protein. Provide <a href="https://flybase.org/" target="_blank">FlyBase</a> ID (FBpp) or proteoform symbol (yki-PA) in the search form on the top.</p>
+        <div class="image-text-container">
+        <img src="{% static 'browser/images/ProteoCast_overview.jpg' %}" alt="ProteoCast Logo" class="centered-image" style="width: 50%; height: auto;">
+        </div>
+    </div>
+    
     <footer>
         <p>ProteoCast - This website is free and open to all users and there is no login requirement.</p>
     </footer>
