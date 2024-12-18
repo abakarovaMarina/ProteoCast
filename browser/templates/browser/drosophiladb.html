@@ -39,6 +39,21 @@
             bottom: 0;
             color: grey;
         }
+            /* Center the image */
+        .image-container {
+            display: flex;           /* Enables flexbox */
+            justify-content: center; /* Centers horizontally */
+            align-items: center;     /* Centers vertically */
+            height: 100vh;           /* Full viewport height */
+            margin: 0;               /* Remove default margin */
+        }
+
+        /* Adjust image size relative to screen */
+        img {
+            max-width: 90%;  /* Maximum width: 90% of the viewport width */
+            max-height: 90%; /* Maximum height: 90% of the viewport height */
+            object-fit: contain; /* Ensures the image maintains aspect ratio */
+        }
     </style>
 </head>
 <body>
@@ -57,9 +72,9 @@
 
     <div class="content" style="color: black;">
         <p>Here we provide <b>ProteoCast</b> predictions and visualization for <em>Drosophila melanogaster</em> proteome, including all protein isoforms (proteoforms) resulting from alternative splicing.</p>
-        <p>Try it out with your favorite protein. Provide <a href="https://flybase.org/" target="_blank">FlyBase</a> ID (FBpp) or proteoform symbol (yki-PA) in the search box on the top.</p>
+        <p>Try it out with your favorite protein. Provide <a href="https://flybase.org/" target="_blank">FlyBase</a> protein ID (FBpp) or proteoform symbol (i.e. yki-PA) in the top-right search dialog.</p>
         <p>For more information, please refer to the <a href="{% url 'documentation' %}">documentation</a>.</p>
-        <p> EXPLAIN THE FIGURE BELOW </p>
+        <p> How it works: </p>
         <div class="image-text-container">
         <img src="{% static 'browser/images/ProteoCast_overview.jpg' %}" alt="ProteoCast Logo" class="centered-image" style="width: 50%; height: auto;">
         </div>
