@@ -203,6 +203,15 @@ def results_view(request):
     pdb_path_1 = f'{DATA}{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
     fig_path_3  = f'{DATA}{id_folder}/3.{FBpp_id}_msaRepresentation.jpg'
     fig_path_4  = f'{DATA}{id_folder}/9.{FBpp_id}_SegProfile.png'
+
+    if not os.path.exists(image_path_1):
+        return HttpResponse("GMM file  found.")
+    if not os.path.exists(pdb_path_1):
+        return HttpResponse("PDB file  found.")
+    if not os.path.exists(fig_path_3):
+        return HttpResponse("MSA file  found.")
+    if not os.path.exists(fig_path_4):
+        return HttpResponse("Seg file  found.") 
     #image_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}_GMM.jpg' if os.path.exists(image_path_1) else None
     #pdb_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}.pdb' if os.path.exists(pdb_path_1) else None
     #fig_msarep = f'/static/jobs/{fbpp_id}/3.{fbpp_id}_msaRepresentation.jpg' if os.path.exists(fig_path_3) else None
