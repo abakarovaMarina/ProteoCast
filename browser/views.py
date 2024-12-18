@@ -224,8 +224,8 @@ def results_view(request):
     fig_segmentation = fig_path_4 
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
-        'query': id_folder,
-        'file_path': f'{DATA}{id_folder}',
+        'query': FBpp_id,
+        #'file_path': f'{DATA}{id_folder}',
         'image_url_1': image_url_1,
         'pdb_url_1': pdb_url_1,
         'fig_msarep': fig_msarep,
@@ -237,15 +237,15 @@ def download_folder(request, fbpp_id):
     if not os.path.exists(folder_path):
         return HttpResponse("Folder not found.")
     
-#    zip_path = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}.zip')
-#    shutil.make_archive(zip_path.replace('.zip', ''), 'zip', folder_path)
+    zip_path = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}.zip')
+    shutil.make_archive(zip_path.replace('.zip', ''), 'zip', folder_path)
     
-    #response = FileResponse(open(zip_path, 'rb'))
+    response = FileResponse(open(zip_path, 'rb'))
     #response['Content-Disposition'] = f'attachment; filename="{fbpp_id}.zip"' 
 
     # Delete the zip file after sending the response
-#    response['delete_zip'] = zip_path
-#    if os.path.exists(zip_path):
-#        os.remove(zip_path) 
-    #return response
+    response['delete_zip'] = zip_path
+    if os.path.exists(zip_path):
+        os.remove(zip_path) 
+    return response
 
