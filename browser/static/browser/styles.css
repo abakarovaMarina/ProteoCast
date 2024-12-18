@@ -11,7 +11,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 90%;
+    width: 100%;
     margin: 0 auto;
 }
 
@@ -77,7 +77,7 @@ header {
 /* Footer */
 footer {
     background-color: #f1f1f1;
-    color: white;
+    color: grey;
     text-align: center;
     padding: 10px;
     width: 100%;
