@@ -211,8 +211,9 @@ def results_view(request):
         return HttpResponse("PDB file  found.")
     if not os.path.exists(fig_path_3):
         return HttpResponse("MSA file  found.")
-    if not os.path.exists(fig_path_4):
-        return HttpResponse("Seg file  found.") 
+    if os.path.exists(fig_path_4):
+        return HttpResponse("Seg file  found.")
+     
     #image_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}_GMM.jpg' if os.path.exists(image_path_1) else None
     #pdb_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}.pdb' if os.path.exists(pdb_path_1) else None
     #fig_msarep = f'/static/jobs/{fbpp_id}/3.{fbpp_id}_msaRepresentation.jpg' if os.path.exists(fig_path_3) else None
