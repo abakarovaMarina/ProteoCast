@@ -92,15 +92,17 @@ def upload_file_2(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def results_view(request):
-    fbpp_id = request.GET.get('q')
+    fbpp_id = request.GET.get('q').lower()
     if fbpp_id:
-        return HttpResponse("Please is provided a FBpp ID.")
+        return HttpResponse(f'Please provide a FBpp ID.{fbpp_id}')
 
     mapping_file_path = '/data/Drosophila_ProteoCast/mapping_database.csv'
     if not os.path.exists(mapping_file_path):
         return HttpResponse("Mapping file not found.")
     
     mapping_df = pd.read_csv(mapping_file_path, index_col=0)
+    mapping_df.index = mapping_df.index.str.lower()
+    mapping_df['Protein_symbol'] = mapping_df['Protein_symbol'].str.lower()
     if mapping_df is not None:
        return HttpResponse("mapping is read", mapping_df) 
     print(mapping_df)
