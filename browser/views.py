@@ -229,7 +229,7 @@ def results_view(request):
     })
 
 def download_folder(request, fbpp_id):
-    folder_path = 
+    folder_path = f'{DATA}{fbpp_id}'
     if not os.path.exists(folder_path):
         return HttpResponse("Folder not found.")
     
