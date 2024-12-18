@@ -48,6 +48,10 @@
                 <a href="{% url 'search' %}" style="text-decoration: none;">ProteoCast</a> 
                 <span style="font-size: 0.8em; color: white;">for <em>Drosophila melanogaster</em></span>
             </h1>
+            <form action="{% url 'results' %}" method="get" class="search-form">
+                <input type="text" name="q" placeholder="Enter FBpp ID" value="{{ query }}">
+                <button type="submit">Search</button>
+            </form>
         </div>
     </header>
 
