@@ -16,6 +16,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
 from datetime import datetime
 import subprocess 
+import uuid
+from django.http import JsonResponse, HttpResponseRedirect
 
 def contact_us(request):
     return render(request, 'browser/contact_us.html')
@@ -29,8 +31,37 @@ def citation(request):
 def search_view(request):
     return render(request, 'browser/search.html')
 
+def job_running(request, job_id):
+    return render(request, 'job_running.html', {'job_id': job_id})
+
 @csrf_exempt
 def upload_file(request):
+    if request.method == 'POST' and 'file' in request.FILES:
+        uploaded_file = request.FILES['file']
+        now = datetime.now()
+        job_id = now.strftime('%Y-%m-%d_%H-%M-%S')
+        folder_name = 'jobs/' + job_id
+        folder_path = os.path.join(settings.BASE_DIR, 'browser', 'static', folder_name)
+
+        # Crear el directorio si no existe
+        os.makedirs(folder_path, mode=0o755, exist_ok=True)
+
+        # Ruta completa para el archivo subido
+        file_path = os.path.join(folder_path, uploaded_file.name)
+
+        # Guardar el archivo directamente en la nueva ubicación
+        try:
+            with open(file_path, 'wb+') as destination:
+                for chunk in uploaded_file.chunks():
+                    destination.write(chunk)
+            return HttpResponseRedirect(f'/job_running/{job_id}/')
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@csrf_exempt
+def upload_file_2(request):
     if request.method == 'POST' and 'file' in request.FILES:
         uploaded_file = request.FILES['file']
         now = datetime.now()
