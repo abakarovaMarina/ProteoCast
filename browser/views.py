@@ -71,15 +71,15 @@ def upload_file(request):
             docker_image = "elodielaine/gemme:gemme" 
             container_workdir = "/opt/job"
 
-            subprocess.run(
-                [
-                    "docker", "run", "--rm",
-                    "-v", f"{new_folder_path}:{container_workdir}", 
-                    docker_image,
-                    "bash", "-c", f"cd / && bash run.sh {first_line.lstrip('>')}"
-                ],
-                check=True  
-            )
+            command = [
+               "sudo", "docker", "run", "--rm",
+               "-v", f"{new_folder_path}:{container_workdir}",
+               docker_image,
+               "bash", "-c", f"cd / && bash run.sh {first_line.lstrip('>')}"
+            ]
+
+            # Execute the command using sudo in the shell
+            subprocess.run(command, check=True, capture_output=True, text=True)
 
             return HttpResponseRedirect(f'/results/?q={uploaded_file.name[:-4]}')
         except subprocess.CalledProcessError as e:
@@ -90,6 +90,16 @@ def upload_file(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def results_view_forjobs(request):
+    fbpp_id = request.GET.get('q')
+    if not fbpp_id:
+        return HttpResponse("Please provide a FBpp ID.")
+
+    path = f'jobs/{fbpp_id}/Sensitivity_Confidence.csv'
+    full_path = os.path.join(settings.BASE_DIR, 'browser', 'static', path)
+
+    conf_df = pd.read_csv(full_path)
+    confidence_values = conf_df['Confidence'].values.reshape(1, -1)
+
     seq = ''
     fasta = f'jobs/{fbpp_id}/{fbpp_id}.fasta'
     full_fasta = os.path.join(settings.BASE_DIR, 'browser', 'static', fasta)
@@ -106,12 +116,11 @@ def results_view_forjobs(request):
         return HttpResponse("File not found.")
 
     df = pd.read_csv(full_path, skiprows=1, sep=' ', header=None, index_col=0)
-    reversed_oranges = px.colors.sequential.Oranges[::-1]
-    df.fillna(0.0, inplace=True)
+
     positions = list(range(1, len(seq) + 1))
     mutations = list(df.index)
 
-    customdata = np.empty((df.shape[0], df.shape[1], 4), dtype=object)
+    customdata = np.empty((df.shape[0], df.shape[1], 4), dtype=object) 
     for row_idx, mutation in enumerate(mutations):
         for col_idx in range(df.shape[1]):
             position = positions[col_idx]
@@ -133,69 +142,55 @@ def results_view_forjobs(request):
     )
 
     heatmap_main = go.Heatmap(
-        z=df.values[::-1],  # Reverse the order of rows
-        x=list(range(1, df.shape[1] + 1)),
-        y=alph,  # Reverse the order of y-axis labels
-        colorscale=px.colors.sequential.Oranges[::-1],
-        customdata=df_mut.values[::-1],  # Reverse the order of custom data
+        z=df.values,  
+        x=list(range(1, len(seq) + 1)),  
+        y=list(df.index), 
+        colorscale=px.colors.sequential.Oranges[::-1], 
+        colorbar=dict(title="GEMME Score"), 
+        customdata=customdata,  
         hovertemplate=(
-            "Position: %{customdata}<br>"
+            "Position: %{customdata[1]}%{x}%{customdata[2]}<br>"
             "Score: %{z:.2f}<extra></extra>"
         ),
     )
-
     fig.add_trace(heatmap_main, row=1, col=1)
 
     heatmap_confidence = go.Heatmap(
-       z=confidence_values,
-       colorscale=confidence_colorscale,
-       showscale=False,
-       hoverinfo='skip',
+        z=confidence_values,
+        colorscale=confidence_colorscale,
+        showscale=False,  
     )
     fig.add_trace(heatmap_confidence, row=2, col=1)
 
-    scatter_border = go.Scatter(
-       x=[0, df.shape[1], df.shape[1], 0, 0],
-       y=[-0.5, -0.5, 0.5, 0.5, -0.5],
-       mode="lines",
-       line=dict(color="black", width=2),
-       hoverinfo="skip",
-       showlegend=False
-    )
-    fig.add_trace(scatter_border, row=2, col=1)
-
     fig.update_layout(
-        title_x=1,
+        title=f"GEMME mutational landscape for {fbpp_id}",
+        title_x=0.5,
         autosize=False,
         width=1500,
         height=600,
         xaxis=dict(
             tickmode="array",
-            tickvals=list(range(0, df.shape[1]+1, 10)),
-            ticktext=[str(i) for i in range(0,df.shape[1]+1, 10)],
+            tickvals=list(range(0, len(positions), 10)),  
+            ticktext=[str(positions[i]) for i in range(0, len(positions), 10)],
         ),
         yaxis=dict(title="Mutations"),
         coloraxis_colorbar=dict(
             title="GEMME Score",
-            tickvals=[-8, -4, 0],
+            tickvals=[-8, -4, 0], 
         ),
     )
-
-    fig.update_yaxes(visible=False, row=2, col=1)
     heatmap_html = fig.to_html(full_html=False)
 
-    image_url_1 = f'{DATA}{id_folder}/6.{FBpp_id}_GMM.jpg'
-    pdb_url_1 = f'{DATA}{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
-    fig_msarep = f'{DATA}{id_folder}/3.{FBpp_id}_msaRepresentation.jpg'
-    fig_segmentation = f'{DATA}{id_folder}/9.{FBpp_id}_SegProfile.png'
-
+    image_path_1 = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}/{fbpp_id}_GMM.jpg')
+    pdb_path_1 = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}/{fbpp_id}.pdb')
+    image_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}_GMM.jpg' if os.path.exists(image_path_1) else None
+    pdb_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}.pdb' if os.path.exists(pdb_path_1) else None
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
-        'query': FBpp_id,
+        'query': fbpp_id,
+        'file_path': full_path,
         'image_url_1': image_url_1,
         'pdb_url_1': pdb_url_1,
-        'fig_msarep': fig_msarep,
-        'fig_segmentation': fig_segmentation,
     })
 
 def results_view(request):
