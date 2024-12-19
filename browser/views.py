@@ -236,30 +236,20 @@ def results_view(request):
         'fig_segmentation': fig_segmentation,
     })
 
-
-
 def download_folder(request, fbpp_id):
-    # Path to the folder to be downloaded
-    folder_path = os.path.join(DATA, fbpp_id)
-    
+    folder_path = f'{DATA}{fbpp_id}'
     if not os.path.exists(folder_path):
-        return HttpResponse("Folder not found.", status=404)
+        return HttpResponse("Folder not found.")
     
-    # Create a temporary ZIP file in the system's temporary directory
-    temp_zip_path = os.path.join('/tmp', f'{fbpp_id}.zip')
+    zip_path = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}.zip')
+    shutil.make_archive(zip_path.replace('.zip', ''), 'zip', folder_path)
     
-    try:
-        # Create a ZIP archive of the folder
-        shutil.make_archive(temp_zip_path.replace('.zip', ''), 'zip', folder_path)
-        
-        # Serve the ZIP file
-        response = FileResponse(open(temp_zip_path, 'rb'), as_attachment=True)
-        response['Content-Disposition'] = f'attachment; filename="{fbpp_id}.zip"'
-        
-        return response
-    except Exception as e:
-        return HttpResponse(f"An error occurred: {e}", status=500)
-    finally:
-        # Ensure the temporary ZIP file is deleted after serving
-        if os.path.exists(temp_zip_path):
-            os.remove(temp_zip_path)
+    response = FileResponse(open(zip_path, 'rb'))
+    #response['Content-Disposition'] = f'attachment; filename="{fbpp_id}.zip"' 
+
+    # Delete the zip file after sending the response
+    response['delete_zip'] = zip_path
+    if os.path.exists(zip_path):
+        os.remove(zip_path) 
+    return response
+
