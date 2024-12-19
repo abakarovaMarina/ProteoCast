@@ -53,8 +53,8 @@ def upload_file(request):
         folder_path = os.path.join('/data/jobs/', job_id)
 
         os.makedirs(folder_path, mode=0o755, exist_ok=True)
-
-        file_path = os.path.join(folder_path, uploaded_file.name)
+        return redirect('job_running', job_id=uploaded_file.name)
+        '''file_path = os.path.join(folder_path, uploaded_file.name)
 
         try:
 
@@ -94,7 +94,7 @@ docker run --rm -v "/data/jobs/{prot_name}:/opt/job" elodielaine/gemme:gemme /bi
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
-    return JsonResponse({'error': 'oups Invalid request'}, status=400)
+    return JsonResponse({'error': 'oups Invalid request'}, status=400)'''
 
 
 def results_view(request):
