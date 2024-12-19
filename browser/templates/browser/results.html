@@ -149,7 +149,7 @@
 
             var options = {
                 customData: {
-                   url: "{{ pdb_url_1 }}",
+                   url: "{% static 'jobs/' %}{{ query }}/{{ query }}.pdb",
                    format: 'pdb'
                 },
                 alphafoldView: true,
