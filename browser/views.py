@@ -34,11 +34,11 @@ def drosophiladb(request):
     return render(request, 'browser/drosophiladb.html')
 
 def job_running(request, job_id):
-    return render(request, 'job_running.html', {'job_id': job_id})
+    return render(request, 'browser/job_running.html', {'job_id': job_id})
 
 
-#DATA = '/Users/manchuta/Documents/GitHub/Droso_GEMMEwebsite/browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
-DATA = '/data/Drosophila_ProteoCast/'
+DATA = '/Users/manchuta/Documents/GitHub/Droso_GEMMEwebsite/browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
+#DATA = '/data/Drosophila_ProteoCast/'
 
 @csrf_exempt
 def upload_file(request):
@@ -98,8 +98,7 @@ def results_view(request):
     prot_name = request.GET.get('q').lower()
     if not prot_name:
         return HttpResponse(f'Please provide a protein name.')
-    if prot_name:
-        return HttpResponse(f'Please provide a protein name.{prot_name}')
+
     alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y"][::-1]
     alph = [i.upper() for i in alph]
     mapping_file_path = f'{DATA}mapping_database.csv'
@@ -215,7 +214,7 @@ def results_view(request):
         return HttpResponse("MSA file not found.")
     if not os.path.exists(fig_segmentation):
         return HttpResponse("Seg file  not found.")
-     
+    print(image_url_1)
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
         'query': FBpp_id,

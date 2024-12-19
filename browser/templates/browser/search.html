@@ -141,20 +141,14 @@
     </div>
     
 
-    <div class="instructions">
+    <div style="margin-top: 20px;" class="instructions">
         <p>To run a new job, please upload a MSA (Multiple Sequence Alignment) using the button below. You can create your MSA at <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb" target="_blank">MMseqs2</a>.</p>
     </div>
 
 
     <div class="container">
-        <div class="row py-2">
-          <form method="GET" action="/results?jobid=EXAMPLE" enctype="multipart/form-data">
-            <input name="jobid" value="EXAMPLE" type="hidden" />
-            <button class="btn btn-outline-secondary" type="submit">Load Example</button>
-          </form>
-        </div>
-        <a href="{% url 'results' %}?q=FBpp0301274" class="btn btn-primary mt-3">Load an Example Protein</a>
-      </div>
+        <a href="{% url 'results' %}?q=FBpp0301274" class="btn btn-outline-secondary">Load an Example Protein</a>
+    </div>
 
     <script>
         document.getElementById('uploadForm').addEventListener('submit', async function (event) {
