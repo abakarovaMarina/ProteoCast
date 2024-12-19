@@ -72,17 +72,17 @@ def upload_file(request):
             run_docker_script = os.path.join(new_folder_path, 'run_docker.sh')
             with open(run_docker_script, 'w') as script:
                 script.write(f"""#!/bin/bash
-                        #SBATCH --nodes=1
-                        #SBATCH --ntasks-per-node=1
-                        #SBATCH --cpus-per-task=8
-                        #SBATCH --time=01:00:00
-                        #SBATCH --job-name=test
-                        #SBATCH --mail-type=END
-                        #SBATCH --mail-user=abakamarina@gmail.com
-                        #SBATCH --output=slurm_%j.out
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=8
+#SBATCH --time=01:00:00
+#SBATCH --job-name=test
+#SBATCH --mail-type=END
+#SBATCH --mail-user=abakamarina@gmail.com
+#SBATCH --output=slurm_%j.out
 
-                        squeue -u $USER
-                        docker run --rm -v "/data/FBpp0428279:/opt/job" elodielaine/gemme:gemme /bin/bash -c "cd / && bash run.sh FBpp0428279.a3m"
+squeue -u $USER
+docker run --rm -v "/data/FBpp0428279:/opt/job" elodielaine/gemme:gemme /bin/bash -c "cd / && bash run.sh FBpp0428279.a3m"
                             """)
             os.chmod(run_docker_script, 0o755)
             subprocess.run(['sbatch', run_docker_script], check=True)
