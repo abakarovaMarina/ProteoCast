@@ -200,10 +200,10 @@ def results_view(request):
     fig.update_yaxes(visible=False, row=2, col=1)
     heatmap_html = fig.to_html(full_html=False)
 
-    image_url_1 = f'/static/jobs/{id_folder}/6.{FBpp_id}_GMM.jpg'
-    pdb_url_1 = f'/static/jobs/{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
-    fig_msarep = f'/static/jobs/{id_folder}/3.{FBpp_id}_msaRepresentation.jpg'
-    fig_segmentation = f'/static/jobs/{id_folder}/9.{FBpp_id}_SegProfile.png'
+    image_url_1 = f'{DATA}{id_folder}/6.{FBpp_id}_GMM.jpg'
+    pdb_url_1 = f'{DATA}{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
+    fig_msarep = f'{DATA}{id_folder}/3.{FBpp_id}_msaRepresentation.jpg'
+    fig_segmentation = f'{DATA}{id_folder}/9.{FBpp_id}_SegProfile.png'
 
     if not os.path.exists(image_url_1):
         return HttpResponse(f'GMM file  found {image_url_1}.')
