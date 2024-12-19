@@ -206,7 +206,7 @@ def results_view(request):
     fig_segmentation = f'/static/jobs/{id_folder}/9.{FBpp_id}_SegProfile.png'
 
     if not os.path.exists(image_url_1):
-        return HttpResponse("GMM file  found.")
+        return HttpResponse(f'GMM file  found {image_url_1}.')
     if not os.path.exists(pdb_url_1):
         return HttpResponse("PDB file  found.")
     if not os.path.exists(fig_msarep):
