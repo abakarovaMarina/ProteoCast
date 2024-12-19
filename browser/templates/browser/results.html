@@ -106,7 +106,7 @@
                     <a href="{% url 'drosophiladb' %}" style="text-decoration: none;">ProteoCast for {{ query }}</a> 
                 </h1>
             </div>
-            <a href="{% url 'download_file' fbpp_id=query %}" class="download-button" style="margin-right: 20px;">
+            <a href="{% url 'download_folder' fbpp_id=query %}" class="download-button" style="margin-right: 20px;">
                 <button style="padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: white; border-radius: 12px; border: 1px solid #ccc;">
                     <img src="{% static 'browser/images/download_icon.png' %}" alt="Download Icon" style="width: 43px; height: 40px; vertical-align: middle; margin-right: 2px;">
                     Download Results

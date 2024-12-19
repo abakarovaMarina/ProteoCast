@@ -229,7 +229,7 @@ def results_view(request):
     
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
-        'query': FBpp_id,
+        'query': id_folder,
         'image_url_1': image_url_1,
         'pdb_url_1': pdb_url_1,
         'fig_msarep': fig_msarep,
@@ -252,4 +252,30 @@ def download_folder(request, fbpp_id):
     if os.path.exists(zip_path):
         os.remove(zip_path) 
     return response
+
+def download_folder(request, fbpp_id):
+    # Path to the folder to be downloaded
+    folder_path = os.path.join('/data/Drosophila_ProteoCast', fbpp_id)
+    
+    if not os.path.exists(folder_path):
+        return HttpResponse("Folder not found.", status=404)
+    
+    # Create a temporary ZIP file in the system's temporary directory
+    temp_zip_path = os.path.join('/tmp', f'{fbpp_id}.zip')
+    
+    try:
+        # Create a ZIP archive of the folder
+        shutil.make_archive(temp_zip_path.replace('.zip', ''), 'zip', folder_path)
+        
+        # Serve the ZIP file
+        response = FileResponse(open(temp_zip_path, 'rb'), as_attachment=True)
+        response['Content-Disposition'] = f'attachment; filename="{fbpp_id}.zip"'
+        
+        return response
+    except Exception as e:
+        return HttpResponse(f"An error occurred: {e}", status=500)
+    finally:
+        # Ensure the temporary ZIP file is deleted after serving
+        if os.path.exists(temp_zip_path):
+            os.remove(temp_zip_path)
 

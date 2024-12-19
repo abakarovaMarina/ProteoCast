@@ -9,4 +9,6 @@ urlpatterns = [
     path('upload/', upload_file, name='upload_file'),
     path('drosophiladb/',drosophiladb, name='drosophiladb'),
     path('data/<str:folder>/<str:filename>/', serve_file, name='serve_file'),
+    path('download_folder/<str:fbpp_id>/', download_folder, name='download_folder'),
+
 ]
