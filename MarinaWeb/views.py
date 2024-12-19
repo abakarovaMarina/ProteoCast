@@ -15,3 +15,6 @@ def citation(request):
 
 def drosophiladb(request):
     return render(request, 'browser/drosophiladb.html')
+
+def job_running(request):
+    return render(request, 'browser/job_running.html')

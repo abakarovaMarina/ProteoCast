@@ -133,7 +133,8 @@
     
 
     <div class="upload-section">
-        <form id="uploadForm" enctype="multipart/form-data">
+        <form id="uploadForm" action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
             <input type="file" name="file" id="fileInput" required>
             <button type="submit">Upload MSA File</button>
         </form>

@@ -15,4 +15,3 @@ urlpatterns = [
     path('job_running/<str:job_id>/', job_running, name='job_running'),
     path('drosophiladb/',drosophiladb, name='drosophilasb'),
 ]
-

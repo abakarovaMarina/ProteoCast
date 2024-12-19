@@ -1,3 +1,5 @@
+from django.urls import reverse
+from django.shortcuts import redirect
 import os
 import pandas as pd
 import plotly.express as px
@@ -49,48 +51,19 @@ def upload_file(request):
         folder_name = 'jobs/' + job_id
         folder_path = os.path.join(settings.BASE_DIR, 'browser', 'static', folder_name)
 
-        # Crear el directorio si no existe
         os.makedirs(folder_path, mode=0o755, exist_ok=True)
 
-        # Ruta completa para el archivo subido
         file_path = os.path.join(folder_path, uploaded_file.name)
 
-        # Guardar el archivo directamente en la nueva ubicación
         try:
             with open(file_path, 'wb+') as destination:
                 for chunk in uploaded_file.chunks():
                     destination.write(chunk)
-            return HttpResponseRedirect(f'/job_running/{job_id}/')
+            return render(request, 'browser/job_running.html', {'job_id': job_id})
+            #return HttpResponseRedirect(f'/job_running/{job_id}/')
+            #return redirect(reverse('job_running', args=[job_id]))
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
-
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-@csrf_exempt
-def upload_file_2(request):
-    if request.method == 'POST' and 'file' in request.FILES:
-        uploaded_file = request.FILES['file']
-        now = datetime.now()
-        folder_name = 'jobs/' + now.strftime('%Y-%m-%d_%H-%M-%S')
-        folder_path = os.path.join(settings.BASE_DIR, 'browser', 'static', folder_name)
-
-        # Crear el directorio con permisos adecuados
-        os.makedirs(folder_path, exist_ok=True)
-        subprocess.run(['sudo', 'mkdir', '-p', folder_path], check=True)
-        subprocess.run(['sudo', 'chown', '-R', 'www-data:www-data', folder_path], check=True)
-
-        # Ruta completa para el archivo subido
-        file_path = os.path.join(folder_path, uploaded_file.name)
-
-        # Guardar el archivo directamente en la nueva ubicación
-        with open(file_path, 'wb+') as destination:
-            for chunk in uploaded_file.chunks():
-                destination.write(chunk)
-
-        return JsonResponse({
-            'message': 'File uploaded and moved successfully',
-            'file_path': os.path.join(folder_name, uploaded_file.name)  # Ruta relativa para el cliente
-        })
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
