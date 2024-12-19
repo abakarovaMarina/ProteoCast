@@ -45,11 +45,12 @@ DATA = '/data/Drosophila_ProteoCast/'
 @csrf_exempt
 def upload_file(request):
     if request.method == 'POST' and 'file' in request.FILES:
+
         uploaded_file = request.FILES['file']
         now = datetime.now()
         job_id = now.strftime('%Y-%m-%d_%H-%M-%S')
-        folder_name = 'jobs/' + job_id
-        folder_path = os.path.join(settings.BASE_DIR, 'browser', 'static', folder_name)
+        #folder_name = 'jobs/' + job_id
+        folder_path = os.path.join('/data/jobs/', job_id)
 
         os.makedirs(folder_path, mode=0o755, exist_ok=True)
 
@@ -63,9 +64,8 @@ def upload_file(request):
 
             with open(file_path, 'r') as file:
                 first_line = file.readline().strip()
-
-            new_folder_name = f"jobs/{first_line.lstrip('>')}"
-            new_folder_path = os.path.join(settings.BASE_DIR, 'browser', 'static', new_folder_name)
+            prot_name = first_line.lstrip('>')
+            new_folder_path = '/data/jobs/' + prot_name
             os.rename(folder_path, new_folder_path)
             os.chdir(new_folder_path)
             
@@ -81,9 +81,8 @@ def upload_file(request):
 #SBATCH --mail-user=abakamarina@gmail.com
 #SBATCH --output=slurm_%j.out
 
-echo $USER
-squeue -u $USER
-docker run --rm -v "/data/FBpp0428279:/opt/job" elodielaine/gemme:gemme /bin/bash -c "cd / && bash run.sh FBpp0428279.a3m"
+
+docker run --rm -v "/data/jobs/{prot_name}:/opt/job" elodielaine/gemme:gemme /bin/bash -c "cd / && bash run.sh {uploaded_file.name}"
                             """)
             os.chmod(run_docker_script, 0o755)
             subprocess.run(['sbatch', run_docker_script], check=True)
@@ -94,7 +93,7 @@ docker run --rm -v "/data/FBpp0428279:/opt/job" elodielaine/gemme:gemme /bin/bas
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+    return JsonResponse({'error': 'oups Invalid request'}, status=400)
 
 
 def results_view(request):
