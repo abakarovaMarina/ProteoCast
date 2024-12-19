@@ -20,6 +20,10 @@ import subprocess
 import uuid
 from django.http import JsonResponse, HttpResponseRedirect
 
+
+
+
+
 def contact_us(request):
     return render(request, 'browser/contact_us.html')
 
@@ -96,6 +100,16 @@ docker run --rm -v "/data/jobs/{prot_name}:/opt/job" elodielaine/gemme:gemme /bi
     return JsonResponse({'error': 'oups Invalid request'}, status=400)
 
 
+def serve_file(request, folder, filename):
+    file_path = os.path.join(DATA, folder, filename)
+    if os.path.exists(file_path):
+        response = FileResponse(open(file_path, 'rb'))
+        return response
+    else:
+        return HttpResponse(f"File not found: {filename}", status=404)
+
+
+
 def results_view(request):
     prot_name = request.GET.get('q').lower()
     if not prot_name:
@@ -118,7 +132,7 @@ def results_view(request):
         id_folder = mapping_df.loc[mapping_df['fbpp_low']==prot_name, 'id'].item()
         FBpp_id =mapping_df.loc[mapping_df['id']==id_folder].index[0]
     else:
-        id_folder = mapping_df.loc[mapping_df['pr_sym']==prot_name, 'id']
+        id_folder = mapping_df.loc[mapping_df['pr_sym']==prot_name, 'id'].item()
         FBpp_id =mapping_df.loc[mapping_df['fbpp_low']==prot_name].index[0]
    
     
@@ -203,20 +217,16 @@ def results_view(request):
     fig.update_yaxes(visible=False, row=2, col=1)
     heatmap_html = fig.to_html(full_html=False)
 
-    image_url_1 = f'{DATA}{id_folder}/6.{FBpp_id}_GMM.jpg'
-    pdb_url_1 = f'{DATA}{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
-    fig_msarep = f'{DATA}{id_folder}/3.{FBpp_id}_msaRepresentation.jpg'
-    fig_segmentation = f'{DATA}{id_folder}/9.{FBpp_id}_SegProfile.png'
+    image_url_1 = f'/data/{id_folder}/6.{FBpp_id}_GMM.jpg'
+    pdb_url_1 = f'/data/{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
+    fig_msarep = f'/data/{id_folder}/3.{FBpp_id}_msaRepresentation.jpg'
+    fig_segmentation = f'/data/{id_folder}/9.{FBpp_id}_SegProfile.png'
 
-    if not os.path.exists(image_url_1):
-        return HttpResponse(f'GMM file not found {image_url_1}.')
-    if not os.path.exists(pdb_url_1):
-        return HttpResponse("PDB file not found.")
-    if not os.path.exists(fig_msarep):
-        return HttpResponse("MSA file not found.")
-    if not os.path.exists(fig_segmentation):
-        return HttpResponse("Seg file  not found.")
-    print(image_url_1)
+    # Validate existence of files
+    for file_path in [image_url_1, pdb_url_1, fig_msarep, fig_segmentation]:
+        if not os.path.exists(file_path.replace('/data/', DATA)):
+            return HttpResponse(f"File not found: {file_path}")
+    
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
         'query': FBpp_id,
