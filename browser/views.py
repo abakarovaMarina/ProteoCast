@@ -35,8 +35,8 @@ def search_view(request):
 def drosophiladb(request):
     return render(request, 'browser/drosophiladb.html')
 
-def job_running(request, job_id):
-    return render(request, 'browser/job_running.html', {'job_id': job_id})
+def job_running(request):
+    return render(request, 'browser/job_running.html')
 
 
 #DATA = '/Users/manchuta/Documents/GitHub/Droso_GEMMEwebsite/browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
@@ -53,8 +53,8 @@ def upload_file(request):
         folder_path = os.path.join('/data/jobs/', job_id)
 
         os.makedirs(folder_path, mode=0o755, exist_ok=True)
-        return redirect('job_running', job_id=uploaded_file.name)
-        '''file_path = os.path.join(folder_path, uploaded_file.name)
+        
+        file_path = os.path.join(folder_path, uploaded_file.name)
 
         try:
 
@@ -86,15 +86,14 @@ docker run --rm -v "/data/jobs/{prot_name}:/opt/job" elodielaine/gemme:gemme /bi
                             """)
             os.chmod(run_docker_script, 0o755)
             subprocess.run(['sbatch', run_docker_script], check=True)
-            redirect('job_running', job_id=prot_name)
-            return redirect('job_running', job_id=prot_name) 
+            return redirect('job_running') 
 
         except subprocess.CalledProcessError as e:
             return JsonResponse({'error': f"Error running Docker: {e}"}, status=500)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
-    return JsonResponse({'error': 'oups Invalid request'}, status=400)'''
+    return JsonResponse({'error': 'oups Invalid request'}, status=400)
 
 
 def results_view(request):
