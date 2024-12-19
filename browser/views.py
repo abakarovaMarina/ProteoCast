@@ -90,7 +90,34 @@ def upload_file(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def results_view_forjobs(request):
-    
+    seq = ''
+    fasta = f'jobs/{fbpp_id}/{fbpp_id}.fasta'
+    full_fasta = os.path.join(settings.BASE_DIR, 'browser', 'static', fasta)
+    if os.path.exists(full_fasta):
+        with open(full_fasta) as fst:
+            for line in fst:
+                line = line.rstrip('\n')
+                if '>' not in line:
+                    seq += line
+
+    path = f'jobs/{fbpp_id}/{fbpp_id}_normPred_evolCombi.txt'
+    full_path = os.path.join(settings.BASE_DIR, 'browser', 'static', path)
+    if not os.path.exists(full_path):
+        return HttpResponse("File not found.")
+
+    df = pd.read_csv(full_path, skiprows=1, sep=' ', header=None, index_col=0)
+    reversed_oranges = px.colors.sequential.Oranges[::-1]
+    df.fillna(0.0, inplace=True)
+    positions = list(range(1, len(seq) + 1))
+    mutations = list(df.index)
+
+    customdata = np.empty((df.shape[0], df.shape[1], 4), dtype=object)
+    for row_idx, mutation in enumerate(mutations):
+        for col_idx in range(df.shape[1]):
+            position = positions[col_idx]
+            native_residue = seq[col_idx]
+            gemme_score = df.iloc[row_idx, col_idx]
+            customdata[row_idx, col_idx] = [position, native_residue, mutation.upper(), gemme_score]
 
     # Custom color scale for confidence
     confidence_colorscale = [
@@ -162,15 +189,6 @@ def results_view_forjobs(request):
     fig_msarep = f'{DATA}{id_folder}/3.{FBpp_id}_msaRepresentation.jpg'
     fig_segmentation = f'{DATA}{id_folder}/9.{FBpp_id}_SegProfile.png'
 
-    if not os.path.exists(image_url_1):
-        return HttpResponse(f'GMM file not found {image_url_1}.')
-    if not os.path.exists(pdb_url_1):
-        return HttpResponse("PDB file not found.")
-    if not os.path.exists(fig_msarep):
-        return HttpResponse("MSA file not found.")
-    if not os.path.exists(fig_segmentation):
-        return HttpResponse("Seg file  not found.")
-    print(image_url_1)
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
         'query': FBpp_id,
