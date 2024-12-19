@@ -81,6 +81,7 @@ def upload_file(request):
 #SBATCH --mail-user=abakamarina@gmail.com
 #SBATCH --output=slurm_%j.out
 
+echo $USER
 squeue -u $USER
 docker run --rm -v "/data/FBpp0428279:/opt/job" elodielaine/gemme:gemme /bin/bash -c "cd / && bash run.sh FBpp0428279.a3m"
                             """)
