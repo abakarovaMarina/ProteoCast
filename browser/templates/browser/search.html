@@ -123,16 +123,43 @@
         </div>
     </header>
 
-    
 
+   
     <div class="upload-section">
         <form id="uploadForm" action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <input type="file" name="file" id="fileInput" required>
+            <input type="file" name="file" id="fileInput" accept=".a3m,.fasta" required>
             <button type="submit">Upload MSA File</button>
         </form>
+        <div id="loading" style="display: none;">Uploading... Please wait.</div>
         <div id="uploadStatus"></div>
     </div>
+    
+    <script>
+    document.getElementById("uploadForm").addEventListener("submit", async function (e) {
+        e.preventDefault(); // Prevent default form submission
+    
+        // Show loading message
+        document.getElementById("loading").style.display = "block";
+    
+        const formData = new FormData(this);
+        const response = await fetch(this.action, {
+            method: "POST",
+            body: formData,
+        });
+    
+        const result = await response.json();
+    
+        // Handle response
+        if (response.ok) {
+            window.location.href = response.url; // Redirect if successful
+        } else {
+            document.getElementById("loading").style.display = "none"; // Hide loading
+            document.getElementById("uploadStatus").innerText = result.error || "An error occurred.";
+        }
+    });
+    </script>
+
     
 
     <div style="margin-top: 20px;" class="instructions">
