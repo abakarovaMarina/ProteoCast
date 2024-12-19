@@ -39,7 +39,7 @@ def job_running(request):
     return render(request, 'browser/job_running.html')
 
 
-#DATA = '/Users/manchuta/Documents/GitHub/Droso_GEMMEwebsite/browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
+#DATA = 'browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
 DATA = '/data/Drosophila_ProteoCast/'
 
 @csrf_exempt
