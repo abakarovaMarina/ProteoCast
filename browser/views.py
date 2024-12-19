@@ -200,36 +200,27 @@ def results_view(request):
     fig.update_yaxes(visible=False, row=2, col=1)
     heatmap_html = fig.to_html(full_html=False)
 
-    image_path_1 = f'{DATA}{id_folder}/6.{FBpp_id}_GMM.jpg'
-    pdb_path_1 = f'{DATA}{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
-    fig_path_3  = f'{DATA}{id_folder}/3.{FBpp_id}_msaRepresentation.jpg'
-    fig_path_4  = f'{DATA}{id_folder}/9.{FBpp_id}_SegProfile.png'
+    image_url_1 = f'/static/jobs/{id_folder}/6.{FBpp_id}_GMM.jpg'
+    pdb_url_1 = f'/static/jobs/{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
+    fig_msarep = f'/static/jobs/{id_folder}/3.{FBpp_id}_msaRepresentation.jpg'
+    fig_segmentation = f'/static/jobs/{id_folder}/9.{FBpp_id}_SegProfile.png'
 
-    if not os.path.exists(image_path_1):
+    if not os.path.exists(image_url_1):
         return HttpResponse("GMM file  found.")
-    if not os.path.exists(pdb_path_1):
+    if not os.path.exists(pdb_url_1):
         return HttpResponse("PDB file  found.")
-    if not os.path.exists(fig_path_3):
+    if not os.path.exists(fig_msarep):
         return HttpResponse("MSA file  found.")
-    if not os.path.exists(fig_path_4):
+    if not os.path.exists(fig_segmentation):
         return HttpResponse("Seg file  found.")
      
-    #image_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}_GMM.jpg' if os.path.exists(image_path_1) else None
-    #pdb_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}.pdb' if os.path.exists(pdb_path_1) else None
-    #fig_msarep = f'/static/jobs/{fbpp_id}/3.{fbpp_id}_msaRepresentation.jpg' if os.path.exists(fig_path_3) else None
-    #fig_segmentation = f'/static/jobs/{fbpp_id}/9.{fbpp_id}_SegProfile.png' if os.path.exists(fig_path_4) else None
-    image_url_1 = image_path_1
-    pdb_url_1 = pdb_path_1
-    fig_msarep = fig_path_3 
-    fig_segmentation = fig_path_4 
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
         'query': FBpp_id,
-        #'file_path': f'{DATA}{id_folder}',
         'image_url_1': image_url_1,
         'pdb_url_1': pdb_url_1,
         'fig_msarep': fig_msarep,
-        'fig_segmentation' : fig_segmentation,
+        'fig_segmentation': fig_segmentation,
     })
 
 def download_folder(request, fbpp_id):

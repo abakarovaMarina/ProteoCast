@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProteoCast</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'browser/styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/general.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
-
+    <link crossorigin="anonymous" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" />
     <style>
         body {
             font-family: 'Montserrat', sans-serif;
@@ -81,6 +82,22 @@
             align-items: center;
             padding: 0 20px; /* Add padding to create space from the left border */
         }
+
+        .example-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border-radius: 12px;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .example-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -109,9 +126,7 @@
         </div>
     </header>
 
-    <div class="instructions">
-        <p>To run a new job, please upload a MSA (Multiple Sequence Alignment) using the button below. You can create your MSA at <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb" target="_blank">MMseqs2</a>.</p>
-    </div>
+    
 
     <div class="upload-section">
         <form id="uploadForm" enctype="multipart/form-data">
@@ -120,6 +135,22 @@
         </form>
         <div id="uploadStatus"></div>
     </div>
+    
+
+    <div class="instructions">
+        <p>To run a new job, please upload a MSA (Multiple Sequence Alignment) using the button below. You can create your MSA at <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb" target="_blank">MMseqs2</a>.</p>
+    </div>
+
+
+    <div class="container">
+        <div class="row py-2">
+          <form method="GET" action="/results?jobid=EXAMPLE" enctype="multipart/form-data">
+            <input name="jobid" value="EXAMPLE" type="hidden" />
+            <button class="btn btn-outline-secondary" type="submit">Load Example</button>
+          </form>
+        </div>
+        <a href="{% url 'results' %}?q=FBpp0301274" class="btn btn-primary mt-3">Load an Example Protein</a>
+      </div>
 
     <script>
         document.getElementById('uploadForm').addEventListener('submit', async function (event) {

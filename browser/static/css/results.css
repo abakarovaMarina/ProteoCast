@@ -1,0 +1,109 @@
+.resultCard {
+    margin-bottom: 15px;
+}
+
+/* splice graph : start */
+#cy {
+    height: 400px;
+}
+/* splice graph : end */
+
+/* msa : start */
+.msa-container {
+    width:100%;
+    overflow: auto;
+}
+/* msa : end */
+
+/* tables : start */
+.table-container {
+    width:100%;
+    max-height: 400px;
+    overflow: auto;
+    /* StickyHeaders */
+    position: relative;
+    padding: 0 5px;
+    overflow-y: auto;
+}
+  
+tbody tr.alt-row td {
+    background: #F5F5F5;
+}
+
+/* column selector widget : start */
+.popover{
+    max-width: 100%;
+}
+
+#popover-target label {
+    margin: 0 5px;
+    display: block;
+}
+
+#popover-target input {
+    margin-right: 5px;
+}
+
+#popover-target .disabled {
+    color: #ddd;
+}
+/* column selector widget : end */
+
+/* tables : end */
+
+/* forest : start */
+#graph path, #graph polygon{
+    stroke: #3f3f3f;
+}
+
+#graph .highlighted path, #graph .highlighted polygon{
+    stroke-width: 10;
+}
+
+#graph .clicked path, #graph .clicked polygon{
+    stroke-width: 10;
+    stroke: #000000;
+}
+
+.graphBorder {
+    stroke-width: 0px;
+}
+
+g.cluster polygon {
+    stroke-width: 3;
+}
+
+/* forest : end */
+
+/* gene_structure : start */
+
+rect.selectedSExon {
+    stroke-width:3;
+    stroke:rgb(0,0,0);
+}
+  
+/* gene_structure : end */
+
+/* example : start */
+.grey-link {
+    color: rgba(0,0,0,.9);
+    background-color: transparent;
+    text-decoration: none;
+}
+
+.grey-link:hover {
+    color: rgba(0,0,0,.9);
+    text-decoration: underline;
+}
+
+/* example : end */
+
+/* warnings : start */
+#orthologyWarning{
+    font-size: 0.85rem;
+}
+
+#speciesWarning{
+    font-size: 0.85rem;
+}
+/* warnings : end */

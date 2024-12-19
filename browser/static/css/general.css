@@ -1,0 +1,28 @@
+.no_text_decoration{
+    text-decoration: none !important;
+  }
+
+.header {
+    margin-bottom: 30px;
+}
+
+/* sticky footer : start */
+.page {
+    min-height:100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    flex: 1;
+}
+
+.footer {
+    font-size: small;
+    margin-top: 30px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #f8f9fa;
+    text-align: center;
+}
+/* sticky footer : end */
