@@ -56,16 +56,129 @@ def upload_file(request):
         file_path = os.path.join(folder_path, uploaded_file.name)
 
         try:
+            
             with open(file_path, 'wb+') as destination:
                 for chunk in uploaded_file.chunks():
                     destination.write(chunk)
-            return render(request, 'browser/job_running.html', {'job_id': job_id})
-            #return HttpResponseRedirect(f'/job_running/{job_id}/')
-            #return redirect(reverse('job_running', args=[job_id]))
+
+            with open(file_path, 'r') as file:
+                first_line = file.readline().strip()
+
+            new_folder_name = f"jobs/{first_line.lstrip('>')}"
+            new_folder_path = os.path.join(settings.BASE_DIR, 'browser', 'static', new_folder_name)
+            os.rename(folder_path, new_folder_path)
+
+            docker_image = "elodielaine/gemme:gemme" 
+            container_workdir = "/opt/job"
+
+            subprocess.run(
+                [
+                    "docker", "run", "--rm",
+                    "-v", f"{new_folder_path}:{container_workdir}", 
+                    docker_image,
+                    "bash", "-c", f"cd / && bash run.sh {first_line.lstrip('>')}"
+                ],
+                check=True  
+            )
+
+            return HttpResponseRedirect(f'/results/?q={uploaded_file.name[:-4]}')
+        except subprocess.CalledProcessError as e:
+            return JsonResponse({'error': f"Error running Docker: {e}"}, status=500)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def results_view_forjobs(request):
+    
+
+    # Custom color scale for confidence
+    confidence_colorscale = [
+        [0, 'white'],  # Low confidence - white
+        [1, 'darkblue']  # High confidence - dark blue
+    ]
+
+    fig = make_subplots(
+        rows=2, cols=1,
+        shared_xaxes=True,
+        row_heights=[0.9, 0.1],
+        vertical_spacing=0.02,
+    )
+
+    heatmap_main = go.Heatmap(
+        z=df.values[::-1],  # Reverse the order of rows
+        x=list(range(1, df.shape[1] + 1)),
+        y=alph,  # Reverse the order of y-axis labels
+        colorscale=px.colors.sequential.Oranges[::-1],
+        customdata=df_mut.values[::-1],  # Reverse the order of custom data
+        hovertemplate=(
+            "Position: %{customdata}<br>"
+            "Score: %{z:.2f}<extra></extra>"
+        ),
+    )
+
+    fig.add_trace(heatmap_main, row=1, col=1)
+
+    heatmap_confidence = go.Heatmap(
+       z=confidence_values,
+       colorscale=confidence_colorscale,
+       showscale=False,
+       hoverinfo='skip',
+    )
+    fig.add_trace(heatmap_confidence, row=2, col=1)
+
+    scatter_border = go.Scatter(
+       x=[0, df.shape[1], df.shape[1], 0, 0],
+       y=[-0.5, -0.5, 0.5, 0.5, -0.5],
+       mode="lines",
+       line=dict(color="black", width=2),
+       hoverinfo="skip",
+       showlegend=False
+    )
+    fig.add_trace(scatter_border, row=2, col=1)
+
+    fig.update_layout(
+        title_x=1,
+        autosize=False,
+        width=1500,
+        height=600,
+        xaxis=dict(
+            tickmode="array",
+            tickvals=list(range(0, df.shape[1]+1, 10)),
+            ticktext=[str(i) for i in range(0,df.shape[1]+1, 10)],
+        ),
+        yaxis=dict(title="Mutations"),
+        coloraxis_colorbar=dict(
+            title="GEMME Score",
+            tickvals=[-8, -4, 0],
+        ),
+    )
+
+    fig.update_yaxes(visible=False, row=2, col=1)
+    heatmap_html = fig.to_html(full_html=False)
+
+    image_url_1 = f'{DATA}{id_folder}/6.{FBpp_id}_GMM.jpg'
+    pdb_url_1 = f'{DATA}{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
+    fig_msarep = f'{DATA}{id_folder}/3.{FBpp_id}_msaRepresentation.jpg'
+    fig_segmentation = f'{DATA}{id_folder}/9.{FBpp_id}_SegProfile.png'
+
+    if not os.path.exists(image_url_1):
+        return HttpResponse(f'GMM file not found {image_url_1}.')
+    if not os.path.exists(pdb_url_1):
+        return HttpResponse("PDB file not found.")
+    if not os.path.exists(fig_msarep):
+        return HttpResponse("MSA file not found.")
+    if not os.path.exists(fig_segmentation):
+        return HttpResponse("Seg file  not found.")
+    print(image_url_1)
+    return render(request, 'browser/results.html', {
+        'heatmap_html': heatmap_html,
+        'query': FBpp_id,
+        'image_url_1': image_url_1,
+        'pdb_url_1': pdb_url_1,
+        'fig_msarep': fig_msarep,
+        'fig_segmentation': fig_segmentation,
+    })
 
 def results_view(request):
     prot_name = request.GET.get('q').lower()
