@@ -81,7 +81,7 @@ def upload_file(request):
                         #SBATCH --mail-user=abakamarina@gmail.com
                         #SBATCH --output=slurm_%j.out
 
-
+                        squeue -u $USER
                         docker run --rm -v "/data/FBpp0428279:/opt/job" elodielaine/gemme:gemme /bin/bash -c "cd / && bash run.sh FBpp0428279.a3m"
                             """)
             os.chmod(run_docker_script, 0o755)
