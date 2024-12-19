@@ -39,8 +39,8 @@ def job_running(request, job_id):
     return render(request, 'browser/job_running.html', {'job_id': job_id})
 
 
-DATA = '/Users/manchuta/Documents/GitHub/Droso_GEMMEwebsite/browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
-#DATA = '/data/Drosophila_ProteoCast/'
+#DATA = '/Users/manchuta/Documents/GitHub/Droso_GEMMEwebsite/browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
+DATA = '/data/Drosophila_ProteoCast/'
 
 @csrf_exempt
 def upload_file(request):
