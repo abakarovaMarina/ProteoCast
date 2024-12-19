@@ -37,7 +37,7 @@ def job_running(request, job_id):
     return render(request, 'job_running.html', {'job_id': job_id})
 
 
-DATA = '/Users/manchuta/Documents/GitHub/Droso_GEMMEwebsite/browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
+#DATA = '/Users/manchuta/Documents/GitHub/Droso_GEMMEwebsite/browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
 DATA = '/data/Drosophila_ProteoCast/'
 
 @csrf_exempt
@@ -98,6 +98,8 @@ def results_view(request):
     prot_name = request.GET.get('q').lower()
     if not prot_name:
         return HttpResponse(f'Please provide a protein name.')
+    if prot_name:
+        return HttpResponse(f'Please provide a protein name.{prot_name}')
     alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y"][::-1]
     alph = [i.upper() for i in alph]
     mapping_file_path = f'{DATA}mapping_database.csv'
@@ -122,7 +124,7 @@ def results_view(request):
     ### Confidence values
     proteocast_path = f'{DATA}{id_folder}/4.{FBpp_id}_ProteoCast.csv'
     if not os.path.exists(proteocast_path):
-        return HttpResponse("ProteoCast file  found.")
+        return HttpResponse("ProteoCast file not found.")
     
     
     df_proteocast = pd.read_csv(proteocast_path)
@@ -206,13 +208,13 @@ def results_view(request):
     fig_segmentation = f'{DATA}{id_folder}/9.{FBpp_id}_SegProfile.png'
 
     if not os.path.exists(image_url_1):
-        return HttpResponse(f'GMM file  found {image_url_1}.')
+        return HttpResponse(f'GMM file not found {image_url_1}.')
     if not os.path.exists(pdb_url_1):
-        return HttpResponse("PDB file  found.")
+        return HttpResponse("PDB file not found.")
     if not os.path.exists(fig_msarep):
-        return HttpResponse("MSA file  found.")
+        return HttpResponse("MSA file not found.")
     if not os.path.exists(fig_segmentation):
-        return HttpResponse("Seg file  found.")
+        return HttpResponse("Seg file  not found.")
      
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
