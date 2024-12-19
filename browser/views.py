@@ -86,7 +86,7 @@ docker run --rm -v "/data/jobs/{prot_name}:/opt/job" elodielaine/gemme:gemme /bi
                             """)
             os.chmod(run_docker_script, 0o755)
             subprocess.run(['sbatch', run_docker_script], check=True)
-
+            return redirect('job_running', job_id=prot_name) 
 
         except subprocess.CalledProcessError as e:
             return JsonResponse({'error': f"Error running Docker: {e}"}, status=500)
