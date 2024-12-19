@@ -51,12 +51,12 @@ def upload_file(request):
         folder_name = 'jobs/' + job_id
         folder_path = os.path.join(settings.BASE_DIR, 'browser', 'static', folder_name)
 
-        os.makedirs(folder_path, mode=0o755, exist_ok=True)
+        os.makedirs(folder_path, mode=0o755, exist_ok=True
 
         file_path = os.path.join(folder_path, uploaded_file.name)
 
         try:
-            
+
             with open(file_path, 'wb+') as destination:
                 for chunk in uploaded_file.chunks():
                     destination.write(chunk)
@@ -67,21 +67,113 @@ def upload_file(request):
             new_folder_name = f"jobs/{first_line.lstrip('>')}"
             new_folder_path = os.path.join(settings.BASE_DIR, 'browser', 'static', new_folder_name)
             os.rename(folder_path, new_folder_path)
-
-            docker_image = "elodielaine/gemme:gemme" 
+            os.chdir(new_folder_path)
+            docker_image = "elodielaine/gemme:gemme"
             container_workdir = "/opt/job"
 
-            command = [
-               "sudo", "docker", "run", "--rm",
-               "-v", f"{new_folder_path}:{container_workdir}",
-               docker_image,
-               "bash", "-c", f"cd / && bash run.sh {first_line.lstrip('>')}"
+            command='sudo docker run --rm -v "'+new_folder_path+':/opt/job" elodielaine/gemme:gemme /bin/bash -c "cd / && bash run.sh '+first_line.lstrip('>')+'"'
+            subprocess.run(command, shell=True, check=True)
+
+            fbpp_id = first_line.lstrip('>')
+
+            path = f'jobs/{fbpp_id}/Sensitivity_Confidence.csv'
+            full_path = os.path.join(settings.BASE_DIR, 'browser', 'static', path)
+
+            conf_df = pd.read_csv(full_path)
+            confidence_values = conf_df['Confidence'].values.reshape(1, -1)
+
+            seq = ''
+            fasta = f'jobs/{fbpp_id}/{fbpp_id}.fasta'
+            full_fasta = os.path.join(settings.BASE_DIR, 'browser', 'static', fasta)
+            if os.path.exists(full_fasta):
+                with open(full_fasta) as fst:
+                    for line in fst:
+                        line = line.rstrip('\n')
+                        if '>' not in line:
+                            seq += line
+
+            path = f'jobs/{fbpp_id}/{fbpp_id}_normPred_evolCombi.txt'
+            full_path = os.path.join(settings.BASE_DIR, 'browser', 'static', path)
+            if not os.path.exists(full_path):
+                return HttpResponse("File not found.")
+
+            df = pd.read_csv(full_path, skiprows=1, sep=' ', header=None, index_col=0)
+
+            positions = list(range(1, len(seq) + 1))
+            mutations = list(df.index)
+
+            customdata = np.empty((df.shape[0], df.shape[1], 4), dtype=object)
+            for row_idx, mutation in enumerate(mutations):
+                for col_idx in range(df.shape[1]):
+                    position = positions[col_idx]
+                    native_residue = seq[col_idx]
+                    gemme_score = df.iloc[row_idx, col_idx]
+                    customdata[row_idx, col_idx] = [position, native_residue, mutation.upper(), gemme_score]
+
+            # Custom color scale for confidence
+            confidence_colorscale = [
+                [0, 'white'],  # Low confidence - white
+                [1, 'darkblue']  # High confidence - dark blue
             ]
 
-            # Execute the command using sudo in the shell
-            subprocess.run(command, check=True, capture_output=True, text=True)
+            fig = make_subplots(
+                rows=2, cols=1,
+                shared_xaxes=True,
+                row_heights=[0.9, 0.1],
+                vertical_spacing=0.02,
+            )
 
-            return HttpResponseRedirect(f'/results/?q={uploaded_file.name[:-4]}')
+            heatmap_main = go.Heatmap(
+                z=df.values,
+                x=list(range(1, len(seq) + 1)),
+                y=list(df.index),
+                colorscale=px.colors.sequential.Oranges[::-1],
+                colorbar=dict(title="GEMME Score"),
+                customdata=customdata,
+                hovertemplate=(
+                    "Position: %{customdata[1]}%{x}%{customdata[2]}<br>"
+                    "Score: %{z:.2f}<extra></extra>"
+                ),
+            )
+            fig.add_trace(heatmap_main, row=1, col=1)
+
+            heatmap_confidence = go.Heatmap(
+                z=confidence_values,
+                colorscale=confidence_colorscale,
+                showscale=False,
+            )
+            fig.add_trace(heatmap_confidence, row=2, col=1)
+
+            fig.update_layout(
+                title=f"GEMME mutational landscape for {fbpp_id}",
+                title_x=0.5,
+                autosize=False,
+                width=1500,
+                height=600,
+                xaxis=dict(
+                    tickmode="array",
+                    tickvals=list(range(0, len(positions), 10)),
+                    ticktext=[str(positions[i]) for i in range(0, len(positions), 10)],
+                ),
+                yaxis=dict(title="Mutations"),
+                coloraxis_colorbar=dict(
+                    title="GEMME Score",
+                    tickvals=[-8, -4, 0],
+                ),
+            )
+            heatmap_html = fig.to_html(full_html=False)
+
+            image_path_1 = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}/{fbpp_id}_GMM.jpg')
+            pdb_path_1 = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}/{fbpp_id}.pdb')
+            image_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}_GMM.jpg' if os.path.exists(image_path_1) else None
+            pdb_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}.pdb' if os.path.exists(pdb_path_1) else None
+            return render(request, 'browser/results_job.html', {
+                'heatmap_html': heatmap_html,
+                'query': fbpp_id,
+                'file_path': full_path,
+                'image_url_1': image_url_1,
+                'pdb_url_1': pdb_url_1,
+            })
         except subprocess.CalledProcessError as e:
             return JsonResponse({'error': f"Error running Docker: {e}"}, status=500)
         except Exception as e:
@@ -89,109 +181,6 @@ def upload_file(request):
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
-def results_view_forjobs(request):
-    fbpp_id = request.GET.get('q')
-    if not fbpp_id:
-        return HttpResponse("Please provide a FBpp ID.")
-
-    path = f'jobs/{fbpp_id}/Sensitivity_Confidence.csv'
-    full_path = os.path.join(settings.BASE_DIR, 'browser', 'static', path)
-
-    conf_df = pd.read_csv(full_path)
-    confidence_values = conf_df['Confidence'].values.reshape(1, -1)
-
-    seq = ''
-    fasta = f'jobs/{fbpp_id}/{fbpp_id}.fasta'
-    full_fasta = os.path.join(settings.BASE_DIR, 'browser', 'static', fasta)
-    if os.path.exists(full_fasta):
-        with open(full_fasta) as fst:
-            for line in fst:
-                line = line.rstrip('\n')
-                if '>' not in line:
-                    seq += line
-
-    path = f'jobs/{fbpp_id}/{fbpp_id}_normPred_evolCombi.txt'
-    full_path = os.path.join(settings.BASE_DIR, 'browser', 'static', path)
-    if not os.path.exists(full_path):
-        return HttpResponse("File not found.")
-
-    df = pd.read_csv(full_path, skiprows=1, sep=' ', header=None, index_col=0)
-
-    positions = list(range(1, len(seq) + 1))
-    mutations = list(df.index)
-
-    customdata = np.empty((df.shape[0], df.shape[1], 4), dtype=object) 
-    for row_idx, mutation in enumerate(mutations):
-        for col_idx in range(df.shape[1]):
-            position = positions[col_idx]
-            native_residue = seq[col_idx]
-            gemme_score = df.iloc[row_idx, col_idx]
-            customdata[row_idx, col_idx] = [position, native_residue, mutation.upper(), gemme_score]
-
-    # Custom color scale for confidence
-    confidence_colorscale = [
-        [0, 'white'],  # Low confidence - white
-        [1, 'darkblue']  # High confidence - dark blue
-    ]
-
-    fig = make_subplots(
-        rows=2, cols=1,
-        shared_xaxes=True,
-        row_heights=[0.9, 0.1],
-        vertical_spacing=0.02,
-    )
-
-    heatmap_main = go.Heatmap(
-        z=df.values,  
-        x=list(range(1, len(seq) + 1)),  
-        y=list(df.index), 
-        colorscale=px.colors.sequential.Oranges[::-1], 
-        colorbar=dict(title="GEMME Score"), 
-        customdata=customdata,  
-        hovertemplate=(
-            "Position: %{customdata[1]}%{x}%{customdata[2]}<br>"
-            "Score: %{z:.2f}<extra></extra>"
-        ),
-    )
-    fig.add_trace(heatmap_main, row=1, col=1)
-
-    heatmap_confidence = go.Heatmap(
-        z=confidence_values,
-        colorscale=confidence_colorscale,
-        showscale=False,  
-    )
-    fig.add_trace(heatmap_confidence, row=2, col=1)
-
-    fig.update_layout(
-        title=f"GEMME mutational landscape for {fbpp_id}",
-        title_x=0.5,
-        autosize=False,
-        width=1500,
-        height=600,
-        xaxis=dict(
-            tickmode="array",
-            tickvals=list(range(0, len(positions), 10)),  
-            ticktext=[str(positions[i]) for i in range(0, len(positions), 10)],
-        ),
-        yaxis=dict(title="Mutations"),
-        coloraxis_colorbar=dict(
-            title="GEMME Score",
-            tickvals=[-8, -4, 0], 
-        ),
-    )
-    heatmap_html = fig.to_html(full_html=False)
-
-    image_path_1 = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}/{fbpp_id}_GMM.jpg')
-    pdb_path_1 = os.path.join(settings.BASE_DIR, 'browser', 'static', f'jobs/{fbpp_id}/{fbpp_id}.pdb')
-    image_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}_GMM.jpg' if os.path.exists(image_path_1) else None
-    pdb_url_1 = f'/static/jobs/{fbpp_id}/{fbpp_id}.pdb' if os.path.exists(pdb_path_1) else None
-    return render(request, 'browser/results.html', {
-        'heatmap_html': heatmap_html,
-        'query': fbpp_id,
-        'file_path': full_path,
-        'image_url_1': image_url_1,
-        'pdb_url_1': pdb_url_1,
-    })
 
 def results_view(request):
     prot_name = request.GET.get('q').lower()
