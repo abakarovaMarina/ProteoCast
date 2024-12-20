@@ -18,15 +18,151 @@
             </h1>
         </div>
     </header>
-    <main class="container my-5">
+
+
+    <div class="container">
+        <p>The 
+          <b>ProteoCast Server</b> allows you to rapidly and easily explore how missense mutations can functionaly affect proteins. ProteoCast primary source of information are the protein
+  sequence alignements used by
+          GEMME (<a href="https://www.ensembl.org/index.htmlhttps://academic.oup.com/mbe/article/36/11/2604/5548199">Laine et al., 2019</a>) running in the  
+          pipeline described in (<a href="https://github.com/PhyloSofS-Team/thoraxehttps://academic.oup.com/gbe/article/15/11/evad201/7344676">Abakarova et al., 2023</a>).
+          
+     <!--   <p>For a quick start, you can see our 
+          <a href="https://youtu.be/k44U0WNwzC4">YouTube tutorial</a>:</p>
+        <p style="text-align:center">
+          <iframe height="315" allow="accelerometer; autoplay; clipboard-write;
+      encrypted-media; gyroscope; picture-in-picture" src="https://www.youtube.com/embed/k44U0WNwzC4" title="YouTube video player" width="560" frameborder="0" allowfullscreen=""></iframe>
+        </p> -->
+        <p> You want to know more, collaborate, or you encounter a problem with the server? Please feel free to 
+          <a href="mailto: elodie.laine@sorbonne-universite.fr">contact us</a>!</p>
+        <h3> Input </h3>
+        <p> Please provide your Multiple Sequence Alignement using <a href = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb">CollabFold</a>. 
+          Optionally, you can provide <i>Uniprot ID</i> (e.g. P07643) or upload a PDB file for mapping ProteoCast predictions onto the 3D model of the protein.
+  Ideally, 100 or more sequences should be used for the MSA to allow relevant predictions (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676">Abakarova et al., 2023</a>).</p>
+        
+        <h3> Output </h3>
+        <p>Please check our example 
+          <a href="http://www.lcqb.upmc.fr/Ases/results?jobid=EXAMPLEhttps://proteocast.ijm.fr/results/results/?q=FBpp0301274">result page</a>. </p>
+        <p> Ases provides a comprehensive visualization of the results with pre-tuned parameters (nodes and edges colors and
+  shapes) and with clear connections between the different representations of the biological objects (graph,
+  forest of trees, multiple sequence alignments, sequences, genes and tables with ids and annotations).</p>
         <div class="text-center">
-            <p><b>Bulk data download:</b> <a href="https://zenodo.org/records/10995110" target="_blank">https://zenodo.org/records/10995110</a></p>
-            <p><b>Acknowledgements:</b></p>
-            <ul class="list-unstyled">
-                <li><a href="https://alphafold.ebi.ac.uk" target="_blank">AlphaFold Protein Structure Database</a></li>
-            </ul>
+          <img alt="options" id="panels" src="/browser/images/gemme_mutational_landscape_example.png" width="80%">
         </div>
-    </main>
+        <h4>GEMME mutational landscape</h4>
+        <p> This interactive graph summarizes the transcript variability observed for the query gene across the selected
+  species. Each 
+          <b>transcript</b> corresponds to a path in the graph, divided into minimal building blocks called the s-exons. 
+  Each 
+          <b>s-exon</b> corresponds to a node in the graph. Formally, a s-exon is defined by a multiple sequence alignment where each 
+  sequence comes from a species. Upon clicking on a node in the interactive graph, you will be able to visualize the corresponding 
+  sequence logo and alignment in the panel below. You can easily move the nodes around to get a clearer picture of the graph topology 
+  and of the alternative splicing events. Each 
+          <b>event</b> is defined by a pair of canonical and alternative subpaths, and thus appears 
+  as a bubble in the graph. The colors of the nodes and the edges indicate the conservation levels of the s-exons and their junctions:
+  number of species for each s-exon, and number of transcripts for each junction.  
+  The start and stop nodes are added for convenience, and remain hidden by default. </p>
+        <p>ThorAxe procedure unfolds in five main steps: (1) cluster genomic exons sharing some similarity, 
+  (2) define sub-exons within each species, (3) align all sub-exons belonging to the same cluster, 
+  (4) identify s-exons as continuous blocks in the alignment, (5) refine s-exons. 
+  The identifiers of the s-exons reflect this procedure. Specifically, the s-exon with id XX_YY corresponds to the YYth block 
+  in the alignment built for the XXth cluster. Hence, the s-exons sharing the same prefix come from the same cluster. 
+  The s-exons starting with "0" originate from genomic exons that were not included in the clustering (typically 
+  because they are very small, see the advanced parameters), and thus they are not associated with an alignment. 
+  Nevertheless, you can get access to their sequences in the s-exon table (see below). </p>
+        <h4>Raw Predicted Score distributions</h4>
+        <p> In this interactive forest, each tree represents the phylogeny of a transcript. More precisely, the root of the tree indicates 
+  the emergence of a new transcript in evolution, and the changes along the branches represent plausible scenarios explaining 
+  how this ancestral transcript has led to a set of observed transcripts in current-day species (the leaves). Hence, the internal
+  nodes and the leaves represent transcripts. Dead ends (shown as triangles) indicate transcript losses. The different trees can be 
+  easily distinguished thanks to their different colors. Note that the whole forest is embedded in the gene tree retrieved from Ensembl. 
+  The visualisation of the forest is dynamically linked to the visualisation of the evolutionary splicing graph on the left. 
+  For instance, upon clicking on a node or a leaf in the 
+          <b>forest</b>, the corresponding path in the
+  
+          <b>evolutionary splicing graph</b> will be emphasised by grey boxes. Note that by default, the s-exons appearing only in one transcript from one species
+      have been removed prior to the construction of the forest (see the advanced option no pruning). 
+      These s-exons will thus not appear as part of the path in the ESG. 
+  Moreover, upon clicking specifically on a leaf, the corresponding transcript sequence will be
+  shown in the 
+          <i>Transcript sequence</i> panel at the bottom. You may simply copy-paste it in a domain-annotation or 3D-structure prediction web server. 
+      Transcripts can mutate along the branches by gaining or losing s-exons. If you click on a branch, you will get
+      access to the description of the parent and child node/transcript and of the change(s) from one to the other.
+  </p>
+        <div class="text-center">
+          <img alt="options" id="panels" src="/Ases/img/resultBranch.png" width="80%">
+        </div>
+        <h4>Transcript sequence</h4>
+        <p>This panel will show you the sequence and s-exon composition of a given transcript. You can select a transcript from the dropdown menu at the top or by clicking on a leaf of the 
+          <i>Transcript phylogenetic forest</i>. When a transcript is selected from the dropdown menu, the s-exon that compound the sequence will be highlighted on the 
+          <i>Evolutionary splicing graph</i>. The colour changes on the sequence indicate the s-exon changes. You can see the s-exon identifier for a given residue by keeping the mouse over a residue for some seconds.</p>
+        <h4> Genomic coordinates</h4>
+        <p> This plot shows the gene structure in terms of s-exons (coloured boxes). 
+  The s-exons are ordered in increasing (respectively decreasing) genomic coordinates for positive 
+  (resp. negative) stranded genes. The arrows indicate the strand direction.
+  You can click on a s-exon box in a gene to see its information, including its
+  genomic coordinates and nucleotide sequence. You can also click on the
+  s-exon in the list on the right to highlight it on the genes. The entire
+  list does not always fit the screen, but you can zoom out and pan the plot to
+  see the s-exons. To unselect an item, click on it. </p>
+        <div class="text-center">
+          <img alt="options" id="panels" src="/Ases/img/resultGene.png" width="100%">
+        </div>
+        <h4> S-exon and alternative splicing event tables </h4>
+        <p> These two interactive tables give detailed information about the s-exons
+  and the alternative splicing events. You can for example select all
+  transcripts annotated for a given species, get access to the list of
+  building blocks for a given transcript, or select all insertions...etc. </p>
+        <h3> Browser compatibility </h3>
+        <p> The server's JavaScript code uses 
+  
+          <a href="https://www.w3schools.com/js/js_es6.asp">ECMAScript 2015 (ES6)</a> 
+  features; therefore, it needs 
+  Chrome 58+, Edge 15+, Firefox 54+, Safari 10+, or Opera 55+. 
+  We have tested this server using the following browsers:</p>
+        <div class="tableContainer">
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <td>OS</td>
+                <td align="center">Version</td>
+                <td align="center">Chrome</td>
+                <td align="center">Firefox</td>
+                <td align="center">Microsoft Edge</td>
+                <td align="center">Safari</td>
+              </tr>
+              <tr>
+                <td>Linux</td>
+                <td align="center">Ubuntu 18.04</td>
+                <td align="center">87.0.4280.88</td>
+                <td align="center">84.0</td>
+                <td align="center">n/a</td>
+                <td align="center">n/a</td>
+              </tr>
+              <tr>
+                <td>MacOS</td>
+                <td align="center">Mojave</td>
+                <td align="center">87.0.4280.88</td>
+                <td align="center">83.0</td>
+                <td align="center">n/a</td>
+                <td align="center">14.0</td>
+              </tr>
+              <tr>
+                <td>Windows</td>
+                <td align="center">Windows 10 Home</td>
+                <td align="center">87.0.4280.88</td>
+                <td align="center">84.0</td>
+                <td align="center">87.0.664.60</td>
+                <td align="center">n/a</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>If you find any problem, please report it to 
+          <a href="mailto: marina.abakarova@sorbonne-universite.fr">us</a>.</p>
+      </div>
+
+
     <footer class="bg-light text-center py-3">
         <div class="container">
             <p class="mb-0">ProteoCast - This website is free and open to all users and there is no login requirement.</p>
