@@ -21,10 +21,8 @@ import uuid
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 
-global job_id
-
 def check_job_status(request):
-#    job_id = request.GET.get('job_id')
+    job_id = request.GET.get('job_id')
     if not job_id:
         return JsonResponse({'status': 'error', 'message': 'Job ID not provided.'}, status=400)
 
@@ -136,7 +134,7 @@ def serve_file(request, folder, filename):
 
 
 def results_job(request):
-    #job_id = request.GET.get('job_id')
+    job_id = request.GET.get('job_id')
     DATA = '/data/jobs/'+job_id
     alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y"][::-1]
     alph = [i.upper() for i in alph]
