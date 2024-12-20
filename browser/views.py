@@ -119,7 +119,7 @@ docker run --rm -v "/data/jobs/{prot_name}:/opt/job" elodielaine/gemme:gemme /bi
         with open(job_status_path, 'w') as status_file:
             status_file.write('in_progress')
 
-        return JsonResponse({'redirect_url': '{% url "job_running" %}'})
+        return JsonResponse({'redirect_url': '/job_running/' + job_id})
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
