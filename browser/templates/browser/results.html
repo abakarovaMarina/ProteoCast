@@ -26,58 +26,58 @@
     <style>
         body {
             font-family: 'Montserrat', sans-serif;
-            line-height: 1;
+            line-height: 1.6;
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            background-color: #f8f9fa;
         } 
         .main-content {
             flex-grow: 1;
             width: 100%;
+            padding: 20px;
         }
         .results-container {
             display: flex;
             flex-direction: column; 
-            align-items: flex-start;   
+            align-items: center;   
             margin: 20px;
             gap: 20px;
             width: 90%;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         .images-flex-container {
            display: flex;
            flex-direction: column;
-           align-items: flex-start; 
+           align-items: center; 
            margin-top: 20px;
         }
         .results-container h2,
-        .results-container p {
-            margin-left: 0; 
-            text-align: left;
-        }
+        .results-container p,
         .images-flex-container h2,
         .images-flex-container p {
-            margin-left: 0; /* Quita el margen izquierdo */
-            text-align: left; /* Alinea los títulos a la izquierda */
+            text-align: center;
+            margin: 0;
         }
         .heatmap { 
-            height: auto;
+            width: 100%;
             margin: 10px 0; 
-            padding-left: 20px; 
-            display: block;
         }
         .image-container {
             display: flex;
-            justify-content: flex-start; 
+            justify-content: center; 
             margin: 20px auto; 
         }
         .result-image {
-            max-width: 50%;
+            max-width: 100%;
             height: auto;
             margin: 10px 0; 
-            padding-left: 20px; 
             display: block;
         }
         footer {
@@ -90,27 +90,56 @@
             color: grey;
         }
         #myViewer {
-            float: left;
-            width: 1000px;
+            width: 100%;
             height: 450px;
-            margin-top: 80px;
-            position: relative;
+            margin-top: 20px;
+        }
+        .download-button button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border-radius: 12px;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .download-button button:hover {
+            background-color: #0056b3;
+        }
+        .download-button img {
+            width: 30px;
+            height: 30px;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        #colorBFactorBtn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border-radius: 12px;
+            border: none;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+        #colorBFactorBtn:hover {
+            background-color: #218838;
         }
     </style>
-
-
 </head>
 <body>
     <header>
-        <div class="header-content" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <div class="header-content" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 20px; background-color: #343a40; color: white;">
             <div class="header-text" style="flex-grow: 1;">
                 <h1 style="font-size: 2em; text-align: left;">
-                    <a href="{% url 'drosophiladb' %}" style="text-decoration: none;">ProteoCast for {{ prot_name }}</a> 
+                    <a href="{% url 'drosophiladb' %}" style="text-decoration: none; color: white;">ProteoCast for {{ prot_name }}</a> 
                 </h1>
             </div>
-            <a href="{% url 'download_folder' fbpp_id=query %}" class="download-button" style="margin-right: 20px;">
-                <button style="padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: white; border-radius: 12px; border: 1px solid #ccc;">
-                    <img src="{% static 'browser/images/download_icon.png' %}" alt="Download Icon" style="width: 43px; height: 40px; vertical-align: middle; margin-right: 2px;">
+            <a href="{% url 'download_folder' fbpp_id=query %}" class="download-button">
+                <button>
+                    <img src="{% static 'browser/images/download_icon.png' %}" alt="Download Icon">
                     Download Results
                 </button>
             </a>
@@ -120,7 +149,6 @@
     <div class="main-content">
         <div class="results-container">
             {% if heatmap_html %}
-            
             <div class="heatmap">
                 <h2>Mutational Landscape</h2>
                 <p>The following matrix represents the predicted effects of all possible mutations (rows) at each position (columns) of a protein sequence</p>
@@ -130,28 +158,20 @@
             <p>No results found.</p>
             {% endif %}
             
-            <div class="images-flex-container" style="margin-left: 0.5cm; margin-top:1cm;">
+            <div class="images-flex-container">
                 <h2>GMM profile</h2>
                 <p>To better interpret mutational landscapes, we use a Gaussian Mixture Model (GMM) to cluster mutation effect scores into distinct categories, such as tolerant, intermediate, and sensitive mutations. The GMM identifies patterns in the distribution of mutational effects by modeling the data as a mixture of Gaussian distributions</p>
-
-            {% if image_url_1 %}
-                <div class="image-container" style="margin-left: 2cm; margin-top:1cm;">
-                <img src="{{ image_url_1 }}" alt="GMM" class="result-image">
+                {% if image_url_1 %}
+                <div class="image-container">
+                    <img src="{{ image_url_1 }}" alt="GMM" class="result-image">
                 </div>
-            {% endif %}
+                {% endif %}
             </div>
         </div>
-        <h2 style="margin-bottom:1cm; margin-left: 0.5cm;"> 3D Protein Structure </h2>
-        
-        
 
-
-
-        <!-- Molstar Viewer Container -->
-        <div id="myViewer" style="margin-left: 2cm;"></div>
-
-        <!-- Add a button to toggle B-factor coloring -->
-        <button id="colorBFactorBtn" style="margin-top: 10px;">Color by B-Factors</button>
+        <h2 style="text-align: center; margin-top: 40px;">3D Protein Structure</h2>
+        <div id="myViewer"></div>
+        <button id="colorBFactorBtn">Color by B-Factors</button>
 
         <script>
             var viewerInstance = new PDBeMolstarPlugin();
@@ -199,31 +219,30 @@
             });
         </script>
 
-
-
         <div class="results-container">
-            <div class="images-flex-container" style="margin-left: 0.5cm; margin-top:1cm;">
+            <div class="images-flex-container">
                 <h2>Segmentation profile</h2>
                 <p>To better interpret mutational landscapes, we use a Gaussian Mixture Model (GMM) to cluster mutation effect scores into distinct categories, such as tolerant, intermediate, and sensitive mutations. The GMM identifies patterns in the distribution of mutational effects by modeling the data as a mixture of Gaussian distributions</p>
-
-            {% if fig_segmentation %}
-                <div class="image-container" style="margin-left: 2cm; margin-top:1cm;">
-                <img src="{{ fig_segmentation }}" alt="Segmentation" class="result-image">
+                {% if fig_segmentation %}
+                <div class="image-container">
+                    <img src="{{ fig_segmentation }}" alt="Segmentation" class="result-image">
                 </div>
-            {% endif %}
-        </div>
-        <div class="images-flex-container" style="margin-left: 0.5cm; margin-top:1cm;">
-            <h2>MSA Representation</h2>
-            <p>To better interpret mutational landscapes, we use a Gaussian Mixture Model (GMM) to cluster mutation effect scores into distinct categories, such as tolerant, intermediate, and sensitive mutations. The GMM iden>
-        {% if fig_msarep %}
-            <div class="image-container" style="margin-left: 2cm; margin-top:1cm;">
-            <img src="{{ fig_msarep }}" alt="Segmentation" class="result-image">
+                {% endif %}
             </div>
-        {% endif %}
+            <div class="images-flex-container">
+                <h2>MSA Representation</h2>
+                <p>To better interpret mutational landscapes, we use a Gaussian Mixture Model (GMM) to cluster mutation effect scores into distinct categories, such as tolerant, intermediate, and sensitive mutations. The GMM iden></p>
+                {% if fig_msarep %}
+                <div class="image-container">
+                    <img src="{{ fig_msarep }}" alt="MSA Representation" class="result-image">
+                </div>
+                {% endif %}
+            </div>
         </div>
-        </div>
+    </div>
+
     <footer>
-        <p> ProteoCast - This website is free and open to all users and there is no login requirement. </p>
+        <p>ProteoCast - This website is free and open to all users and there is no login requirement.</p>
     </footer>
 </body>
 </html>
