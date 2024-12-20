@@ -130,9 +130,23 @@
             {% csrf_token %}
             <input type="file" name="file" id="fileInput" accept=".a3m,.fasta" required>
             <button type="submit">Upload MSA File</button>
+            <div style="margin-top: 10px;">
+                <input type="checkbox" id="uniprotCode" name="uniprotCode">
+                <label for="uniprotCode">Is this a UniProt code?</label>
+            </div>
         </form>
         <div id="loading" style="display: none;">Uploading... Please wait.</div>
         <div id="uploadStatus"></div>
+    </div>
+
+    <div class="upload-section">
+        <form id="uploadPDBForm" action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="pdbFile" id="pdbFileInput" accept=".pdb" required>
+            <button type="submit">Upload PDB Structure</button>
+        </form>
+        <div id="pdbLoading" style="display: none;">Uploading... Please wait.</div>
+        <div id="pdbUploadStatus"></div>
     </div>
     
     <script>
@@ -158,6 +172,29 @@
             document.getElementById("uploadStatus").innerText = result.error || "An error occurred.";
         }
     });
+
+    document.getElementById("uploadPDBForm").addEventListener("submit", async function (e) {
+        e.preventDefault(); // Prevent default form submission
+    
+        // Show loading message
+        document.getElementById("pdbLoading").style.display = "block";
+    
+        const formData = new FormData(this);
+        const response = await fetch(this.action, {
+            method: "POST",
+            body: formData,
+        });
+    
+        const result = await response.json();
+    
+        // Handle response
+        if (response.ok) {
+            window.location.href = response.url; // Redirect if successful
+        } else {
+            document.getElementById("pdbLoading").style.display = "none"; // Hide loading
+            document.getElementById("pdbUploadStatus").innerText = result.error || "An error occurred.";
+        }
+    });
     </script>
 
     
@@ -171,37 +208,10 @@
         <a href="{% url 'results' %}?q=FBpp0301274" class="btn btn-outline-secondary">Load an Example Protein</a>
     </div>
 
-    <script>
-        document.getElementById('uploadForm').addEventListener('submit', async function (event) {
-            event.preventDefault();
-            const formData = new FormData();
-            const fileInput = document.getElementById('fileInput');
-            if (fileInput.files.length === 0) {
-                alert("Please select a file to upload.");
-                return;
-            }
-            formData.append('file', fileInput.files[0]);
+    <div class="figure-container" style="margin-top: 20px;">
+        <img src="{% static 'browser/images/fig_search_server.jpg' %}" alt="Search and Server GIF" style="width: 100%; height: auto;">
+    </div>
 
-            try {
-                const response = await fetch('/upload/', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    }
-                });
-                const result = await response.json();
-                const statusDiv = document.getElementById('uploadStatus');
-                if (response.ok) {
-                    statusDiv.textContent = `File uploaded successfully: ${result.file_path}`;
-                } else {
-                    statusDiv.textContent = `Error: ${result.error}`;
-                }
-            } catch (error) {
-                console.error('Error uploading file:', error);
-            }
-        });
-    </script>
     <footer>
         <p>ProteoCast - This website is free and open to all users and there is no login requirement.</p>
     </footer>
