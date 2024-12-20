@@ -195,27 +195,17 @@
 
             // Function to apply B-factor coloring
             function applyBFactorColoring() {
-                // Check if the viewer is ready
-                if (!viewerInstance.plugin) {
-                    console.error('Viewer not initialized');
-                    return;
-                }
-
-                // Get the structure component
-                const structure = viewerInstance.plugin.managers.structure.hierarchy.current.structures[0];
-                if (!structure) {
-                    console.error('No structure loaded');
-                    return;
-                }
-
-                // Apply the coloring
-                viewerInstance.plugin.managers.structure.component.updateRepresentations(structure, {
-                    type: 'cartoon',
-                    colorTheme: { 
-                        name: 'property',
-                        params: {
-                            property: {
-                                name: 'b-factor'
+                viewerInstance.visual.update({
+                    structure: {
+                        theme: {
+                            name: 'bfactor', // Utilisation du thème par B-factor
+                            params: {
+                                domain: [0, 100], // Plage de valeurs des B-factors
+                                colors: [
+                                    { value: 0, color: { r: 0, g: 0, b: 255 } },   // Bleu pour les valeurs faibles
+                                    { value: 50, color: { r: 255, g: 255, b: 255 } }, // Blanc pour les valeurs moyennes
+                                    { value: 100, color: { r: 255, g: 0, b: 0 } }  // Rouge pour les valeurs élevées
+                                ]
                             }
                         }
                     }
