@@ -127,45 +127,45 @@
         <form id="uploadForm" action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="file" name="file" id="fileInput" accept=".a3m,.fasta" required>
+            <button type="submit">Upload MSA File</button>
             <div style="margin-top: 10px;">
                 <input type="checkbox" id="uniprotCode" name="uniprotCode">
                 <label for="uniprotCode">Is this a UniProt code?</label>
             </div>
-            <button type="submit" class="example-button">Upload MSA File</button>
         </form>
         <div id="loading" style="display: none;">Uploading... Please wait.</div>
         <div id="uploadStatus"></div>
+        <a id="jobRunningLink" href="{% url 'job_running' %}" style="display: none;">Go to Job Running</a>
     </div>
 
     <div class="upload-section">
         <form id="uploadPDBForm" action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="file" name="pdbFile" id="pdbFileInput" accept=".pdb" required>
-            <button type="submit" class="example-button">Upload PDB Structure</button>
+            <button type="submit">Upload PDB Structure</button>
         </form>
         <div id="pdbLoading" style="display: none;">Uploading... Please wait.</div>
         <div id="pdbUploadStatus"></div>
-        </div>
-   
-    
+    </div>
+
     <script>
     document.getElementById("uploadForm").addEventListener("submit", async function (e) {
         e.preventDefault(); // Prevent default form submission
-    
+
         // Show loading message
         document.getElementById("loading").style.display = "block";
-    
+
         const formData = new FormData(this);
         const response = await fetch(this.action, {
             method: "POST",
             body: formData,
         });
-    
+
         const result = await response.json();
-    
+
         // Handle response
         if (response.ok) {
-            window.location.href = response.url; // Redirect if successful
+            window.location.href = "{% url 'job_running' %}"; // Redirect if successful
         } else {
             document.getElementById("loading").style.display = "none"; // Hide loading
             document.getElementById("uploadStatus").innerText = result.error || "An error occurred.";
@@ -174,29 +174,27 @@
 
     document.getElementById("uploadPDBForm").addEventListener("submit", async function (e) {
         e.preventDefault(); // Prevent default form submission
-    
+
         // Show loading message
         document.getElementById("pdbLoading").style.display = "block";
-    
+
         const formData = new FormData(this);
         const response = await fetch(this.action, {
             method: "POST",
             body: formData,
         });
-    
+
         const result = await response.json();
-    
+
         // Handle response
         if (response.ok) {
-            window.location.href = response.url; // Redirect if successful
+            window.location.href = "{% url 'job_running' %}"; // Redirect if successful
         } else {
             document.getElementById("pdbLoading").style.display = "none"; // Hide loading
             document.getElementById("pdbUploadStatus").innerText = result.error || "An error occurred.";
         }
     });
     </script>
-
-
 
     <div class="container">
         <a href="{% url 'results' %}?q=FBpp0301274" class="btn btn-outline-secondary">Load an Example Protein</a>
