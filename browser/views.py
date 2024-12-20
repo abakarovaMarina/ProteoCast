@@ -49,19 +49,15 @@ DATA = '/data/Drosophila_ProteoCast/'
 @csrf_exempt
 def upload_file(request):
     if request.method == 'POST' and 'file' in request.FILES:
-
         uploaded_file = request.FILES['file']
         now = datetime.now()
         job_id = now.strftime('%Y-%m-%d_%H-%M-%S')
-        #folder_name = 'jobs/' + job_id
         folder_path = os.path.join('/data/jobs/', job_id)
-
         os.makedirs(folder_path, mode=0o755, exist_ok=True)
-        
+
         file_path = os.path.join(folder_path, uploaded_file.name)
 
         try:
-
             with open(file_path, 'wb+') as destination:
                 for chunk in uploaded_file.chunks():
                     destination.write(chunk)
@@ -72,7 +68,7 @@ def upload_file(request):
             new_folder_path = '/data/jobs/' + prot_name
             os.rename(folder_path, new_folder_path)
             os.chdir(new_folder_path)
-            
+
             run_docker_script = os.path.join(new_folder_path, 'run_docker.sh')
             with open(run_docker_script, 'w') as script:
                 script.write(f"""#!/bin/bash
@@ -85,22 +81,23 @@ def upload_file(request):
 #SBATCH --mail-user=abakamarina@gmail.com
 #SBATCH --output=slurm_%j.out
 
-
 docker run --rm -v "/data/jobs/{prot_name}:/opt/job" elodielaine/gemme:gemme /bin/bash -c "cd / && bash run.sh {uploaded_file.name}"
                             """)
             os.chmod(run_docker_script, 0o755)
             subprocess.run(['sbatch', run_docker_script], check=True)
+
+            # Cambiar el estado del trabajo a "en progreso"
             job_status_path = os.path.join(new_folder_path, 'status.txt')
             with open(job_status_path, 'w') as status_file:
-                status_file.write('in_progress') 
+                status_file.write('in_progress')
+
+            # Redirigir a la página job_running
             return redirect('job_running')
 
-        except subprocess.CalledProcessError as e:
-            return JsonResponse({'error': f"Error running Docker: {e}"}, status=500)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
-    return JsonResponse({'error': 'oups Invalid request'}, status=400)
+    return JsonResponse({'error': 'Invalid request method or no file uploaded.'}, status=400)
 
 
 def serve_file(request, folder, filename):
