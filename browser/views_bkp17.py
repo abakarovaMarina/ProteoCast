@@ -1,4 +1,4 @@
-from django.urls import reverse
+çfrom django.urls import reverse
 from django.shortcuts import redirect
 import os
 import pandas as pd
@@ -23,10 +23,11 @@ from django.shortcuts import redirect
 
 def check_job_status(request):
     job_id = request.GET.get('job_id')
-    #if not job_id:
-    #    return JsonResponse({'status': 'error', 'message': 'Job ID not provided.'}, status=400)
+    job_id = 'FBpp0428279'
+    if not job_id:
+        return JsonResponse({'status': 'error', 'message': 'Job ID not provided.'}, status=400)
 
-    job_status_path = os.path.join('data', 'jobs', job_id, 'status.txt')
+    job_status_path = os.path.join('/data/jobs', job_id, 'status.txt')
 
     if not os.path.exists(job_status_path):
         return JsonResponse({'status': 'not_found'}, status=404)
@@ -35,12 +36,12 @@ def check_job_status(request):
         with open(job_status_path, 'r') as status_file:
             status = status_file.read().strip()
             if not status:
-                return JsonResponse({'status': 'in_progress'}, status=200)  
+                return JsonResponse({'status': 'in_progress'}, status=200)
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
-    if 'finished' in status:
-        return JsonResponse({'status': 'finished', 'redirect_url': '/results_job/?job_id=' + job_id}, status=200)
+    if status == 'finished':
+        return JsonResponse({'status': 'finished', 'redirect_url': f'/results_job/?job_id={job_id}'}, status=200)
 
     return JsonResponse({'status': status})
 
