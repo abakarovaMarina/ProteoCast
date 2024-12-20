@@ -25,7 +25,7 @@ global job_id
 job_id = ''
 
 def check_job_status(request):
-    #job_id = request.GET.get('job_id')
+    job_id = request.GET.get('job_id')
     if not job_id:
         return JsonResponse({'status': 'error', 'message': 'Job ID not provided.'}, status=400)
 
