@@ -162,9 +162,9 @@
         </div>
     </header>
 
-    <div class="container-fluid" style="width:95%;">
+    <div class="container-fluid" style="width:150%;">
         <div class="row">
-        <div class="results-container">
+        <!-- <div class="results-container"> -->
             {% if heatmap_html %}
             <div class="heatmap">
                 <h2>Mutational Landscape</h2>
@@ -174,7 +174,8 @@
             {% else %}
             <p>No results found.</p>
             {% endif %}
-            
+        </div>
+        <div class="row">
             <div class="images-flex-container">
                 <h2>GMM profile</h2>
                 <p>To better interpret mutational landscapes, we use a Gaussian Mixture Model (GMM) to cluster mutation effect scores into distinct categories, such as tolerant, intermediate, and sensitive mutations. The GMM identifies patterns in the distribution of mutational effects by modeling the data as a mixture of Gaussian distributions</p>
@@ -185,7 +186,7 @@
                 {% endif %}
             </div>
         </div>
-        </div>
+        
 
         <h2 style="text-align: center; margin-top: 40px;">3D Protein Structure</h2>
         <div id="myViewer"></div>
