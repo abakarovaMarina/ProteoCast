@@ -12,7 +12,7 @@
                     if (data.status === 'finished') {
                         document.getElementById('uploadStatus').innerHTML = 'Job Completed';
                     } else {
-                        document.getElementById('uploadStatus').innerHTML = 'Uploading... Please wait.';
+                        document.getElementById('uploadStatus').innerHTML = 'At the end of the process the results will be displayed';
                     }
                 })
                 .catch(error => console.error('Error checking job status:', error));
