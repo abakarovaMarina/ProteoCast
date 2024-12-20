@@ -72,9 +72,21 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
+
     <header>
-        <h1>ProteoCast for {{ prot_name }}</h1>
+        <div class="header-content" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 20px; background-color: #343a40; color: white;">
+            <div class="header-text" style="flex-grow: 1;">
+                <h1 style="font-size:2em; text-align: left;">
+                    <a href="{% url 'drosophiladb' %}" style="text-decoration: none; color: white;">ProteoCast for {{ prot_name }}</a> 
+                </h1>
+            </div>
+            <a href="{% url 'download_folder' fbpp_id=query %}" class="download-button">
+                <button>
+                    <img src="{% static 'browser/images/download_icon.png' %}" alt="Download Icon">
+                    Download Results
+                </button>
+            </a>
+        </div>
     </header>
 
     <!-- Main Content -->
@@ -90,14 +102,7 @@
             {% endif %}
         </div>
 
-        <!-- GMM Profile -->
-        <div class="results-container">
-            <h2>GMM Profile</h2>
-            <p>Gaussian Mixture Model clustering of mutation effects into tolerant, intermediate, and sensitive categories.</p>
-            {% if image_url_1 %}
-                <img src="{{ image_url_1 }}" alt="GMM Profile">
-            {% endif %}
-        </div>
+
 
         <!-- Segmentation Profile -->
         <div class="results-container">
@@ -114,68 +119,106 @@
                 <img src="{{ fig_msarep }}" alt="MSA Representation">
             {% endif %}
         </div>
-    </div>
+        <!-- GMM Profile -->
+        <div class="results-container">
+            <h2>GMM Profile</h2>
+            <p>Gaussian Mixture Model clustering of mutation effects into tolerant, intermediate, and sensitive categories.</p>
+            {% if image_url_1 %}
+                <img src="{{ image_url_1 }}" alt="GMM Profile">
+            {% endif %}
+        </div>
+        <div class="results-container">
+            <div id="myViewer"></div>
+            <button id="colorBFactorBtn">Color by B-Factors</button>
+            <button id="testColorBtn">Test Simple Coloring</button>
+        </div>
+
+    </div>  
 
     <!-- Footer -->
     <footer>
         <p>ProteoCast - This website is free and open to all users.</p>
     </footer>
 
-    <!-- Molstar Viewer Script -->
+    <!-- Script -->
     <script>
+        // Initialisation du viewer
         var viewerInstance = new PDBeMolstarPlugin();
+        console.log("Initializing viewer instance...", viewerInstance);
 
-        // Options pour initialiser le viewer
         var options = {
             customData: {
-                url: "{{ pdb_url_1 }}", // Fichier PDB
+                url: "{{ pdb_url_1 }}", // URL dynamique pour le fichier PDB
                 format: 'pdb'
             },
             alphafoldView: true,
             bgColor: { r: 255, g: 255, b: 255 }
         };
 
+        // Rendu du viewer
         var viewerContainer = document.getElementById('myViewer');
         viewerInstance.render(viewerContainer, options);
 
-        // Vérification après chargement
         viewerInstance.events.loadComplete.subscribe(() => {
-            console.log("Structure loaded successfully.");
+            console.log("Structure loaded successfully!");
+            console.log("Loaded structure:", viewerInstance.structure);
         });
 
-        // Coloration par B-factors
+        // Test de coloration par B-Factors
         function applyBFactorColoring() {
-            console.log("Applying B-factor coloring...");
-            viewerInstance.visual.update({
-                structure: {
-                    theme: {
-                        name: 'atom-bfactor',
-                        params: {
-                            domain: [0, 100],
-                            colors: [
-                                { value: 0, color: { r: 0, g: 0, b: 255 } },
-                                { value: 50, color: { r: 255, g: 255, b: 255 } },
-                                { value: 100, color: { r: 255, g: 0, b: 0 } }
-                            ]
+            console.log("Attempting B-factor coloring...");
+            try {
+                viewerInstance.visual.update({
+                    structure: {
+                        theme: {
+                            name: 'atom-bfactor', // Thème B-factor corrigé
+                            params: {
+                                domain: [0, 100],
+                                colors: [
+                                    { value: 0, color: { r: 0, g: 0, b: 255 } },   // Bleu
+                                    { value: 50, color: { r: 255, g: 255, b: 255 } }, // Blanc
+                                    { value: 100, color: { r: 255, g: 0, b: 0 } }  // Rouge
+                                ]
+                            }
                         }
                     }
-                }
-            });
+                });
+                console.log("B-factor coloring applied successfully.");
+            } catch (error) {
+                console.error("Error applying B-factor coloring:", error);
+            }
         }
 
-        // Test de coloration simple
+        // Test de coloration simple (éléments chimiques)
         function applyTestColoring() {
-            console.log("Applying test coloring...");
-            viewerInstance.visual.update({
-                structure: {
-                    theme: {
-                        name: 'element-symbol',
-                        params: {}
+            console.log("Applying simple test coloring...");
+            try {
+                viewerInstance.visual.update({
+                    structure: {
+                        theme: {
+                            name: 'element-symbol',
+                            params: {}
+                        }
                     }
-                }
-            });
+                });
+                console.log("Simple test coloring applied successfully.");
+            } catch (error) {
+                console.error("Error applying simple test coloring:", error);
+            }
         }
 
+        // Vérification des données après chargement
+        viewerInstance.events.loadComplete.subscribe(() => {
+            console.log("Checking B-factor data...");
+            const structure = viewerInstance.structure;
+            if (structure && structure.atoms) {
+                console.log("B-factors available:", structure.atoms.bfactor || "No B-factor data found.");
+            } else {
+                console.warn("Structure data not loaded correctly.");
+            }
+        });
+
+        // Ajout des événements aux boutons
         document.getElementById('colorBFactorBtn').addEventListener('click', applyBFactorColoring);
         document.getElementById('testColorBtn').addEventListener('click', applyTestColoring);
     </script>

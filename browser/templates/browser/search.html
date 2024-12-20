@@ -102,6 +102,17 @@
         .example-button:hover {
             background-color: #0056b3;
         }
+
+        .figure-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .figure-container img {
+            width: 45%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -199,8 +210,9 @@
         <a href="{% url 'results' %}?q=FBpp0301274" class="btn btn-outline-secondary">Load an Example Protein</a>
     </div>
 
-    <div class="figure-container" style="margin-top: 20px;">
-        <img src="{% static 'browser/images/fig_search_server.png' %}" alt="Search and Server GIF" style="width: 100%; height: auto;">
+    <div class="figure-container">
+        <img src="{% static 'browser/images/fig_search_server.png' %}" alt="Search and Server GIF">
+        <img src="{% static 'browser/images/another_image.png' %}" alt="Another Image">
     </div>
 
     <footer>
