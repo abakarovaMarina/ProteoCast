@@ -40,7 +40,7 @@ def check_job_status(request):
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
-    if status == 'finished':
+    if 'finished' in status:
         # Job finished, redirect to the results page
         return JsonResponse({'status': 'finished', 'redirect_url': '/results_job/?job_id=' + job_id}, status=200)
     
