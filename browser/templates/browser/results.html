@@ -25,125 +25,6 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pdbe-molstar@latest/build/pdbe-molstar-light.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pdbe-molstar@latest/build/pdbe-molstar-plugin.js"></script>
 
-    <style>
-        body {
-            font-family: 'Montserrat', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f8f9fa;
-        } 
-        .main-content {
-            flex-grow: 1;
-            width: 100%;
-            padding: 20px;
-        }
-        .results-container {
-            display: flex;
-            flex-direction: column; 
-            align-items: center;   
-            margin: 20px;
-            gap: 20px;
-            width: 50%;
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .results-containerseg {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 20px;
-            gap: 20px;
-            width: 70%;
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .images-flex-container {
-           display: flex;
-           flex-direction: column;
-           align-items: center; 
-           margin-top: 20px;
-        }
-        .results-container h2,
-        .results-container p,
-        .images-flex-container h2,
-        .images-flex-container p {
-            text-align: center;
-            margin: 0;
-        }
-        .heatmap { 
-            width: 100%;
-            margin: 10px 0; 
-        }
-        .image-container {
-            display: flex;
-            justify-content: center; 
-            margin: 20px auto; 
-        }
-        .result-image {
-            max-width: 100%;
-            height: auto;
-            margin: 10px 0; 
-            display: block;
-        }
-        footer {
-            width: 100%;
-            text-align: center;
-            padding: 10px;
-            background-color: #f1f1f1;
-            position: fixed;
-            bottom: 0;
-            color: grey;
-        }
-        #myViewer {
-            width: 70%;
-            height: 450px;
-            margin-top: 20px;
-            position: relative;
-            z-index: 1;
-        }
-        .download-button button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            border-radius: 12px;
-            border: none;
-            transition: background-color 0.3s ease;
-        }
-        .download-button button:hover {
-            background-color: #0056b3;
-        }
-        .download-button img {
-            width: 30px;
-            height: 30px;
-            vertical-align: middle;
-            margin-right: 10px;
-        }
-        #colorBFactorBtn {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #28a745;
-            color: white;
-            border-radius: 12px;
-            border: none;
-            transition: background-color 0.3s ease;
-            margin-top: 20px;
-        }
-        #colorBFactorBtn:hover {
-            background-color: #218838;
-        }
-    </style>
 </head>
 <body>
     <header>
@@ -173,8 +54,9 @@
             {% else %}
             <p>No results found.</p>
             {% endif %}
+        </div>
             
-            <div class="images-flex-container">
+        <div class="images-flex-container">
                 <h2>GMM profile</h2>
                 <p>To better interpret mutational landscapes, we use a Gaussian Mixture Model (GMM) to cluster mutation effect scores into distinct categories, such as tolerant, intermediate, and sensitive mutations. The GMM identifies patterns in the distribution of mutational effects by modeling the data as a mixture of Gaussian distributions</p>
                 {% if image_url_1 %}
