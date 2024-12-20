@@ -171,13 +171,17 @@
             </div>
         </div>
 
-        <h2 style="text-align: center; margin-top: 40px;">3D Protein Structure</h2>
-        <div id="myViewer"></div>
-        <button id="colorBFactorBtn">Color by B-Factors</button>
+                <!-- Molstar Viewer Container -->
+        <div id="myViewer" style="margin-left: 2cm;"></div>
+
+        <!-- Add a button to toggle B-factor coloring -->
+        <button id="colorBFactorBtn" style="margin-top: 10px;">Color by B-Factors</button>
 
         <script>
+            // Initialize the viewer
             var viewerInstance = new PDBeMolstarPlugin();
 
+            // Viewer options
             var options = {
                 customData: {
                     url: "{{ pdb_url_1 }}", // Dynamically set PDB URL from Django context
@@ -189,22 +193,24 @@
                 layoutIsExpanded: false
             };
 
+            // Get the viewer container and render the structure
             var viewerContainer = document.getElementById('myViewer');
             viewerInstance.render(viewerContainer, options);
 
             // Function to apply coloring based on B-factor
             function applyBFactorColoring() {
-                viewerInstance.visual.setColor({
-                    color: {
-                        name: 'bfactor',
-                        params: {
+                viewerInstance.visual.applyTheme({
+                    globalName: 'custom',
+                    globalParams: {
+                        property: 'B-factor',
+                        legend: {
+                            min: 0,
+                            max: 100,
                             list: [
                                 { value: 0, color: { r: 0, g: 0, b: 255 } },   // Blue for minimum
                                 { value: 50, color: { r: 255, g: 255, b: 255 } }, // White for middle
                                 { value: 100, color: { r: 255, g: 0, b: 0 } }  // Red for maximum
-                            ],
-                            min: 0,
-                            max: 100
+                            ]
                         }
                     }
                 });
@@ -220,6 +226,7 @@
                 console.log("Structure loaded! Click the button to color by B-factors.");
             });
         </script>
+
 
         <div class="results-container">
             <div class="images-flex-container">
