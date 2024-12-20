@@ -133,7 +133,7 @@ def results_view(request):
         FBpp_id =mapping_df.loc[mapping_df['id']==id_folder].index[0]
     else:
         id_folder = mapping_df.loc[mapping_df['pr_sym']==prot_name, 'id'].item()
-        FBpp_id =mapping_df.loc[mapping_df['pr_sym']==prot_name].index[0]
+        FBpp_id =mapping_df.loc[mapping_df['id']==id_folder].index[0]
    
     
     ### Confidence values
