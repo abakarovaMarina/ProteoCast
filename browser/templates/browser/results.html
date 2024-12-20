@@ -103,7 +103,7 @@
         <div class="header-content" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
             <div class="header-text" style="flex-grow: 1;">
                 <h1 style="font-size: 2em; text-align: left;">
-                    <a href="{% url 'drosophiladb' %}" style="text-decoration: none;">ProteoCast for {{ query }}</a> 
+                    <a href="{% url 'drosophiladb' %}" style="text-decoration: none;">ProteoCast for {{ prot_name }}</a> 
                 </h1>
             </div>
             <a href="{% url 'download_folder' fbpp_id=query %}" class="download-button" style="margin-right: 20px;">
@@ -143,14 +143,14 @@
         
         <!-- Molstar Viewer Container -->
         <div id="myViewer" style="margin-left: 2cm;"></div>
-            
+
         <script>
             var viewerInstance = new PDBeMolstarPlugin();
 
             var options = {
                 customData: {
-                   url: "{% static 'jobs/' %}{{ query }}/{{ query }}.pdb",
-                   format: 'pdb'
+                    url: "{{ pdb_url_1 }}", // Dynamically set PDB URL from Django context
+                    format: 'pdb'
                 },
                 alphafoldView: true,
                 bgColor: { r: 255, g: 255, b: 255 },
@@ -163,25 +163,26 @@
 
             function colorResidues(residueData) {
                 viewerInstance.visual.select({
-                   data: residueData.map(function(residue) {
-                      return { residue_number: residue.residue_number, color: `rgb(${residue.color.r}, ${residue.color.g}, ${residue.color.b})` };
-                   })
+                    data: residueData.map(function (residue) {
+                        return { residue_number: residue.residue_number, color: `rgb(${residue.color.r}, ${residue.color.g}, ${residue.color.b})` };
+                    })
                 });
             }
-      
-            window.onload = function() {
-               var residueFileUrl = "{% static 'jobs/' %}{{ query }}/residue_colors.txt";
 
-               setTimeout(function() {
-                   fetch(residueFileUrl)
-                      .then(response => response.json()) // .json() es la función correcta para parsear la respuesta como JSON
-                      .then(data => {
-                           colorResidues(data);
-                       })
-                       .catch(error => console.error("Error loading residue file:", error));
-               }, 2000);
-           };
+            window.onload = function () {
+                var residueFileUrl = "{{ request.scheme }}://{{ request.get_host }}/data/{{ query }}/residue_colors.txt"; // Update this URL as needed
+
+                setTimeout(function () {
+                    fetch(residueFileUrl)
+                        .then(response => response.json()) // Parse the response as JSON
+                        .then(data => {
+                            colorResidues(data);
+                        })
+                        .catch(error => console.error("Error loading residue file:", error));
+                }, 2000);
+            };
         </script>
+
 
         <div class="results-container">
             <div class="images-flex-container" style="margin-left: 0.5cm; margin-top:1cm;">
