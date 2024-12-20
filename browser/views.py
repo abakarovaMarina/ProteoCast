@@ -60,8 +60,8 @@ def search_view(request):
 def drosophiladb(request):
     return render(request, 'browser/drosophiladb.html')
 
-def job_running(request):
-    return render(request, 'browser/job_running.html')
+def job_running(request, job_id):
+    return render(request, 'browser/job_running.html', {'job_id': job_id})
 
 
 #DATA = 'browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
