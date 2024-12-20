@@ -178,12 +178,13 @@
         <!-- Add a button to toggle B-factor coloring -->
         <button id="colorBFactorBtn" style="margin-top: 10px;">Color by B-Factors</button>
 
+        <!-- Molstar Viewer Script -->
         <script>
             var viewerInstance = new PDBeMolstarPlugin();
 
             var options = {
                 customData: {
-                    url: "{{ pdb_url_1 }}", // Dynamically set PDB URL from Django context
+                    url: "{{ pdb_url_1 }}", 
                     format: 'pdb'
                 },
                 alphafoldView: true,
@@ -192,28 +193,64 @@
                 layoutIsExpanded: false
             };
 
+            // Initialize viewer
             var viewerContainer = document.getElementById('myViewer');
             viewerInstance.render(viewerContainer, options);
 
+            // Function to apply B-factor coloring
             function applyBFactorColoring() {
-                viewerInstance.visual.updateColor({
-                  colorScheme: 'bfactor',
-                  colorScale: 'RdWhBu', 
-                  domain: [0, 100]
+                // Check if the viewer is ready
+                if (!viewerInstance.plugin) {
+                    console.error('Viewer not initialized');
+                    return;
+                }
+
+                // Get the structure component
+                const structure = viewerInstance.plugin.managers.structure.hierarchy.current.structures[0];
+                if (!structure) {
+                    console.error('No structure loaded');
+                    return;
+                }
+
+                // Apply the coloring
+                viewerInstance.plugin.managers.structure.component.updateRepresentations(structure, {
+                    type: 'cartoon',
+                    colorTheme: { 
+                        name: 'property',
+                        params: {
+                            property: {
+                                name: 'b-factor'
+                            }
+                        }
+                    }
                 });
             }
 
+            // Toggle state for the button
+            let bFactorEnabled = false;
+
             // Add click event to the button
             document.getElementById('colorBFactorBtn').addEventListener('click', function() {
-                applyBFactorColoring();
+                if (bFactorEnabled) {
+                    // Reset to default coloring
+                    viewerInstance.plugin.managers.structure.component.updateRepresentations(
+                        viewerInstance.plugin.managers.structure.hierarchy.current.structures[0],
+                        { colorTheme: { name: 'uniform' } }
+                    );
+                    this.textContent = 'Color by B-Factors';
+                } else {
+                    // Apply B-factor coloring
+                    applyBFactorColoring();
+                    this.textContent = 'Reset Coloring';
+                }
+                bFactorEnabled = !bFactorEnabled;
             });
 
-            // Optional: Log to console when structure is loaded
+            // Optional: Log when structure is loaded
             viewerInstance.events.loadComplete.subscribe(() => {
                 console.log("Structure loaded! Click the button to color by B-factors.");
             });
         </script>
-
 
 
         <div class="results-container">
