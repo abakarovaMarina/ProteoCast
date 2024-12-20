@@ -178,7 +178,7 @@
 
         <div class="row">
             <div class="col">
-            <div class="col-8">Input Alignment
+            <div class="col-8">
                 <h2>Input Alignment</h2>
             </div>
                 {% if fig_msarep %}
@@ -188,7 +188,8 @@
                 {% endif %}
             </div>
             <div class="col">
-            <div class="col-8">Predicted Score Distribution
+            <div class="col-8">
+                <h2>Predicted Score Distribution<h2>
             </div>
                 {% if image_url_1 %}
                 <div class="image-container">
@@ -202,7 +203,7 @@
             <h2>Segmentation profile</h2>
             {% if fig_segmentation %}
             <div class="image-container">
-                <img src="{{ fig_segmentation }}" alt="Segmentation" class="result-image">
+                <img src="{{ fig_segmentation }}" alt="Segmentation" class="result-image" style="width: 80%; display: block; margin: 0 auto;">
             </div>
             {% endif %}
         </div>
@@ -212,54 +213,56 @@
             <div id="myViewer"></div>
             <button id="colorBFactorBtn">Color by B-Factors</button>
         </div>
+        <script>
+            var viewerInstance = new PDBeMolstarPlugin();            
+            var options = {
+                customData: {
+                    url: "{{ pdb_url_1 }}", // Dynamically set PDB URL from Django context
+                    format: 'pdb'
+                },
+                alphafoldView: true,
+                bgColor: { r: 255, g: 255, b: 255 },
+                hideCanvasControls: ['selection', 'animation', 'controlToggle', 'controlInfo'],
+                layoutIsExpanded: false
+            };
+        
+            var viewerContainer = document.getElementById('myViewer');
+            viewerInstance.render(viewerContainer, options);
+        
+            // Function to apply coloring based on B-factor
+            function applyBFactorColoring() {
+                viewerInstance.visual.setColor({
+                    color: {
+                      name: 'bfactor',
+                      params: {
+                          list: [
+                              { value: 30, color: { r: 0, g: 0, b: 255 } },   
+                              { value: 40, color: { r: 255, g: 255, b: 255 } },
+                              { value: 50, color: { r: 255, g: 0, b: 0 } }  
+                          ],
+                          min: 30,  
+                          max: 50 
+                      }
+                    }
+                });
+            };
+            // Add click event to the button
+            document.getElementById('colorBFactorBtn').addEventListener('click', function() {
+                applyBFactorColoring();
+            });
+        
+            // Optional: Log to console when structure is loaded
+            viewerInstance.events.loadComplete.subscribe(() => {
+                console.log("Structure loaded! Click the button to color by B-factors.");
+            });
+        </script>
             
     </div>
 
     <footer>
         <p>ProteoCast - This website is free and open to all users and there is no login requirement.</p>
     </footer>
-    <script>
-        var viewerInstance = new PDBeMolstarPlugin();            
-        var options = {
-            customData: {
-                url: "{{ pdb_url_1 }}", // Dynamically set PDB URL from Django context
-                format: 'pdb'
-            },
-            alphafoldView: true,
-            bgColor: { r: 255, g: 255, b: 255 },
-            hideCanvasControls: ['selection', 'animation', 'controlToggle', 'controlInfo'],
-            layoutIsExpanded: false
-        };
+
     
-        var viewerContainer = document.getElementById('myViewer');
-        viewerInstance.render(viewerContainer, options);
-    
-        // Function to apply coloring based on B-factor
-        function applyBFactorColoring() {
-            viewerInstance.visual.setColor({
-                color: {
-                  name: 'bfactor',
-                  params: {
-                      list: [
-                          { value: 30, color: { r: 0, g: 0, b: 255 } },   
-                          { value: 40, color: { r: 255, g: 255, b: 255 } },
-                          { value: 50, color: { r: 255, g: 0, b: 0 } }  
-                      ],
-                      min: 30,  
-                      max: 50 
-                  }
-                }
-            });
-        };
-        // Add click event to the button
-        document.getElementById('colorBFactorBtn').addEventListener('click', function() {
-            applyBFactorColoring();
-        });
-    
-        // Optional: Log to console when structure is loaded
-        viewerInstance.events.loadComplete.subscribe(() => {
-            console.log("Structure loaded! Click the button to color by B-factors.");
-        });
-    </script>
 </body>
 </html>
