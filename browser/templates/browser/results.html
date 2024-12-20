@@ -175,6 +175,7 @@
             {% endif %}
         </div>
         <div class="row">
+            <div class="col">
                 <h2>GMM profile</h2>
                 <p>To better interpret mutational landscapes, we use a Gaussian Mixture Model (GMM) to cluster mutation effect scores into distinct categories, such as tolerant, intermediate, and sensitive mutations. The GMM identifies patterns in the distribution of mutational effects by modeling the data as a mixture of Gaussian distributions</p>
                 {% if image_url_1 %}
@@ -182,6 +183,9 @@
                     <img src="{{ image_url_1 }}" alt="GMM" class="result-image">
                 </div>
                 {% endif %}
+            </div>
+            <div class="col">
+            </div>
         </div>
         
 
