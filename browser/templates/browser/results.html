@@ -16,6 +16,7 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/molstar@latest/build/viewer/molstar.css" />
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/molstar@latest/build/viewer/molstar.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pdbe-molstar@3.3.0/build/pdbe-molstar-light.css"></script>
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
@@ -194,20 +195,11 @@
             var viewerContainer = document.getElementById('myViewer');
             viewerInstance.render(viewerContainer, options);
 
-            // Function to apply coloring based on B-factor
             function applyBFactorColoring() {
-                viewerInstance.visual.updateTheme({
-                    structure: {
-                        name: 'atom-bfactor', 
-                        params: {
-                            domain: [0, 100], // Specify the range of B-factor values
-                            list: [
-                                { value: 0, color: { r: 0, g: 0, b: 255 } },   // Blue for minimum
-                                { value: 50, color: { r: 255, g: 255, b: 255 } }, // White for middle
-                                { value: 100, color: { r: 255, g: 0, b: 0 } }  // Red for maximum
-                            ]
-                        }
-                    }
+                viewerInstance.visual.updateColor({
+                  colorScheme: 'bfactor',
+                  colorScale: 'RdWhBu', 
+                  domain: [0, 100]
                 });
             }
 
