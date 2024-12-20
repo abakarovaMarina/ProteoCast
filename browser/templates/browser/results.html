@@ -207,19 +207,24 @@
             {% endif %}
         </div>
 
+
         <div class="row">
-            <div class="col-8">
-            <h2>Structure</h2>
+            <div class="col-12">
+                <h2>Structure</h2>
             </div>
-        <div class="row"> 
-            <button id="colorBFactorBtn">Color by B-Factors</button>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <button id="colorBFactorBtn">Color by B-Factors</button>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div id="myViewer" class="viewer-container"></div>
         </div>
 
-            <div id="myViewer"></div>
-        </div>
-
-
-
+        
         <script>
             var viewerInstance = new PDBeMolstarPlugin();            
             var options = {
@@ -229,8 +234,9 @@
                 },
                 alphafoldView: true,
                 bgColor: { r: 255, g: 255, b: 255 },
-                hideCanvasControls: ['selection', 'animation', 'controlToggle', 'controlInfo'],
-                layoutIsExpanded: false
+                hideCanvasControls: ['selection', 'animation', 'controlToggle', 'controlInfo', 'controlZoom', 'controlRotate', 'controlTranslate', 'controlReset', 'controlFullscreen'],
+                layoutIsExpanded: false,
+                hideControls: true // This will hide the toolbar
             };
         
             var viewerContainer = document.getElementById('myViewer');
@@ -265,7 +271,7 @@
         </script>
     </div>
 
-
+</div>
     <footer>
         <p>ProteoCast - This website is free and open to all users and there is no login requirement.</p>
     </footer>
