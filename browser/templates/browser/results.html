@@ -161,27 +161,31 @@
             var viewerContainer = document.getElementById('myViewer');
             viewerInstance.render(viewerContainer, options);
 
-            function colorResidues(residueData) {
-                viewerInstance.visual.select({
-                    data: residueData.map(function (residue) {
-                        return { residue_number: residue.residue_number, color: `rgb(${residue.color.r}, ${residue.color.g}, ${residue.color.b})` };
-                    })
+            // Function to apply coloring based on B-factor
+            function applyBFactorColoring() {
+                viewerInstance.visual.setColor({
+                    color: {
+                        name: 'bfactor',
+                        params: {
+                            // Specify the color scale (blue to white to red)
+                            list: [
+                                { value: 0, color: { r: 0, g: 0, b: 255 } },   // Blue for minimum
+                                { value: 50, color: { r: 255, g: 255, b: 255 } }, // White for middle
+                                { value: 100, color: { r: 255, g: 0, b: 0 } }  // Red for maximum
+                            ],
+                            min: 0, // Minimum B-factor value
+                            max: 100 // Maximum B-factor value
+                        }
+                    }
                 });
             }
 
-            window.onload = function () {
-                var residueFileUrl = "{{ request.scheme }}://{{ request.get_host }}/data/{{ query }}/residue_colors.txt"; // Update this URL as needed
-
-                setTimeout(function () {
-                    fetch(residueFileUrl)
-                        .then(response => response.json()) // Parse the response as JSON
-                        .then(data => {
-                            colorResidues(data);
-                        })
-                        .catch(error => console.error("Error loading residue file:", error));
-                }, 2000);
-            };
+            // Wait for the structure to load before applying coloring
+            viewerInstance.events.loadComplete.subscribe(() => {
+                applyBFactorColoring();
+            });
         </script>
+
 
 
         <div class="results-container">
