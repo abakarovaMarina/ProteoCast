@@ -23,6 +23,7 @@ from django.shortcuts import redirect
 
 def check_job_status(request):
     job_id = request.GET.get('job_id')
+    job_id = 'FBpp0428279'
     if not job_id:
         return JsonResponse({'status': 'error', 'message': 'Job ID not provided.'}, status=400)
 
