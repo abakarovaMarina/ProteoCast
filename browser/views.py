@@ -136,6 +136,113 @@ def serve_file(request, folder, filename):
         return HttpResponse(f"File not found: {filename}", status=404)
 
 
+def results_job(request):
+    prot_name = request.GET.get('q').lower()
+    DATA = '/data/jobs/'+prot_name
+    alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y"][::-1]
+    alph = [i.upper() for i in alph]
+
+    ### Confidence values
+    proteocast_path = f'{DATA}{id_folder}/4.{FBpp_id}_ProteoCast.csv'
+    if not os.path.exists(proteocast_path):
+        return HttpResponse("ProteoCast file not found.")
+
+
+    df_proteocast = pd.read_csv(proteocast_path)
+    df_proteocast['GEMME_LocalConfidence'] = df_proteocast['GEMME_LocalConfidence'].replace({True:1, False:0})
+    confidence_values = np.array(df_proteocast.groupby('Residue')['GEMME_LocalConfidence'].apply(lambda x: x.iloc[0]).tolist()).reshape(1, -1)
+
+
+    df = pd.DataFrame(np.array(df_proteocast['GEMME_score']).reshape(20, -1, order='F'))
+    df_mut = pd.DataFrame(np.array(df_proteocast['Mutation']).reshape(20, -1, order='F'))
+
+
+
+    # Custom color scale for confidence
+    confidence_colorscale = [
+        [0, 'white'],  # Low confidence - white
+        [1, 'darkblue']  # High confidence - dark blue
+    ]
+
+    fig = make_subplots(
+        rows=2, cols=1,
+        shared_xaxes=True,
+        row_heights=[0.9, 0.1],
+        vertical_spacing=0.02,
+    )
+
+    heatmap_main = go.Heatmap(
+        z=df.values[::-1],  # Reverse the order of rows
+        x=list(range(1, df.shape[1] + 1)),
+        y=alph,  # Reverse the order of y-axis labels
+        colorscale=px.colors.sequential.Oranges[::-1],
+        customdata=df_mut.values[::-1],  # Reverse the order of custom data
+        hovertemplate=(
+            "Position: %{customdata}<br>"
+            "Score: %{z:.2f}<extra></extra>"
+        ),
+    )
+
+    fig.add_trace(heatmap_main, row=1, col=1)
+
+    heatmap_confidence = go.Heatmap(
+       z=confidence_values,
+       colorscale=confidence_colorscale,
+       showscale=False,
+       hoverinfo='skip',
+    )
+    fig.add_trace(heatmap_confidence, row=2, col=1)
+
+    scatter_border = go.Scatter(
+       x=[0, df.shape[1], df.shape[1], 0, 0],
+       y=[-0.5, -0.5, 0.5, 0.5, -0.5],
+       mode="lines",
+       line=dict(color="black", width=2),
+       hoverinfo="skip",
+       showlegend=False
+    )
+    fig.add_trace(scatter_border, row=2, col=1)
+
+    fig.update_layout(
+        title_x=1,
+        autosize=False,
+        width=1500,
+        height=600,
+        xaxis=dict(
+            tickmode="array",
+            tickvals=list(range(0, df.shape[1]+1, 10)),
+            ticktext=[str(i) for i in range(0,df.shape[1]+1, 10)],
+        ),
+        yaxis=dict(title="Mutations"),
+        coloraxis_colorbar=dict(
+            title="GEMME Score",
+            tickvals=[-8, -4, 0],
+        ),
+    )
+
+    fig.update_yaxes(visible=False, row=2, col=1)
+    heatmap_html = fig.to_html(full_html=False)
+
+    image_url_1 = f'/data/{id_folder}/6.{FBpp_id}_GMM.jpg'
+    pdb_url_1 = f'/data/{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
+    fig_msarep = f'/data/{id_folder}/3.{FBpp_id}_msaRepresentation.jpg'
+    fig_segmentation = f'/data/{id_folder}/9.{FBpp_id}_SegProfile.png'
+
+    # Validate existence of files
+    for file_path in [image_url_1, pdb_url_1, fig_msarep, fig_segmentation]:
+        if not os.path.exists(file_path.replace('/data/', DATA)):
+            return HttpResponse(f"File not found: {file_path}")
+
+    return render(request, 'browser/results.html', {
+        'heatmap_html': heatmap_html,
+        'query': id_folder,
+        'prot_name': FBpp_id,
+        'image_url_1': image_url_1,
+        'pdb_url_1': pdb_url_1,
+        'fig_msarep': fig_msarep,
+        'fig_segmentation': fig_segmentation,
+    })
+
 
 def results_view(request):
     prot_name = request.GET.get('q').lower()
