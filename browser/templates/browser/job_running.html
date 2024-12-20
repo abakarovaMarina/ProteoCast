@@ -1,58 +1,21 @@
+<!-- job_running.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta http-equiv="refresh" content="5"> <!-- Actualizar la página cada 5 segundos -->
     <title>Job Running</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/general.css' %}">
-    <style>
-        body {
-            font-family: 'Montserrat', sans-serif;
-            line-height: 1.5;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f8f9fa;
-        }
-
-        h1 {
-            color: #007bff;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        p {
-            text-align: center;
-            font-size: 1.2em;
-            margin-top: 10px;
-        }
-
-        #uploadStatus {
-            text-align: center;
-            font-size: 1.1em;
-            color: #333;
-            margin-top: 20px;
-        }
-    </style>
     <script>
         function checkJobStatus() {
             fetch("{% url 'check_job_status' %}")
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'finished') {
-                        document.getElementById('uploadStatus').innerText = 'Job Completed';
-                    } else if (data.status === 'error') {
-                        document.getElementById('uploadStatus').innerText = 'Error: ' + data.message;
+                        document.getElementById('uploadStatus').innerHTML = 'Job Completed';
                     } else {
-                        document.getElementById('uploadStatus').innerText = 'Uploading... Please wait.';
+                        document.getElementById('uploadStatus').innerHTML = 'Uploading... Please wait.';
                     }
                 })
-                .catch(error => {
-                    document.getElementById('uploadStatus').innerText = 'Error checking job status: ' + error.message;
-                });
+                .catch(error => console.error('Error checking job status:', error));
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -63,8 +26,7 @@
 </head>
 <body>
     <h1>Job running...</h1>
-    <p>Please wait, job running...</p>
-    <div id="uploadStatus">Uploading... Please wait.</div>
+    <p>Please wait, job running</p>
+    <div id="uploadStatus">At the end of the process the results will be displayed.</div>
 </body>
 </html>
-
