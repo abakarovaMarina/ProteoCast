@@ -21,6 +21,7 @@ import uuid
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 
+global job_id
 
 def check_job_status(request):
 #    job_id = request.GET.get('job_id')
@@ -98,7 +99,7 @@ def handle_upload(request, uploaded_file):
         new_folder_path = '/data/jobs/' + prot_name
         os.rename(folder_path, new_folder_path)
         os.chdir(new_folder_path)
-
+        job_id = prot_name
         run_docker_script = os.path.join(new_folder_path, 'run_docker.sh')
         with open(run_docker_script, 'w') as script:
             script.write(f"""#!/bin/bash
