@@ -178,89 +178,88 @@
 
         <div class="row">
             <div class="col">
-                <h2>GMM profile</h2>
-                <p>To better interpret mutational landscapes, we use a Gaussian Mixture Model (GMM) to cluster mutation effect scores into distinct categories, such as tolerant, intermediate, and sensitive mutations. The GMM identifies patterns in the distribution of mutational effects by modeling the data as a mixture of Gaussian distributions</p>
-                {% if image_url_1 %}
-                <div class="image-container">
-                    <img src="{{ image_url_1 }}" alt="GMM" class="result-image">
-                </div>
-                {% endif %}
-            </div>
-            <div class="col">
-                <h2>MSA Representation</h2>
+                <h2>Input Alignment</h2>
                 {% if fig_msarep %}
                 <div class="image-container">
                     <img src="{{ fig_msarep }}" alt="MSA Representation" class="result-image">
                 </div>
                 {% endif %}
             </div>
-        </div>
 
-        
-
-        <h2 style="text-align: center; margin-top: 40px;">3D Protein Structure</h2>
-        <div id="myViewer"></div>
-        <button id="colorBFactorBtn">Color by B-Factors</button>
-
-        <script>
-            var viewerInstance = new PDBeMolstarPlugin();            
-            var options = {
-                customData: {
-                    url: "{{ pdb_url_1 }}", // Dynamically set PDB URL from Django context
-                    format: 'pdb'
-                },
-                alphafoldView: true,
-                bgColor: { r: 255, g: 255, b: 255 },
-                hideCanvasControls: ['selection', 'animation', 'controlToggle', 'controlInfo'],
-                layoutIsExpanded: false
-            };
-
-            var viewerContainer = document.getElementById('myViewer');
-            viewerInstance.render(viewerContainer, options);
-
-            // Function to apply coloring based on B-factor
-            function applyBFactorColoring() {
-                viewerInstance.visual.setColor({
-                    color: {
-                      name: 'bfactor',
-                      params: {
-                          list: [
-                              { value: 30, color: { r: 0, g: 0, b: 255 } },   
-                              { value: 40, color: { r: 255, g: 255, b: 255 } },
-                              { value: 50, color: { r: 255, g: 0, b: 0 } }  
-                          ],
-                          min: 30,  
-                          max: 50 
-                      }
-                    }
-                });
-            };
-            // Add click event to the button
-            document.getElementById('colorBFactorBtn').addEventListener('click', function() {
-                applyBFactorColoring();
-            });
-
-            // Optional: Log to console when structure is loaded
-            viewerInstance.events.loadComplete.subscribe(() => {
-                console.log("Structure loaded! Click the button to color by B-factors.");
-            });
-        </script>
-
-        <div class="results-containerseg">
-            <div class="images-flex-container">
-                <h2>Segmentation profile</h2>
-                <p>To better interpret mutational landscapes, we use a Gaussian Mixture Model (GMM) to cluster mutation effect scores into distinct categories, such as tolerant, intermediate, and sensitive mutations. The GMM identifies patterns in the distribution of mutational effects by modeling the data as a mixture of Gaussian distributions</p>
-                {% if fig_segmentation %}
+            <div class="col">
+                <h2>Predicted Score Distribution</h2>
+                {% if image_url_1 %}
                 <div class="image-container">
-                    <img src="{{ fig_segmentation }}" alt="Segmentation" class="result-image">
+                    <img src="{{ image_url_1 }}" alt="GMM" class="result-image">
                 </div>
                 {% endif %}
             </div>
+            
+        </div>
+
+        
+        <div class="row"> 
+            <h2>Structure</h2>
+            <div id="myViewer"></div>
+            <button id="colorBFactorBtn">Color by B-Factors</button>
+        </div>
+
+        <div class="row"> 
+            <h2>Segmentation profile</h2>
+            {% if fig_segmentation %}
+            <div class="image-container">
+                <img src="{{ fig_segmentation }}" alt="Segmentation" class="result-image">
+            </div>
+            {% endif %}
+        </div>
             
     </div>
 
     <footer>
         <p>ProteoCast - This website is free and open to all users and there is no login requirement.</p>
     </footer>
+    <script>
+        var viewerInstance = new PDBeMolstarPlugin();            
+        var options = {
+            customData: {
+                url: "{{ pdb_url_1 }}", // Dynamically set PDB URL from Django context
+                format: 'pdb'
+            },
+            alphafoldView: true,
+            bgColor: { r: 255, g: 255, b: 255 },
+            hideCanvasControls: ['selection', 'animation', 'controlToggle', 'controlInfo'],
+            layoutIsExpanded: false
+        };
+    
+        var viewerContainer = document.getElementById('myViewer');
+        viewerInstance.render(viewerContainer, options);
+    
+        // Function to apply coloring based on B-factor
+        function applyBFactorColoring() {
+            viewerInstance.visual.setColor({
+                color: {
+                  name: 'bfactor',
+                  params: {
+                      list: [
+                          { value: 30, color: { r: 0, g: 0, b: 255 } },   
+                          { value: 40, color: { r: 255, g: 255, b: 255 } },
+                          { value: 50, color: { r: 255, g: 0, b: 0 } }  
+                      ],
+                      min: 30,  
+                      max: 50 
+                  }
+                }
+            });
+        };
+        // Add click event to the button
+        document.getElementById('colorBFactorBtn').addEventListener('click', function() {
+            applyBFactorColoring();
+        });
+    
+        // Optional: Log to console when structure is loaded
+        viewerInstance.events.loadComplete.subscribe(() => {
+            console.log("Structure loaded! Click the button to color by B-factors.");
+        });
+    </script>
 </body>
 </html>
