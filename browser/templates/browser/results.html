@@ -11,135 +11,94 @@
     <link rel="stylesheet" type="text/css" href="https://www.ebi.ac.uk/pdbe/pdb-component-library/css/pdbe-molstar-3.1.0.css">
     <script type="text/javascript" src="https://www.ebi.ac.uk/pdbe/pdb-component-library/js/pdbe-molstar-plugin-3.1.0.js"></script>
 
-    <!-- CSS personalizadas -->
-    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
-    <link crossorigin="anonymous" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
-
     <style>
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-        }
-        .main-content, header {
-            width: 100%;
-        }
-        #myViewer {
-            width: 100%;
-            height: 450px;
-            border: 1px solid #ddd;
-            margin: 20px 0;
-        }
+        body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; }
+        #myViewer { width: 100%; height: 450px; border: 1px solid #ddd; margin: 20px auto; }
         button {
-            margin: 10px;
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            margin: 10px; padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;
         }
-        button:hover {
-            background-color: #0056b3;
-        }
+        button:hover { background-color: #0056b3; }
+        .log-container { margin: 10px; background-color: #f1f1f1; padding: 10px; border-radius: 5px; overflow: auto; }
+        h1 { text-align: center; }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <h1>ProteoCast for {{ prot_name }}</h1>
-    </header>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <div id="myViewer"></div>
-        <button id="colorBFactorBtn">Color by B-Factors</button>
-        <button id="testColorBtn">Test Simple Coloring</button>
+    <h1>Debugging PDBeMolstar Plugin</h1>
+    <div id="myViewer"></div>
+    <div style="text-align: center;">
+        <button id="reloadViewerBtn">Reload Structure</button>
+        <button id="checkDataBtn">Check Structure Data</button>
+    </div>
+    <div class="log-container" id="logContainer">
+        <h4>Debug Logs:</h4>
+        <pre id="debugLogs"></pre>
     </div>
 
-    <!-- Script -->
     <script>
-        // Initialisation du viewer
-        var viewerInstance = new PDBeMolstarPlugin();
-        console.log("Initializing viewer instance...", viewerInstance);
+        let viewerInstance;
 
-        var options = {
-            customData: {
-                url: "{{ pdb_url_1 }}", // URL dynamique pour le fichier PDB
-                format: 'pdb'
-            },
-            alphafoldView: true,
-            bgColor: { r: 255, g: 255, b: 255 }
-        };
-
-        // Rendu du viewer
-        var viewerContainer = document.getElementById('myViewer');
-        viewerInstance.render(viewerContainer, options);
-
-        viewerInstance.events.loadComplete.subscribe(() => {
-            console.log("Structure loaded successfully!");
-            console.log("Loaded structure:", viewerInstance.structure);
-        });
-
-        // Test de coloration par B-Factors
-        function applyBFactorColoring() {
-            console.log("Attempting B-factor coloring...");
-            try {
-                viewerInstance.visual.update({
-                    structure: {
-                        theme: {
-                            name: 'atom-bfactor', // Thème B-factor corrigé
-                            params: {
-                                domain: [0, 100],
-                                colors: [
-                                    { value: 0, color: { r: 0, g: 0, b: 255 } },   // Bleu
-                                    { value: 50, color: { r: 255, g: 255, b: 255 } }, // Blanc
-                                    { value: 100, color: { r: 255, g: 0, b: 0 } }  // Rouge
-                                ]
-                            }
-                        }
-                    }
-                });
-                console.log("B-factor coloring applied successfully.");
-            } catch (error) {
-                console.error("Error applying B-factor coloring:", error);
-            }
+        // Fonction pour afficher les logs
+        function logMessage(message) {
+            const logContainer = document.getElementById("debugLogs");
+            logContainer.textContent += `${message}\n`;
+            console.log(message);
         }
 
-        // Test de coloration simple (éléments chimiques)
-        function applyTestColoring() {
-            console.log("Applying simple test coloring...");
-            try {
-                viewerInstance.visual.update({
-                    structure: {
-                        theme: {
-                            name: 'element-symbol',
-                            params: {}
-                        }
-                    }
-                });
-                console.log("Simple test coloring applied successfully.");
-            } catch (error) {
-                console.error("Error applying simple test coloring:", error);
-            }
+        // Fonction pour initialiser le viewer
+        function initializeViewer() {
+            viewerInstance = new PDBeMolstarPlugin();
+            const viewerContainer = document.getElementById('myViewer');
+
+            logMessage("Initializing viewer...");
+
+            viewerInstance.render(viewerContainer, {
+                customData: {
+                    url: "{{ pdb_url_1 }}", // URL dynamique de la structure
+                    format: 'pdb'
+                },
+                alphafoldView: true,
+                bgColor: { r: 255, g: 255, b: 255 }
+            });
+
+            viewerInstance.events.loadComplete.subscribe(() => {
+                logMessage("Structure loaded successfully.");
+                checkStructureData();
+            });
+
+            viewerInstance.events.loadError.subscribe((error) => {
+                logMessage(`Error loading structure: ${error}`);
+            });
         }
 
-        // Vérification des données après chargement
-        viewerInstance.events.loadComplete.subscribe(() => {
-            console.log("Checking B-factor data...");
-            const structure = viewerInstance.structure;
-            if (structure && structure.atoms) {
-                console.log("B-factors available:", structure.atoms.bfactor || "No B-factor data found.");
+        // Fonction pour vérifier les données de la structure
+        function checkStructureData() {
+            if (viewerInstance && viewerInstance.structure) {
+                const structure = viewerInstance.structure;
+                logMessage("Checking structure data...");
+                logMessage(JSON.stringify(structure, null, 2));
+
+                if (structure.atoms && structure.atoms.bfactor) {
+                    logMessage(`B-factors detected: ${JSON.stringify(structure.atoms.bfactor)}`);
+                } else {
+                    logMessage("No B-factor data found in the structure.");
+                }
             } else {
-                console.warn("Structure data not loaded correctly.");
+                logMessage("Structure data not loaded correctly.");
             }
+        }
+
+        // Écouteurs pour les boutons
+        document.getElementById('reloadViewerBtn').addEventListener('click', () => {
+            logMessage("Reloading structure...");
+            document.getElementById('myViewer').innerHTML = ""; // Réinitialiser le conteneur
+            initializeViewer();
         });
 
-        // Ajout des événements aux boutons
-        document.getElementById('colorBFactorBtn').addEventListener('click', applyBFactorColoring);
-        document.getElementById('testColorBtn').addEventListener('click', applyTestColoring);
+        document.getElementById('checkDataBtn').addEventListener('click', checkStructureData);
+
+        // Initialisation au chargement
+        window.onload = initializeViewer;
     </script>
 </body>
 </html>
