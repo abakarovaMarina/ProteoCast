@@ -164,10 +164,9 @@
 
     <div class="container-fluid" style="width:95%;">
         <div class="row">
+            <h2>Mutational Landscape</h2>
             {% if heatmap_html %}
             <div class="heatmap">
-                <h2>Mutational Landscape</h2>
-                <p>The following matrix represents the predicted effects of all possible mutations (rows) at each position (columns) of a protein sequence</p>
                 {{ heatmap_html|safe }}
             </div>
             {% else %}
