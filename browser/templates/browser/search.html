@@ -123,17 +123,15 @@
         </div>
     </header>
 
-
-   
     <div class="upload-section">
         <form id="uploadForm" action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="file" name="file" id="fileInput" accept=".a3m,.fasta" required>
-            <button type="submit">Upload MSA File</button>
             <div style="margin-top: 10px;">
                 <input type="checkbox" id="uniprotCode" name="uniprotCode">
                 <label for="uniprotCode">Is this a UniProt code?</label>
             </div>
+            <button type="submit" class="example-button">Upload MSA File</button>
         </form>
         <div id="loading" style="display: none;">Uploading... Please wait.</div>
         <div id="uploadStatus"></div>
@@ -143,11 +141,12 @@
         <form id="uploadPDBForm" action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="file" name="pdbFile" id="pdbFileInput" accept=".pdb" required>
-            <button type="submit">Upload PDB Structure</button>
+            <button type="submit" class="example-button">Upload PDB Structure</button>
         </form>
         <div id="pdbLoading" style="display: none;">Uploading... Please wait.</div>
         <div id="pdbUploadStatus"></div>
-    </div>
+        </div>
+   
     
     <script>
     document.getElementById("uploadForm").addEventListener("submit", async function (e) {

@@ -10,7 +10,7 @@ urlpatterns = [
     path('data/<str:folder>/<str:filename>/', serve_file, name='serve_file'),
     path('download_folder/<str:fbpp_id>/', download_folder, name='download_folder'),
     path('upload_file/', upload_file, name='upload_file'),
-    path('job_running/<str:job_id>/', job_running, name='job_running'),
+    path('job_running/', job_running, name='job_running'),
     path('check_job_status/', check_job_status, name='check_job_status'), 
 
 ]

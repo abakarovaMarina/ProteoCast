@@ -21,9 +21,11 @@ import uuid
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 
+global job_id
+job_id = ''
 
 def check_job_status(request):
-    job_id = request.GET.get('job_id')
+    #job_id = request.GET.get('job_id')
     if not job_id:
         return JsonResponse({'status': 'error', 'message': 'Job ID not provided.'}, status=400)
 
@@ -36,14 +38,12 @@ def check_job_status(request):
         with open(job_status_path, 'r') as status_file:
             status = status_file.read().strip()
             if not status:
-                return JsonResponse({'status': 'in_progress'}, status=200)  
+                return JsonResponse({'status': 'in_progress'}, status=200)  # No status implies the job is still running
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
-    if 'finished' in status:
-        return JsonResponse({'status': 'finished', 'redirect_url': '/results_job/?job_id=' + job_id}, status=200)
-
     return JsonResponse({'status': status})
+
 
 def contact_us(request):
     return render(request, 'browser/contact_us.html')
@@ -60,8 +60,8 @@ def search_view(request):
 def drosophiladb(request):
     return render(request, 'browser/drosophiladb.html')
 
-def job_running(request, job_id):
-    return render(request, 'browser/job_running.html', {'job_id': job_id})
+def job_running(request):
+    return render(request, 'browser/job_running.html')
 
 
 #DATA = 'browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
@@ -95,6 +95,7 @@ def handle_upload(request, uploaded_file):
         with open(file_path, 'r') as file:
             first_line = file.readline().strip()
         prot_name = first_line.lstrip('>')
+        job_id = prot_name
         new_folder_path = '/data/jobs/' + prot_name
         os.rename(folder_path, new_folder_path)
         os.chdir(new_folder_path)
@@ -133,15 +134,15 @@ def serve_file(request, folder, filename):
     else:
         return HttpResponse(f"File not found: {filename}", status=404)
 
-
+DATA_job = '/data/jobs/'
 def results_job(request):
     job_id = request.GET.get('job_id')
-    DATA = '/data/jobs/'+prot_name
+    DATA_job_path = '/data/jobs/'+prot_name
     alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y"][::-1]
     alph = [i.upper() for i in alph]
 
     ### Confidence values
-    proteocast_path = f'{DATA}{id_folder}/4.{FBpp_id}_ProteoCast.csv'
+    proteocast_path = f'{DATA_job_path}/4.{job_id}_ProteoCast.csv'
     if not os.path.exists(proteocast_path):
         return HttpResponse("ProteoCast file not found.")
 
@@ -221,16 +222,12 @@ def results_job(request):
     fig.update_yaxes(visible=False, row=2, col=1)
     heatmap_html = fig.to_html(full_html=False)
 
-    image_url_1 = f'/data/{id_folder}/6.{FBpp_id}_GMM.jpg'
-    pdb_url_1 = f'/data/{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
-    fig_msarep = f'/data/{id_folder}/3.{FBpp_id}_msaRepresentation.jpg'
-    fig_segmentation = f'/data/{id_folder}/9.{FBpp_id}_SegProfile.png'
+    image_url_1 = f'/data/jobs/{job_id}/6.{job_id}_GMM.jpg'
+    pdb_url_1 = f'/data/jobs/{job_id}/AF-Q45VV3-F1-model_v4.pdb'
+    fig_msarep = f'/data/jobs/{job_id}/3.{job_id}_msaRepresentation.jpg'
+    fig_segmentation = f'/data/jobs/{job_id}/9.{job_id}_SegProfile.png'
 
     # Validate existence of files
-    for file_path in [image_url_1, pdb_url_1, fig_msarep, fig_segmentation]:
-        if not os.path.exists(file_path.replace('/data/', DATA)):
-            return HttpResponse(f"File not found: {file_path}")
-
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
         'query': id_folder,

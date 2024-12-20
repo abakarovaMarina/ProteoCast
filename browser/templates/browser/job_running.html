@@ -1,4 +1,4 @@
-{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,35 +40,32 @@
     </style>
     <script>
         function checkJobStatus() {
-            const jobId = new URLSearchParams(window.location.search).get('job_id');
-            fetch("{% url 'check_job_status' %}?job_id=" + jobId)
+            fetch("{% url 'check_job_status' %}")
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'finished') {
-                        // Redireccionar a la función de resultados
-                        window.location.href = data.redirect_url;
-                    } else if (data.status === 'in_progress') {
-                        document.getElementById('uploadStatus').innerText = 'At the end of the process the results will be displayed';
-                    } else if (data.status === 'not_found') {
-                        document.getElementById('uploadStatus').innerText = 'Job not finished';
+                        document.getElementById('uploadStatus').innerText = 'Job Completed';
                     } else if (data.status === 'error') {
-                        document.getElementById('uploadStatus').innerText = `Error: ${data.message}`;
+                        document.getElementById('uploadStatus').innerText = 'Error: ' + data.message;
                     } else {
-                        document.getElementById('uploadStatus').innerText = 'An unknown error occurred.';
+                        document.getElementById('uploadStatus').innerText = 'At the end of the process the results will be displayed';
                     }
                 })
-                .catch(error => console.error('Error checking job status:', error));
+                .catch(error => {
+                    document.getElementById('uploadStatus').innerText = 'Error checking job status: ' + error.message;
+                });
         }
 
         document.addEventListener('DOMContentLoaded', function () {
             checkJobStatus();
+            setInterval(checkJobStatus, 5000); // Revisa el estado cada 5 segundos
         });
     </script>
 </head>
 <body>
     <h1>Job running...</h1>
     <p>Please wait, job running...</p>
-    <div id="uploadStatus">At the end of the process the results will be displayed</div>
+    <div id="uploadStatus">At the end of the process the results will be displayed.</div>
 </body>
 </html>
 
