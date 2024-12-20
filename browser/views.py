@@ -1,4 +1,4 @@
-from django.urls import reverse
+çfrom django.urls import reverse
 from django.shortcuts import redirect
 import os
 import pandas as pd
@@ -40,7 +40,7 @@ def check_job_status(request):
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
-    if 'finished' in status:
+    if status == 'finished':
         return JsonResponse({'status': 'finished', 'redirect_url': f'/results_job/?job_id={job_id}'}, status=200)
 
     return JsonResponse({'status': status})
