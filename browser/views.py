@@ -135,7 +135,7 @@ def serve_file(request, folder, filename):
 
 
 def results_job(request):
-    prot_name = request.GET.get('q').lower()
+    job_id = request.GET.get('job_id')
     DATA = '/data/jobs/'+prot_name
     alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y"][::-1]
     alph = [i.upper() for i in alph]
