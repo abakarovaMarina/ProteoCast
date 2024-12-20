@@ -122,7 +122,7 @@
             </div>
         </div>
     </header>
-
+    <div class="container-fluid" style="width:95%;">
     <div class="upload-section">
         <form id="uploadForm" action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
@@ -203,6 +203,7 @@
     <div class="row">
     <div class="figure-container" style="margin-top: 20px;">
         <img src="{% static 'browser/images/fig_search_server.png' %}" alt="Search and Server GIF" style="width: 100%; height: auto;">
+    </div>
     </div>
     </div>
     <footer>
