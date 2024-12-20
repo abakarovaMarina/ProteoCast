@@ -70,36 +70,40 @@ DATA = '/data/Drosophila_ProteoCast/'
 @csrf_exempt
 def upload_file(request):
     if request.method == 'POST':
-        if 'file' in request.FILES:
-            uploaded_file = request.FILES['file']
-            return handle_upload(request, uploaded_file)
-        #elif 'pdbFile' in request.FILES:
-        #    pdb_file = request.FILES['pdbFile']
-        #    return handle_pdb_upload(request, pdb_file)
-    
+        uploaded_file = request.FILES.get('file')
+        if not uploaded_file:
+            return JsonResponse({'error': 'No file uploaded'}, status=400)
+
+        return handle_upload(request, uploaded_file)
+
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def handle_upload(request, uploaded_file):
-    now = datetime.now()
-    job_id = now.strftime('%Y-%m-%d_%H-%M-%S')
-    folder_path = os.path.join('/data/jobs/', job_id)
-    os.makedirs(folder_path, mode=0o755, exist_ok=True)
-
-    file_path = os.path.join(folder_path, uploaded_file.name)
-
     try:
+        now = datetime.now()
+        job_id = now.strftime('%Y-%m-%d_%H-%M-%S')
+        folder_path = os.path.join('/data/jobs/', job_id)
+        os.makedirs(folder_path, mode=0o755, exist_ok=True)
+
+        file_path = os.path.join(folder_path, uploaded_file.name)
+
+        # Guardar el archivo subido
         with open(file_path, 'wb+') as destination:
             for chunk in uploaded_file.chunks():
                 destination.write(chunk)
 
+        # Leer la primera línea del archivo para obtener 'prot_name'
         with open(file_path, 'r') as file:
             first_line = file.readline().strip()
         prot_name = first_line.lstrip('>')
-        job_id = prot_name
+        if not prot_name:
+            raise ValueError('Invalid file format: Missing prot_name.')
+
         new_folder_path = '/data/jobs/' + prot_name
         os.rename(folder_path, new_folder_path)
         os.chdir(new_folder_path)
 
+        # Crear el script de Docker
         run_docker_script = os.path.join(new_folder_path, 'run_docker.sh')
         with open(run_docker_script, 'w') as script:
             script.write(f"""#!/bin/bash
@@ -117,22 +121,15 @@ docker run --rm -v "/data/jobs/{prot_name}:/opt/job" elodielaine/gemme:gemme /bi
         os.chmod(run_docker_script, 0o755)
         subprocess.run(['sbatch', run_docker_script], check=True)
 
+        # Establecer estado de la tarea
         job_status_path = os.path.join(new_folder_path, 'status.txt')
         with open(job_status_path, 'w') as status_file:
             status_file.write('in_progress')
 
-        return JsonResponse({'redirect_url': '{% url "job_running" %}'})
+        return JsonResponse({'redirect_url': '/job_running/'})
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-
-def serve_file(request, folder, filename):
-    file_path = os.path.join(DATA, folder, filename)
-    if os.path.exists(file_path):
-        response = FileResponse(open(file_path, 'rb'))
-        return response
-    else:
-        return HttpResponse(f"File not found: {filename}", status=404)
 
 DATA_job = '/data/jobs/'
 def results_job(request):
