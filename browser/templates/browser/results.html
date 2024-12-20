@@ -171,16 +171,15 @@
             </div>
         </div>
 
-                <!-- Molstar Viewer Container -->
+        <!-- Molstar Viewer Container -->
         <div id="myViewer" style="margin-left: 2cm;"></div>
+
         <!-- Add a button to toggle B-factor coloring -->
         <button id="colorBFactorBtn" style="margin-top: 10px;">Color by B-Factors</button>
 
         <script>
-            // Initialize the viewer
             var viewerInstance = new PDBeMolstarPlugin();
 
-            // Viewer options
             var options = {
                 customData: {
                     url: "{{ pdb_url_1 }}", // Dynamically set PDB URL from Django context
@@ -192,19 +191,16 @@
                 layoutIsExpanded: false
             };
 
-            // Get the viewer container and render the structure
             var viewerContainer = document.getElementById('myViewer');
             viewerInstance.render(viewerContainer, options);
 
             // Function to apply coloring based on B-factor
             function applyBFactorColoring() {
-                viewerInstance.visual.applyTheme({
-                    globalName: 'custom',
-                    globalParams: {
-                        property: 'B-factor',
-                        legend: {
-                            min: 0,
-                            max: 100,
+                viewerInstance.visual.updateTheme({
+                    structure: {
+                        name: 'bfactor', // Use 'bfactor' as the coloring theme
+                        params: {
+                            domain: [0, 100], // Specify the range of B-factor values
                             list: [
                                 { value: 0, color: { r: 0, g: 0, b: 255 } },   // Blue for minimum
                                 { value: 50, color: { r: 255, g: 255, b: 255 } }, // White for middle
@@ -225,6 +221,7 @@
                 console.log("Structure loaded! Click the button to color by B-factors.");
             });
         </script>
+
 
 
         <div class="results-container">
