@@ -73,9 +73,9 @@ def upload_file(request):
         if 'file' in request.FILES:
             uploaded_file = request.FILES['file']
             return handle_upload(request, uploaded_file)
-        elif 'pdbFile' in request.FILES:
-            pdb_file = request.FILES['pdbFile']
-            return handle_pdb_upload(request, pdb_file)
+        #elif 'pdbFile' in request.FILES:
+        #    pdb_file = request.FILES['pdbFile']
+        #    return handle_pdb_upload(request, pdb_file)
     
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
