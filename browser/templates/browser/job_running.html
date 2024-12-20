@@ -1,14 +1,70 @@
-<!-- job_running.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta http-equiv="refresh" content="5"> <!-- Actualizar la página cada 5 segundos -->
     <title>Job Running</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/general.css' %}">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            color: #007bff;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        p {
+            text-align: center;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        #uploadStatus {
+            text-align: center;
+            font-size: 1.1em;
+            color: #333;
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        function checkJobStatus() {
+            fetch("{% url 'check_job_status' %}")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'finished') {
+                        document.getElementById('uploadStatus').innerText = 'Job Completed';
+                    } else if (data.status === 'error') {
+                        document.getElementById('uploadStatus').innerText = 'Error: ' + data.message;
+                    } else {
+                        document.getElementById('uploadStatus').innerText = 'Uploading... Please wait.';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('uploadStatus').innerText = 'Error checking job status: ' + error.message;
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            checkJobStatus();
+            setInterval(checkJobStatus, 5000); // Revisa el estado cada 5 segundos
+        });
+    </script>
 </head>
 <body>
-    <h1>Jon Running</h1>
-    <p>Please wait, the job is runnig...</p>
-
+    <h1>Job running...</h1>
+    <p>Please wait, job running...</p>
+    <div id="uploadStatus">Uploading... Please wait.</div>
 </body>
 </html>
 
