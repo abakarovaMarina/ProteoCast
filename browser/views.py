@@ -26,7 +26,7 @@ def check_job_status(request):
     if not job_id:
         return JsonResponse({'status': 'error', 'message': 'Job ID not provided.'}, status=400)
 
-    job_status_path = os.path.join('data', 'jobs', job_id, 'status.txt')
+    job_status_path = os.path.join('/data/jobs', job_id, 'status.txt')
 
     if not os.path.exists(job_status_path):
         return JsonResponse({'status': 'not_found'}, status=404)
@@ -35,12 +35,12 @@ def check_job_status(request):
         with open(job_status_path, 'r') as status_file:
             status = status_file.read().strip()
             if not status:
-                return JsonResponse({'status': 'in_progress'}, status=200)  
+                return JsonResponse({'status': 'in_progress'}, status=200)
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
     if 'finished' in status:
-        return JsonResponse({'status': 'finished', 'redirect_url': '/results_job/?job_id=' + job_id}, status=200)
+        return JsonResponse({'status': 'finished', 'redirect_url': f'/results_job/?job_id={job_id}'}, status=200)
 
     return JsonResponse({'status': status})
 
@@ -72,9 +72,6 @@ def upload_file(request):
         if 'file' in request.FILES:
             uploaded_file = request.FILES['file']
             return handle_upload(request, uploaded_file)
-        elif 'pdbFile' in request.FILES:
-            pdb_file = request.FILES['pdbFile']
-            return handle_pdb_upload(request, pdb_file)
     
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
@@ -97,7 +94,8 @@ def handle_upload(request, uploaded_file):
         new_folder_path = '/data/jobs/' + prot_name
         os.rename(folder_path, new_folder_path)
         os.chdir(new_folder_path)
-        job_id = prot_name
+        job_id = prot_name  # Actualiza el job_id con el nuevo nombre
+
         run_docker_script = os.path.join(new_folder_path, 'run_docker.sh')
         with open(run_docker_script, 'w') as script:
             script.write(f"""#!/bin/bash
@@ -111,18 +109,20 @@ def handle_upload(request, uploaded_file):
 #SBATCH --output=slurm_%j.out
 
 docker run --rm -v "/data/jobs/{prot_name}:/opt/job" elodielaine/gemme:gemme /bin/bash -c "cd / && bash run.sh {uploaded_file.name}"
-                            """)
+""")
         os.chmod(run_docker_script, 0o755)
+
         subprocess.run(['sbatch', run_docker_script], check=True)
 
         job_status_path = os.path.join(new_folder_path, 'status.txt')
         with open(job_status_path, 'w') as status_file:
             status_file.write('in_progress')
 
-        return JsonResponse({'redirect_url': '/job_running/' + job_id})
+        return JsonResponse({'redirect_url': f'/job_running/{job_id}'})
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
 
 def serve_file(request, folder, filename):
     file_path = os.path.join(DATA, folder, filename)
