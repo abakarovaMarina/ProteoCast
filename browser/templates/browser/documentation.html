@@ -24,8 +24,8 @@
         <p>The 
           <b>ProteoCast Server</b> allows you to rapidly and easily explore how missense mutations can functionaly affect proteins. ProteoCast primary source of information are the protein
   sequence alignements used by
-          GEMME (<a href="https://www.ensembl.org/index.htmlhttps://academic.oup.com/mbe/article/36/11/2604/5548199">Laine et al., 2019</a>) running in the  
-          pipeline described in (<a href="https://github.com/PhyloSofS-Team/thoraxehttps://academic.oup.com/gbe/article/15/11/evad201/7344676">Abakarova et al., 2023</a>).
+          GEMME (<a href="https://academic.oup.com/mbe/article/36/11/2604/5548199" target="_blank">Laine et al., 2019</a>) running in the  
+          pipeline described in (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676" target="_blank">Abakarova et al., 2023</a>).
           
      <!--   <p>For a quick start, you can see our 
           <a href="https://youtu.be/k44U0WNwzC4">YouTube tutorial</a>:</p>
@@ -36,9 +36,9 @@
         <p> You want to know more, collaborate, or you encounter a problem with the server? Please feel free to 
           <a href="mailto: elodie.laine@sorbonne-universite.fr">contact us</a>!</p>
         <h3> Input </h3>
-        <p> Please provide your Multiple Sequence Alignement using <a href = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb">CollabFold</a>. 
+        <p> Please provide your Multiple Sequence Alignement using <a href = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"  target="_blank">CollabFold</a>. 
           Optionally, you can provide <i>Uniprot ID</i> (e.g. P07643) or upload a PDB file for mapping ProteoCast predictions onto the 3D model of the protein.
-  Ideally, 100 or more sequences should be used for the MSA to allow relevant predictions (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676">Abakarova et al., 2023</a>).</p>
+  Ideally, 100 or more sequences should be used for the MSA to allow relevant predictions (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676" target="_blank">Abakarova et al., 2023</a>).</p>
         
         <h3> Output </h3>
         <p>Please check our example 
@@ -59,7 +59,7 @@
   <p></p>
         <h4>Raw Predicted Score distributions</h4>
         <p> To systematically and automatically evaluate the agreement between our evolutionary-based mutational effect estimates 
-          and the known annotations, we classified all variants into three categories: <span style="color: red">impactful</span>, <span style="color: rgb(209, 126, 140)">uncertain</span> or <span style="color: rgb(18, 176, 224)">neutral</span>. We achieved 
+          and the known annotations, we classified all variants into three categories: <span style="color: #D19190">impactful</span>, <span style="color: #B39ABA">uncertain</span> or <span style="color: #92A3CE">neutral</span>. We achieved 
           this by fitting a mixture of three Gaussians to GEMME predicted score distribution using the expectation-maximization 
           algorithm. This Gaussian Mixture Model (GMM) was used to tailor the classification of each protein’s individual mutational landscape. To minimize biases, we discarded low-confidence predictions.
   </p>
