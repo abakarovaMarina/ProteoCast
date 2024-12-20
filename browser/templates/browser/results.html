@@ -214,58 +214,55 @@
             </div>
          
             <div id="myViewer"></div>
+            <script>
+                var viewerInsproteotance = new PDBeMolstarPlugin();            
+                var options = {
+                    customData: {
+                        url: "{{ pdb_url_1 }}", // Dynamically set PDB URL from Django context
+                        format: 'pdb'
+                    },
+                    alphafoldView: true,
+                    bgColor: { r: 255, g: 255, b: 255 },
+                    hideCanvasControls: ['selection', 'animation', 'controlToggle', 'controlInfo'],
+                    layoutIsExpanded: false
+                };
+            
+                var viewerContainer = document.getElementById('myViewer');
+                viewerInstance.render(viewerContainer, options);
+            
+                // Function to apply coloring based on B-factor
+                function applyBFactorColoring() {
+                    viewerInstance.visual.setColor({
+                        color: {
+                          name: 'bfactor',
+                          params: {
+                              list: [
+                                  { value: 30, color: { r: 0, g: 0, b: 255 } },   
+                                  { value: 40, color: { r: 255, g: 255, b: 255 } },
+                                  { value: 50, color: { r: 255, g: 0, b: 0 } }  
+                              ],
+                              min: 30,  
+                              max: 50 
+                          }
+                        }
+                    });
+                };
+                // Add click event to the button
+                document.getElementById('colorBFactorBtn').addEventListener('click', function() {
+                    applyBFactorColoring();
+                });
+            
+                // Optional: Log to console when structure is loaded
+                viewerInstance.events.loadComplete.subscribe(() => {
+                    console.log("Structure loaded! Click the button to color by B-factors.");
+                });
+            </script>
             </div>
 
             <div class="col"> 
             <button id="colorBFactorBtn">Color by B-Factors</button>
             </div>
         </div>
-
-    
-
-        <script>
-            var viewerInsproteotance = new PDBeMolstarPlugin();            
-            var options = {
-                customData: {
-                    url: "{{ pdb_url_1 }}", // Dynamically set PDB URL from Django context
-                    format: 'pdb'
-                },
-                alphafoldView: true,
-                bgColor: { r: 255, g: 255, b: 255 },
-                hideCanvasControls: ['selection', 'animation', 'controlToggle', 'controlInfo'],
-                layoutIsExpanded: false
-            };
-        
-            var viewerContainer = document.getElementById('myViewer');
-            viewerInstance.render(viewerContainer, options);
-        
-            // Function to apply coloring based on B-factor
-            function applyBFactorColoring() {
-                viewerInstance.visual.setColor({
-                    color: {
-                      name: 'bfactor',
-                      params: {
-                          list: [
-                              { value: 30, color: { r: 0, g: 0, b: 255 } },   
-                              { value: 40, color: { r: 255, g: 255, b: 255 } },
-                              { value: 50, color: { r: 255, g: 0, b: 0 } }  
-                          ],
-                          min: 30,  
-                          max: 50 
-                      }
-                    }
-                });
-            };
-            // Add click event to the button
-            document.getElementById('colorBFactorBtn').addEventListener('click', function() {
-                applyBFactorColoring();
-            });
-        
-            // Optional: Log to console when structure is loaded
-            viewerInstance.events.loadComplete.subscribe(() => {
-                console.log("Structure loaded! Click the button to color by B-factors.");
-            });
-        </script>
     </div>
 
 
