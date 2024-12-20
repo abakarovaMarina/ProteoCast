@@ -21,8 +21,6 @@ import uuid
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 
-global job_id
-job_id = ''
 
 def check_job_status(request):
     job_id = request.GET.get('job_id')
@@ -38,12 +36,14 @@ def check_job_status(request):
         with open(job_status_path, 'r') as status_file:
             status = status_file.read().strip()
             if not status:
-                return JsonResponse({'status': 'in_progress'}, status=200)  # No status implies the job is still running
+                return JsonResponse({'status': 'in_progress'}, status=200)  
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
-    return JsonResponse({'status': status})
+    if 'finished' in status:
+        return JsonResponse({'status': 'finished', 'redirect_url': '/results_job/?job_id=' + job_id}, status=200)
 
+    return JsonResponse({'status': status})
 
 def contact_us(request):
     return render(request, 'browser/contact_us.html')
@@ -70,40 +70,35 @@ DATA = '/data/Drosophila_ProteoCast/'
 @csrf_exempt
 def upload_file(request):
     if request.method == 'POST':
-        uploaded_file = request.FILES.get('file')
-        if not uploaded_file:
-            return JsonResponse({'error': 'No file uploaded'}, status=400)
-
-        return handle_upload(request, uploaded_file)
-
+        if 'file' in request.FILES:
+            uploaded_file = request.FILES['file']
+            return handle_upload(request, uploaded_file)
+        elif 'pdbFile' in request.FILES:
+            pdb_file = request.FILES['pdbFile']
+            return handle_pdb_upload(request, pdb_file)
+    
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def handle_upload(request, uploaded_file):
+    now = datetime.now()
+    job_id = now.strftime('%Y-%m-%d_%H-%M-%S')
+    folder_path = os.path.join('/data/jobs/', job_id)
+    os.makedirs(folder_path, mode=0o755, exist_ok=True)
+
+    file_path = os.path.join(folder_path, uploaded_file.name)
+
     try:
-        now = datetime.now()
-        job_id = now.strftime('%Y-%m-%d_%H-%M-%S')
-        folder_path = os.path.join('/data/jobs/', job_id)
-        os.makedirs(folder_path, mode=0o755, exist_ok=True)
-
-        file_path = os.path.join(folder_path, uploaded_file.name)
-
-        # Guardar el archivo subido
         with open(file_path, 'wb+') as destination:
             for chunk in uploaded_file.chunks():
                 destination.write(chunk)
 
-        # Leer la primera línea del archivo para obtener 'prot_name'
         with open(file_path, 'r') as file:
             first_line = file.readline().strip()
         prot_name = first_line.lstrip('>')
-        if not prot_name:
-            raise ValueError('Invalid file format: Missing prot_name.')
-
         new_folder_path = '/data/jobs/' + prot_name
         os.rename(folder_path, new_folder_path)
         os.chdir(new_folder_path)
 
-        # Crear el script de Docker
         run_docker_script = os.path.join(new_folder_path, 'run_docker.sh')
         with open(run_docker_script, 'w') as script:
             script.write(f"""#!/bin/bash
@@ -121,25 +116,32 @@ docker run --rm -v "/data/jobs/{prot_name}:/opt/job" elodielaine/gemme:gemme /bi
         os.chmod(run_docker_script, 0o755)
         subprocess.run(['sbatch', run_docker_script], check=True)
 
-        # Establecer estado de la tarea
         job_status_path = os.path.join(new_folder_path, 'status.txt')
         with open(job_status_path, 'w') as status_file:
             status_file.write('in_progress')
 
-        return JsonResponse({'redirect_url': '/job_running/'})
+        return JsonResponse({'redirect_url': '{% url "job_running" %}'})
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-DATA_job = '/data/jobs/'
+def serve_file(request, folder, filename):
+    file_path = os.path.join(DATA, folder, filename)
+    if os.path.exists(file_path):
+        response = FileResponse(open(file_path, 'rb'))
+        return response
+    else:
+        return HttpResponse(f"File not found: {filename}", status=404)
+
+
 def results_job(request):
     job_id = request.GET.get('job_id')
-    DATA_job_path = '/data/jobs/'+prot_name
+    DATA = '/data/jobs/'+prot_name
     alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y"][::-1]
     alph = [i.upper() for i in alph]
 
     ### Confidence values
-    proteocast_path = f'{DATA_job_path}/4.{job_id}_ProteoCast.csv'
+    proteocast_path = f'{DATA}{id_folder}/4.{FBpp_id}_ProteoCast.csv'
     if not os.path.exists(proteocast_path):
         return HttpResponse("ProteoCast file not found.")
 
@@ -219,12 +221,16 @@ def results_job(request):
     fig.update_yaxes(visible=False, row=2, col=1)
     heatmap_html = fig.to_html(full_html=False)
 
-    image_url_1 = f'/data/jobs/{job_id}/6.{job_id}_GMM.jpg'
-    pdb_url_1 = f'/data/jobs/{job_id}/AF-Q45VV3-F1-model_v4.pdb'
-    fig_msarep = f'/data/jobs/{job_id}/3.{job_id}_msaRepresentation.jpg'
-    fig_segmentation = f'/data/jobs/{job_id}/9.{job_id}_SegProfile.png'
+    image_url_1 = f'/data/{id_folder}/6.{FBpp_id}_GMM.jpg'
+    pdb_url_1 = f'/data/{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
+    fig_msarep = f'/data/{id_folder}/3.{FBpp_id}_msaRepresentation.jpg'
+    fig_segmentation = f'/data/{id_folder}/9.{FBpp_id}_SegProfile.png'
 
     # Validate existence of files
+    for file_path in [image_url_1, pdb_url_1, fig_msarep, fig_segmentation]:
+        if not os.path.exists(file_path.replace('/data/', DATA)):
+            return HttpResponse(f"File not found: {file_path}")
+
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
         'query': id_folder,
