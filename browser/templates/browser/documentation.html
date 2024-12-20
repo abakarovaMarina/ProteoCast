@@ -46,14 +46,15 @@
         <p> Ases provides a comprehensive visualization of the results with pre-tuned parameters (nodes and edges colors and
   shapes) and with clear connections between the different representations of the biological objects (graph,
   forest of trees, multiple sequence alignments, sequences, genes and tables with ids and annotations).</p>
-        <div class="text-center">
-          <img src="{% static 'browser/images/gemme_mutational_landscape_example.png' %}" id='panels' alt="mutLand" style="width: 80%; height: auto;">
-        </div>
+
         <h4>GEMME mutational landscape</h4>
         <p> This interactive graph summarizes the transcript variability observed for the query gene across the selected
   species. Each 
-          <b>transcript</b> corresponds to a path in the graph, divided into minimal building blocks called the s-exons. 
-  Each 
+          <b>square</b> corresponds to a single amino acid substitution and its predicted impact score . 
+        <div class="text-center">
+          <img src="{% static 'browser/images/gemme_mutational_landscape_example.png' %}" id='panels' alt="mutLand" style="width: 80%; height: auto;">
+        </div>
+          Each 
           <b>s-exon</b> corresponds to a node in the graph. Formally, a s-exon is defined by a multiple sequence alignment where each 
   sequence comes from a species. Upon clicking on a node in the interactive graph, you will be able to visualize the corresponding 
   sequence logo and alignment in the panel below. You can easily move the nodes around to get a clearer picture of the graph topology 
