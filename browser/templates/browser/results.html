@@ -164,7 +164,7 @@
 
     <div class="container-fluid" style="width:95%;">
         <div class="row" style="display: flex; align-items: flex-start;">
-            <div class="heatmap" style="flex: 1;">
+            <div class="heatmap" style="flex: 1; autosize: true;">
                 <h2>Mutational Landscape</h2>
                 <div class="buttons" style="margin-left: 20px;">
                     <label style="display: inline-block; margin-right: 20px;">
@@ -176,7 +176,7 @@
                         VARIANT CLASSES
                     </label>
                 </div>
-                
+                <div style="max-height: 600px; overflow-y: auto; overflow-x: auto; border: 1px solid #ddd; padding: 10px;">
                 {% if heatmap_html %}
                 <div id="heatmap_html" style="display: block;">
                     {{ heatmap_html|safe }}
