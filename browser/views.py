@@ -62,8 +62,8 @@ def job_running(request):
     return render(request, 'browser/job_running.html')
 
 
-DATA = 'browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
-#DATA = '/data/Drosophila_ProteoCast/'
+#DATA = 'browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
+DATA = '/data/Drosophila_ProteoCast/'
 
 @csrf_exempt
 def upload_file(request):
@@ -395,10 +395,10 @@ def results_view(request):
         if not os.path.exists(file_path.replace('/data/', DATA)):
             return HttpResponse(f"File not found: {file_path}")
         
-    image_url_1 = f'{DATA}{id_folder}/6.{FBpp_id}_GMM.jpg'
+    """image_url_1 = f'{DATA}{id_folder}/6.{FBpp_id}_GMM.jpg'
     pdb_url_1 = f'{DATA}{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
     fig_msarep = f'{DATA}{id_folder}/3.{FBpp_id}_msaRepresentation.jpg'
-    fig_segmentation = f'{DATA}{id_folder}/9.{FBpp_id}_SegProfile.png'
+    fig_segmentation = f'{DATA}{id_folder}/9.{FBpp_id}_SegProfile.png'"""
     
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
