@@ -310,9 +310,10 @@ def results_view(request):
     )
     heatmap_main = go.Heatmap(
         z=df.values[::-1],  # Reverse the order of rows
-        x=list(range(1, df.shape[1] + 1)),  
+        x=list(range(1, df.shape[1])),  
         y=alph,  # Reverse the order of y-axis labels
-        colorscale=px.colors.sequential.Oranges[::-1], 
+        colorscale=px.colors.sequential.Oranges[::-1],
+        showscale=False, 
         customdata=df_mut.values[::-1],  # Reverse the order of custom data
         hovertemplate=(
             "Position: %{customdata}<br>"
@@ -321,7 +322,7 @@ def results_view(request):
     )
     heatmap_classes = go.Heatmap(
         z=df_classes.values[::-1],
-        x=list(range(0, df_classes.shape[1])),
+        x=list(range(1, df_classes.shape[1])),
         y=alph,
         customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1]]),
         colorscale=variantClasses_colorscale,
@@ -340,9 +341,8 @@ def results_view(request):
     
     heatmap_confidence = go.Heatmap(
        z=confidence_values,
-       x=list(range(0, df_classes.shape[1])),  
+       x=list(range(1, df_classes.shape[1])),  
        colorscale=confidence_colorscale,
-
        showscale=False, 
        hovertemplate=(
             "%{z}<extra></extra>"
@@ -362,8 +362,8 @@ def results_view(request):
     )
     fig.add_trace(scatter_border, row=2, col=1)
     fig_VariantClasses.add_trace(scatter_border, row=2, col=1)
-    fig.update_layout(title_x=1, autosize=False, width=1500, height=600, xaxis=dict(title='Residue', tickmode="array", tickvals=list(range(0, df.shape[1]+1, 10)), ticktext=[str(i) for i in range(0, df.shape[1]+1, 10)]), yaxis=dict(title="Substituting amino acid"))
-    fig_VariantClasses.update_layout(title_x=1, autosize=False, width=1500, height=600, xaxis=dict(title='Residue', tickmode="array", tickvals=list(range(1, df.shape[1]+1, 10)), ticktext=[str(i) for i in range(1, df.shape[1]+1, 10)]), yaxis=dict(title="Substituting amino acid"))
+    fig.update_layout(title_x=1, autosize=False, width=1500, height=600, xaxis=dict(title='Residue', tickmode="array", tickvals=list(range(1, df.shape[1], 10)), ticktext=[str(i) for i in range(1, df.shape[1], 10)]), yaxis=dict(title="Substituting amino acid"))
+    fig_VariantClasses.update_layout(title_x=1, autosize=False, width=1500, height=600, xaxis=dict(title='Residue', tickmode="array", tickvals=list(range(1, df.shape[1]+1, 10)), ticktext=[str(i) for i in range(1, df.shape[1], 10)]), yaxis=dict(title="Substituting amino acid"))
 
 
     fig.update_yaxes(visible=False, row=2, col=1)
