@@ -162,20 +162,10 @@
         </div>
     </header>
 
-    <div class="container-fluid" style="width:95%;">
-        <div class="row">
-            <h2>Mutational Landscape</h2>
-            <div class="buttons">
-                <label>
-                    <input type="radio" name="heatmapToggle" value="heatmap_html" checked>
-                    ROW SCORES
-                </label>
-                <label>
-                    <input type="radio" name="heatmapToggle" value="heatmapClasses_html">
-                    CLASSES
-                </label>
-            </div>
-            <div class="heatmap">
+    <div class="container-fluid" style="width:80%;">
+        <div class="row" style="display: flex; align-items: flex-start;">
+            <div class="heatmap" style="flex: 1;">
+                <h2>Mutational Landscape</h2>
                 {% if heatmap_html %}
                 <div id="heatmap_html" style="display: block;">
                     {{ heatmap_html|safe }}
@@ -189,6 +179,16 @@
                 {% if not heatmap_html and not heatmapClasses_html %}
                 <p>No results found.</p>
                 {% endif %}
+            </div>
+            <div class="buttons" style="margin-left: 20px;">
+                <label style="display: block; margin-bottom: 10px;">
+                    <input type="radio" name="heatmapToggle" value="heatmap_html" checked>
+                    ROW SCORES
+                </label>
+                <label style="display: block;">
+                    <input type="radio" name="heatmapToggle" value="heatmapClasses_html">
+                    CLASSES
+                </label>
             </div>
         </div>
         
@@ -211,6 +211,7 @@
                 });
             });
         </script>
+        
 
 
         <div class="row">

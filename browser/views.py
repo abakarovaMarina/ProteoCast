@@ -358,27 +358,14 @@ def results_view(request):
        mode="lines",
        line=dict(color="darkblue", width=2), 
        hoverinfo="skip",
-       showlegend=False
+       showlegend=False,
+       xaxis=dict(title='Residue')
     )
     fig.add_trace(scatter_border, row=2, col=1)
     fig_VariantClasses.add_trace(scatter_border, row=2, col=1)
+    fig.update_layout(title_x=1, autosize=False, width=1500, height=600, xaxis=dict(title='Residue', tickmode="array", tickvals=list(range(0, df.shape[1]+1, 10)), ticktext=[str(i) for i in range(0, df.shape[1]+1, 10)]), yaxis=dict(title="Substituting amino acid"))
+    fig_VariantClasses.update_layout(title_x=1, autosize=False, width=1500, height=600, xaxis=dict(title='Residue', tickmode="array", tickvals=list(range(1, df.shape[1]+1, 10)), ticktext=[str(i) for i in range(1, df.shape[1]+1, 10)]), yaxis=dict(title="Substituting amino acid"))
 
-    fig.update_layout(
-        title_x=1,
-        autosize=False,
-        width=1500,
-        height=600,
-        xaxis=dict(title = 'Residue',
-            tickmode="array",
-            tickvals=list(range(0, df.shape[1]+1, 10)),  
-            ticktext=[str(i) for i in range(0,df.shape[1]+1, 10)],
-        ),
-        yaxis=dict(title="Substituting amino acid"),
-        coloraxis_colorbar=dict(
-            title="GEMME Score",
-            tickvals=[-8, -4, 0], 
-        ),
-    )
 
     fig.update_yaxes(visible=False, row=2, col=1)
     fig_VariantClasses.update_yaxes(visible=False, row=2, col=1)
