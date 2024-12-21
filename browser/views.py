@@ -19,7 +19,6 @@ from datetime import datetime
 import subprocess 
 import uuid
 from django.http import JsonResponse, HttpResponseRedirect
-from django.shortcuts import redirect
 
 def check_job_status(request):
     job_id = request.GET.get('job_id')
@@ -63,8 +62,8 @@ def job_running(request):
     return render(request, 'browser/job_running.html')
 
 
-#DATA = 'browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
-DATA = '/data/Drosophila_ProteoCast/'
+DATA = 'browser/static/jobs/Drosophila_ProteoCast/' #'/data/Drosophila_ProteoCast/'
+#DATA = '/data/Drosophila_ProteoCast/'
 
 @csrf_exempt
 def upload_file(request):
@@ -279,10 +278,17 @@ def results_view(request):
     
     
     df = pd.DataFrame(np.array(df_proteocast['GEMME_score']).reshape(20, -1, order='F'))
+    df_classes = pd.DataFrame(np.array(df_proteocast['Variant_class'].replace({'neutral':1, 'uncertain':2, 'impactful':3})).reshape(20, -1, order='F'))
+    df_classesStr = pd.DataFrame(np.array(df_proteocast['Variant_class']).reshape(20, -1, order='F'))
     df_mut = pd.DataFrame(np.array(df_proteocast['Mutation']).reshape(20, -1, order='F'))
 
     
-
+    # Custom color scale for confidence
+    variantClasses_colorscale = [
+        [0, '#3688ED'],  # neutral- white
+        [0.5, '#E097CE'],  # uncertain - purple
+        [1, '#F25064']      #impactful - red
+    ]
     # Custom color scale for confidence
     confidence_colorscale = [
         [0, 'white'],  # Low confidence - white
@@ -296,6 +302,12 @@ def results_view(request):
         vertical_spacing=0.02,
     )
 
+    fig_VariantClasses = make_subplots(
+        rows=2, cols=1,
+        shared_xaxes=True,
+        row_heights=[0.9, 0.1],
+        vertical_spacing=0.02,
+    )
     heatmap_main = go.Heatmap(
         z=df.values[::-1],  # Reverse the order of rows
         x=list(range(1, df.shape[1] + 1)),  
@@ -307,38 +319,61 @@ def results_view(request):
             "Score: %{z:.2f}<extra></extra>"
         ),
     )
-    
-    fig.add_trace(heatmap_main, row=1, col=1)
+    heatmap_classes = go.Heatmap(
+        z=df_classes.values[::-1],
+        x=list(range(0, df_classes.shape[1])),
+        y=alph,
+        customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1]]),
+        colorscale=variantClasses_colorscale,
+        showscale=False,
+        hovertemplate=(
+            "Position: %{customdata[0]}<br>"
+            "Class: %{customdata[1]}<extra></extra>"
+        ),
+        # These just control the gap size; their color is determined by the figure background.
+        xgap=0.3,
+        ygap=0.3,
+    )
 
+    fig.add_trace(heatmap_main, row=1, col=1)
+    fig_VariantClasses.add_trace(heatmap_classes, row=1, col=1)
+    
     heatmap_confidence = go.Heatmap(
        z=confidence_values,
+       x=list(range(0, df_classes.shape[1])),  
        colorscale=confidence_colorscale,
+
        showscale=False, 
-       hoverinfo='skip',  
+       hovertemplate=(
+            "%{z}<extra></extra>"
+        ),
     )  
+    
     fig.add_trace(heatmap_confidence, row=2, col=1)
+    fig_VariantClasses.add_trace(heatmap_confidence, row=2, col=1)
     
     scatter_border = go.Scatter(
-       x=[0, df.shape[1], df.shape[1], 0, 0],
+       x=[0, df.shape[1]+1, df.shape[1]+1, 0, 0],
        y=[-0.5, -0.5, 0.5, 0.5, -0.5],
        mode="lines",
-       line=dict(color="black", width=2), 
+       line=dict(color="darkblue", width=2), 
        hoverinfo="skip",
        showlegend=False
     )
     fig.add_trace(scatter_border, row=2, col=1)
+    fig_VariantClasses.add_trace(scatter_border, row=2, col=1)
 
     fig.update_layout(
         title_x=1,
         autosize=False,
         width=1500,
         height=600,
-        xaxis=dict(
+        xaxis=dict(title = 'Residue',
             tickmode="array",
             tickvals=list(range(0, df.shape[1]+1, 10)),  
             ticktext=[str(i) for i in range(0,df.shape[1]+1, 10)],
         ),
-        yaxis=dict(title="Mutations"),
+        yaxis=dict(title="Substituting amino acid"),
         coloraxis_colorbar=dict(
             title="GEMME Score",
             tickvals=[-8, -4, 0], 
@@ -346,7 +381,9 @@ def results_view(request):
     )
 
     fig.update_yaxes(visible=False, row=2, col=1)
+    fig_VariantClasses.update_yaxes(visible=False, row=2, col=1)
     heatmap_html = fig.to_html(full_html=False)
+    heatmapClasses_html = fig_VariantClasses.to_html(full_html=False)
 
     image_url_1 = f'/data/{id_folder}/6.{FBpp_id}_GMM.jpg'
     pdb_url_1 = f'/data/{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
@@ -357,9 +394,15 @@ def results_view(request):
     for file_path in [image_url_1, pdb_url_1, fig_msarep, fig_segmentation]:
         if not os.path.exists(file_path.replace('/data/', DATA)):
             return HttpResponse(f"File not found: {file_path}")
+        
+    image_url_1 = f'{DATA}{id_folder}/6.{FBpp_id}_GMM.jpg'
+    pdb_url_1 = f'{DATA}{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
+    fig_msarep = f'{DATA}{id_folder}/3.{FBpp_id}_msaRepresentation.jpg'
+    fig_segmentation = f'{DATA}{id_folder}/9.{FBpp_id}_SegProfile.png'
     
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
+        'heatmapClasses_html':heatmapClasses_html,
         'query': id_folder,
         'prot_name': FBpp_id,
         'image_url_1': image_url_1,

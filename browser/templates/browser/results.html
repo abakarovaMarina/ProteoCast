@@ -165,14 +165,52 @@
     <div class="container-fluid" style="width:95%;">
         <div class="row">
             <h2>Mutational Landscape</h2>
-            {% if heatmap_html %}
-            <div class="heatmap">
-                {{ heatmap_html|safe }}
+            <div class="buttons">
+                <label>
+                    <input type="radio" name="heatmapToggle" value="heatmap_html" checked>
+                    ROW SCORES
+                </label>
+                <label>
+                    <input type="radio" name="heatmapToggle" value="heatmapClasses_html">
+                    CLASSES
+                </label>
             </div>
-            {% else %}
-            <p>No results found.</p>
-            {% endif %}
+            <div class="heatmap">
+                {% if heatmap_html %}
+                <div id="heatmap_html" style="display: block;">
+                    {{ heatmap_html|safe }}
+                </div>
+                {% endif %}
+                {% if heatmapClasses_html %}
+                <div id="heatmapClasses_html" style="display: none;">
+                    {{ heatmapClasses_html|safe }}
+                </div>
+                {% endif %}
+                {% if not heatmap_html and not heatmapClasses_html %}
+                <p>No results found.</p>
+                {% endif %}
+            </div>
         </div>
+        
+        <script>
+            // JavaScript for toggling heatmaps
+            document.querySelectorAll('input[name="heatmapToggle"]').forEach(button => {
+                button.addEventListener('change', function() {
+                    // Get all heatmap divs
+                    const heatmapHtmlDiv = document.getElementById('heatmap_html');
+                    const heatmapClassesHtmlDiv = document.getElementById('heatmapClasses_html');
+                    
+                    // Toggle visibility based on selected button
+                    if (this.value === 'heatmap_html') {
+                        heatmapHtmlDiv.style.display = 'block';
+                        heatmapClassesHtmlDiv.style.display = 'none';
+                    } else if (this.value === 'heatmapClasses_html') {
+                        heatmapHtmlDiv.style.display = 'none';
+                        heatmapClassesHtmlDiv.style.display = 'block';
+                    }
+                });
+            });
+        </script>
 
 
         <div class="row">
