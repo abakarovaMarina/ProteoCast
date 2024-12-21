@@ -359,7 +359,6 @@ def results_view(request):
        line=dict(color="darkblue", width=2), 
        hoverinfo="skip",
        showlegend=False,
-       xaxis=dict(title='Residue')
     )
     fig.add_trace(scatter_border, row=2, col=1)
     fig_VariantClasses.add_trace(scatter_border, row=2, col=1)
