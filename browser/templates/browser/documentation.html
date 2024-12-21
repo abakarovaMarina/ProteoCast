@@ -1,11 +1,12 @@
-﻿{% load static %}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Citation</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <title>Documentation</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <link crossorigin="anonymous" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" />
 </head>
@@ -13,7 +14,7 @@
     <header class="bg-dark text-white py-3">
         <div class="container">
             <h1 class="mb-0">
-                <a href="{% url 'search' %}" class="text-white text-decoration-none">ProteoCast</a>
+                <a href="/results/search/" class="text-white text-decoration-none">ProteoCast</a>
                 <span class="h5"> Documentation</span>
             </h1>
         </div>
@@ -21,11 +22,9 @@
 
 
     <div class="container">
+      <br>
         <p>The 
-          <b>ProteoCast Server</b> allows you to rapidly and easily explore how missense mutations can functionaly affect proteins. ProteoCast primary source of information are the protein
-  sequence alignements used by
-          GEMME (<a href="https://academic.oup.com/mbe/article/36/11/2604/5548199" target="_blank">Laine et al., 2019</a>) running in the  
-          pipeline described in (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676" target="_blank">Abakarova et al., 2023</a>).
+          <b>ProteoCast Server</b> allows you to rapidly and easily explore how and to what extent missense mutations affect protein function. ProteoCast relies on GEMME, a highly efficient, unsupervised, and fully interpretable variant effect predictor (<a href="https://academic.oup.com/mbe/article/36/11/2604/5548199" target="_blank">Laine et al., 2019</a>). By focusing on how protein residues segregate along the topology of evolutionary trees, GEMME has proven instrumental for studying protein stability, function, and disease mechanisms in several studies -- see, for instance, (<a href="https://www.nature.com/articles/s41586-023-06328-6" target="_blank">Tsuboyama et al., 2023</a>). It was extensively tested against over 2.5M experimental measurements (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676" target="_blank">Abakarova et al., 2023</a>, <a href="https://academic.oup.com/mbe/article/36/11/2604/5548199" target="_blank">Laine et al., 2019</a>). It is among the top-performing methods on the widely adopted <a href="https://proteingym.org/">ProteinGym benchmark</a>. 
           
      <!--   <p>For a quick start, you can see our 
           <a href="https://youtu.be/k44U0WNwzC4">YouTube tutorial</a>:</p>
@@ -36,53 +35,44 @@
         <p> You want to know more, collaborate, or you encounter a problem with the server? Please feel free to 
           <a href="mailto: elodie.laine@sorbonne-universite.fr">contact us</a>!</p>
         <h3> Input </h3>
-        <p> Please provide your Multiple Sequence Alignement using <a href = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"  target="_blank">CollabFold</a>. 
-          Optionally, you can provide <i>Uniprot ID</i> (e.g. P07643) or upload a PDB file for mapping ProteoCast predictions onto the 3D model of the protein.
-  Ideally, 100 or more sequences should be used for the MSA to allow relevant predictions (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676" target="_blank">Abakarova et al., 2023</a>).</p>
+        <p> Please provide a multiple sequence alignement in FASTA or A3M format. The protein of interest should be the first one in the alignment and should not contain any gap. We recommend generating the alignment with the highly efficient MMseqs2-based protocol implemented in <a href = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"  target="_blank">ColabFold</a> for an optimal balance between speed and accuracy </a>. Using this protocol, the input alignment should contain at least a couple hundred sequences to obtain reliable predictions (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676" target="_blank">Abakarova et al., 2023</a>).</p>
+        <p> Optionally, you can opt for mapping the results onto a 3D structure. If the query sequence header is a Uniprot identifier (e.g. P07643), then ProteoCast will automatically retrieve the corresponding 3D model from the <a href = "https://alphafold.com/">AlphaFold Database</a>. Alternatively, you can provide a custom single-chain PDB file.  
+</p>
         
         <h3> Output </h3>
         <p>Please check our example 
           <a href="https://proteocast.ijm.fr/results/results/?q=FBpp0301274">result page</a>. </p>
-        <p> Ases provides a comprehensive visualization of the results with pre-tuned parameters (nodes and edges colors and
-  shapes) and with clear connections between the different representations of the biological objects (graph,
-  forest of trees, multiple sequence alignments, sequences, genes and tables with ids and annotations).</p>
 
-        <h4>GEMME mutational landscape</h4>
-        <p> This interactive graph summarizes the transcript variability observed for the query gene across the selected
-  species. Each 
-          <b>square</b> corresponds to a single amino acid substitution and its predicted impact score is color coded. 
+        <h4>Mutational landscape</h4>
+        <p> In this interactive heatmap, each 
+          <b>square</b> represents a numerical estimate of the impact of a given amino acid substitution at a given position. The darker the color, the more negative GEMME scores, and thus the stronger the predicted effect. 
         <div class="text-center">
-          <img src="{% static 'browser/images/gemme_mutational_landscape_example.png' %}" id='panels' alt="mutLand" style="width: 80%; height: auto;">
+          <img src="/static/browser/images/gemme_mutational_landscape_example.png" id='panels' alt="mutLand" style="width: 80%; height: auto;">
         </div>
-          By hovering the mouse cursor on the representation, a contextual window will indicate the precise mutation (here P244H) and
-          its calculated score (here -6.84).
-  <p></p>
-        <h4>Raw Predicted Score distributions</h4>
-        <p> To systematically and automatically evaluate the agreement between our evolutionary-based mutational effect estimates 
-          and the known annotations, we classified all variants into three categories: impactful, uncertain or neutral. We achieved 
-          this by fitting a mixture of three Gaussians to GEMME predicted score distribution using the expectation-maximization 
-          algorithm. This Gaussian Mixture Model (GMM) was used to tailor the classification of each protein’s individual mutational landscape. To minimize biases, we discarded low-confidence predictions.
-  </p>
+          By hovering the mouse cursor on the representation, a contextual window will indicate the mutation (here P244H) and
+          its predicted raw score (here -6.84).<p>
+            <p> The bar at the bottom of the matrix reflects the confidence in the predictions. Blue indicates reliable predictions, and white unreliable ones. We consider predictions as unreliable when evolutionary information derived from the input alignment is too scarce.
+          </p>
+        <h4>Input alignement quality assessment</h4>
+        <p>This plot gives an overview of the input alignment, where each horizontal line depicts a sequence and its color indicates its similarity with the query. Gaps correspond to white interruptions. The black curve reports the percentage of sequences that have an amino acid (as opposed to a gap) at each position of the query sequence. This representation is identical to the one used in <a href = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"  target="_blank">ColabFold</a> and we adapted the code from there.</p>
         <div class="text-center">
-          <img src="{% static 'browser/images/GMM_example.jpg' %}" id='panels' alt="GMM_distrib" style="width: 80%; height: auto;">
+          <img src="/static/browser/images/msaRepresentation_example.jpg" id='panels' alt="MSA_cov" style="width: 80%; height: auto;">
         </div>
-        <h4>Multiple Sequences Alignement (MSA) quality assessment</h4>
-        <p>This panel will show you the MSA coverage.</p>
+        <h4>Predicted score distributions for variant classification</h4>
+        <p> This plot gives an overview of the predicted score distribution, fitted with a mixture of three Gaussians. To minimize biases, it does not account fro low-confidence predictions. At one end of the spectrum, mutations close to  zero extending down to the median of the middle Gaussian are classified as neutral. At the other end, mutations with very negative scores are classified as impactful, until they are more likely to belong to the middle Gaussian than the leftmost one. Mutations falling in between are categorised as uncertain. The vertical lines delineate the three classes. </p>
         <div class="text-center">
-          <img src="{% static 'browser/images/msaRepresentation_example.jpg' %}" id='panels' alt="GMM_distrib" style="width: 80%; height: auto;">
+          <img src="/static/browser/images/GMM_example.jpg" id='panels' alt="GMM_distrib" style="width: 80%; height: auto;">
         </div>
-        <h4> Protein Segmentation profile for identifying local mutational impact biases</h4>
-        <p> This plot shows the moving average GEMME score along the protein with automatically identified segments characterized by
-          local high GEMME average. Within these segments, the functional impact of missense mutations is <u>on average</u> higher than 
-          in the surrounding regions.
-        </p>
+        
+        <h4> Segmented mutational sensitivity profile to identify local patterns and  biases</h4>
+        <p> This plot shows the per-residue mutational sensitivity, defined as the average GEMME score over the 19 possible substitutions. The profile is segmented using the <a href="https://CRAN.R-project.org/package=fpopw">FPOP algorithm</a>. FPOP identifies changepoints in the signal through 'functional pruning'. Informally, each detected changepoint signifies a shift in the mean. This representation allows for emphasizing protein segments under stronger or weaker selective pressure than their surrounding background. Yellow: the segment mean is lower than the two neighbouring segments. Purple: the segment mean is higher than the two neighbouring segments. Red: the segment mean is higher than one neighbour and lower than the other one.</p>
   <div class="text-center">
-    <img src="{% static 'browser/images/SegProfile_example.png' %}" id='panels' alt="segmentation profile" style="width: 80%; height: auto;">
+    <img src="/static/browser/images/SegProfile_example.png" id='panels' alt="segmentation profile" style="width: 80%; height: auto;">
   </div>
         <h4> Localisation of mutations  on the 3D structure</h4>
-        <p> This interactive 3D model of the protein allows you to explore the localisation of your chosen mutation in its conformational context. </p>
+        <p> This interactive 3D model of the protein allows you to explore the localisation of any mutation of interest, whether it is on the surface of the protein or within the core, whether it is located in a secondary structure or a loop region...etc. You can choose between different colour regimes that reflect the original B-factor values (pLDDT for AlphaFold models) or the per-residue sensitivity. For improved clarity, we also provide a binary classification of residues into tolerant or sensitive to mutations. Sensitive residues have more than half of the 19 possible substitutions being impactful. </p>
   <div class="text-center">
-    <img src="{% static 'browser/images/3D_example.jpg' %}" id='panels' alt="3D structure" style="width: 80%; height: auto;">
+    <img src="/static/browser/images/3D_example.jpg" id='panels' alt="3D structure" style="width: 80%; height: auto;">
   </div>
         <h3> Browser compatibility </h3>
         <p> The server's JavaScript code uses 
