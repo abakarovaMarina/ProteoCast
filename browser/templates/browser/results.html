@@ -99,9 +99,11 @@
             text-align: center;
             padding: 10px;
             background-color: #f1f1f1;
-            position: flex;
+            position: relative;
             bottom: 0;
             color: grey;
+            margin-top: 20px;
+            z-index: 2;
         }
         #myViewer {
             width: 70%;
@@ -192,7 +194,6 @@
                 {% endif %}
             </div>
         </div>
-        
         <script>
             // JavaScript for toggling heatmaps
             document.querySelectorAll('input[name="heatmapToggle"]').forEach(button => {
@@ -260,12 +261,10 @@
             </div>
         </div>
         
-        <div class="row">
-            <div id="myViewer" class="viewer-container"></div>
-        </div>
-
-        
+        <div id="myViewer" style="margin-left: 5cm;"></div>
         <script>
+        var pdbUrl1 = "{{ pdb_url_1 }}";
+        if (pdbUrl1 && pdbUrl1 !== "undefined") {
             var viewerInstance = new PDBeMolstarPlugin();            
             var options = {
                 customData: {
@@ -308,14 +307,12 @@
             viewerInstance.events.loadComplete.subscribe(() => {
                 console.log("Structure loaded! Click the button to color by B-factors.");
             });
+        }
         </script>
     </div>
-
-</div>
     <footer>
         <p>ProteoCast - This website is free and open to all users and there is no login requirement.</p>
     </footer>
-
     
 </body>
 </html>

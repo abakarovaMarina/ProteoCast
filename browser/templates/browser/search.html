@@ -135,9 +135,13 @@
         </form>
         <div id="loading" style="display: none;">Uploading... Please wait.</div>
         <div id="uploadStatus"></div>
-        <a id="jobRunningLink" href="{% url 'job_running' %}" style="display: none;">Go to Job Running</a>
-    </div>
+        {% if job_id %}
+           <a href="{% url 'job_running' job_id=job_id %}">Go to Job Running</a>
+        {% else %}
+           <p>Job ID will be available after the upload process.</p>
+        {% endif %}
 
+    </div>
     <div class="upload-section">
         <form id="uploadPDBForm" action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
@@ -165,33 +169,12 @@
 
         // Handle response
         if (response.ok) {
-            window.location.href = "{% url 'job_running' %}"; // Redirect if successful
+            // Usamos job_id para construir la URL en JavaScript
+            const jobId = result.job_id;  // El job_id debe estar en la respuesta del backend
+            window.location.href = `/results/job_running/${jobId}`;  // Redirige con job_id
         } else {
             document.getElementById("loading").style.display = "none"; // Hide loading
             document.getElementById("uploadStatus").innerText = result.error || "An error occurred.";
-        }
-    });
-
-    document.getElementById("uploadPDBForm").addEventListener("submit", async function (e) {
-        e.preventDefault(); // Prevent default form submission
-
-        // Show loading message
-        document.getElementById("pdbLoading").style.display = "block";
-
-        const formData = new FormData(this);
-        const response = await fetch(this.action, {
-            method: "POST",
-            body: formData,
-        });
-
-        const result = await response.json();
-
-        // Handle response
-        if (response.ok) {
-            window.location.href = "{% url 'job_running' %}"; // Redirect if successful
-        } else {
-            document.getElementById("pdbLoading").style.display = "none"; // Hide loading
-            document.getElementById("pdbUploadStatus").innerText = result.error || "An error occurred.";
         }
     });
     </script>

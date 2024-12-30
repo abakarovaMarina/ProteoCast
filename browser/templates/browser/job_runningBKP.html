@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="refresh" content="5">
+    <meta http-equiv="refresh" content="5"> 
     <title>Job Running</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/general.css' %}">
@@ -43,21 +43,19 @@
         const jobId = window.location.pathname.split('/').filter(Boolean).pop();
 
         if (!jobId) {
-            console.error('Job ID is not available.');
-            document.getElementById('uploadStatus').innerText = 'No job ID provided.';
+            document.getElementById('uploadStatus').innerText = 'No job_id provided.';
             return;
         }
-
-        fetch(`/results/check_job_status/?job_id=${jobId}`)  // Corregí las comillas aquí
+        fetch(`/check_job_status/?job_id=${jobId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-                return response.json();
+                return response.json(); // Intenta convertir la respuesta a JSON
             })
             .then(data => {
                 if (data.status === 'finished') {
-                    window.location.href = data.redirect_url;  // Esto redirige a la URL proporcionada
+                    window.location.href = data.redirect_url;
                 } else if (data.status === 'error') {
                     document.getElementById('uploadStatus').innerText = 'Error: ' + data.message;
                 } else {
@@ -65,10 +63,13 @@
                 }
             })
             .catch(error => {
-                document.getElementById('uploadStatus').innerText = `Error checking job status: ${error.message}`;
+                error.text().then(errText => {
+                    document.getElementById('uploadStatus').innerText = `Error checking job status: ${errText}`;
+                });
             });
     });
     </script>
+
 </head>
 <body>
     <h1>Job running...</h1>
