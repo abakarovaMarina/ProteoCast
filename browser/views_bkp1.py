@@ -53,8 +53,6 @@ def search_view(request):
 
 def drosophiladb(request):
     return render(request, 'browser/drosophiladb.html')
-def download(request):
-    return render(request, 'browser/download.html')
 
 def job_running(request,job_id): 
     job_status_path = os.path.join('/data/jobs/', job_id, 'status.txt')
@@ -86,12 +84,11 @@ def handle_upload(request, uploaded_file):
     global job_id
     job_id = now.strftime('%Y%m%d%H%M%S')
     folder_path = os.path.join('/data/jobs/', job_id)
+    os.makedirs(folder_path, mode=0o755, exist_ok=True)
+
+    file_path = os.path.join(folder_path, uploaded_file.name)
+
     try:
-        os.makedirs(folder_path, mode=0o755, exist_ok=True)
-
-        file_path = os.path.join(folder_path, uploaded_file.name)
-
- 
         with open(file_path, 'wb+') as destination:
             for chunk in uploaded_file.chunks():
                 destination.write(chunk)

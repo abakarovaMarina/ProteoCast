@@ -9,74 +9,22 @@
     <link rel="stylesheet" type="text/css" href="/static/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <link crossorigin="anonymous" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" />
-    <style>
-        .navbar {
-            background-color: #4F80C0;
-        }
-
-        .example-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #4F80C0;
-            color: white;
-            border-radius: 12px;
-            border: none;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .example-button:hover {
-            background-color: #0056b3;
-        }
-
-        p a, p a:hover{
-          color: #BA839B;
-          text-decoration: underline;
-        }
-
-        p a, p a{
-          color: #BA839B;
-          text-decoration: none;
-        }
-
-    </style> 
 </head>
 <body>
-<div class="page">
-      <div class="header">
-        <nav class="navbar navbar-expand-lg navbar-light text-white">
-          <a class="navbar-brand" href="/results/search/">
-            <h1 class="text-white text-decoration-none">ProteoCast 
-              <span style="font-size: 0.6em; color: white;"> Documentation</span></h1>
-          </a>
-          <button class="navbar-toggler" type="button" aria-label="Toggle navigation" aria-controls="navbarNav" data-target="#navbarNav" data-toggle="collapse">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-            <ul class="navbar-nav ml-auto" id="navbarItems">
-              <li class="nav-item" id="nav-home">
-                <a class="nav-link text-white" href="/results/search/">Home</a>
-              </li>
-              <li class="nav-item" id="nav-documentation">
-                <a class="nav-link text-white" href="/documentation">Documentation</a>
-              </li>
-              <li class="nav-item" id="nav-download">
-                <a class="nav-link text-white" href="/download">Download</a>
-              </li>
-              <li class="nav-item" id="nav-drosophiladb">
-                <a class="nav-link text-white" href="/drosophiladb">DrosophilaDB</a>
-              </li>
-              <li class="nav-item" id="nav-publications">
-                <a class="nav-link text-white" href="/publications">Publications</a>
-              </li>
-            </ul>
-          </div>
-        </nav>
-      </header>
-      <div class="content">
+    <header class="bg-dark text-white py-3">
         <div class="container">
-         <br>
-        <p>The <b>ProteoCast Server</b> allows you to rapidly and easily explore how and to what extent missense mutations affect protein function. ProteoCast relies on GEMME, a highly efficient, unsupervised, and fully interpretable variant effect predictor (<a href="https://academic.oup.com/mbe/article/36/11/2604/5548199" target="_blank">Laine et al., 2019</a>). By focusing on how protein residues segregate along the topology of evolutionary trees, GEMME has proven instrumental for studying protein stability, function, and disease mechanisms in several studies -- see, for instance, (<a href="https://www.nature.com/articles/s41586-023-06328-6" target="_blank">Tsuboyama et al., 2023</a>). It was extensively tested against over 2.5M experimental measurements (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676" target="_blank">Abakarova et al., 2023</a>, <a href="https://academic.oup.com/mbe/article/36/11/2604/5548199" target="_blank">Laine et al., 2019</a>). It is among the top-performing methods on the widely adopted <a href="https://proteingym.org/">ProteinGym benchmark</a>. </p>
+            <h1 class="mb-0">
+                <a href="/results/search/" class="text-white text-decoration-none">ProteoCast</a>
+                <span class="h5"> Documentation</span>
+            </h1>
+        </div>
+    </header>
+
+
+    <div class="container">
+      <br>
+        <p>The 
+          <b>ProteoCast Server</b> allows you to rapidly and easily explore how and to what extent missense mutations affect protein function. ProteoCast relies on GEMME, a highly efficient, unsupervised, and fully interpretable variant effect predictor (<a href="https://academic.oup.com/mbe/article/36/11/2604/5548199" target="_blank">Laine et al., 2019</a>). By focusing on how protein residues segregate along the topology of evolutionary trees, GEMME has proven instrumental for studying protein stability, function, and disease mechanisms in several studies -- see, for instance, (<a href="https://www.nature.com/articles/s41586-023-06328-6" target="_blank">Tsuboyama et al., 2023</a>). It was extensively tested against over 2.5M experimental measurements (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676" target="_blank">Abakarova et al., 2023</a>, <a href="https://academic.oup.com/mbe/article/36/11/2604/5548199" target="_blank">Laine et al., 2019</a>). It is among the top-performing methods on the widely adopted <a href="https://proteingym.org/">ProteinGym benchmark</a>. 
           
      <!--   <p>For a quick start, you can see our 
           <a href="https://youtu.be/k44U0WNwzC4">YouTube tutorial</a>:</p>
@@ -88,7 +36,8 @@
           <a href="mailto: elodie.laine@sorbonne-universite.fr">contact us</a>!</p>
         <h3> Input </h3>
         <p> Please provide a multiple sequence alignement in FASTA or A3M format. The protein of interest should be the first one in the alignment and should not contain any gap. We recommend generating the alignment with the highly efficient MMseqs2-based protocol implemented in <a href = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"  target="_blank">ColabFold</a> for an optimal balance between speed and accuracy </a>. Using this protocol, the input alignment should contain at least a couple hundred sequences to obtain reliable predictions (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676" target="_blank">Abakarova et al., 2023</a>).</p>
-        <p> Optionally, you can opt for mapping the results onto a 3D structure. If the query sequence header is a Uniprot identifier (e.g. P07643), then ProteoCast will automatically retrieve the corresponding 3D model from the <a href = "https://alphafold.com/">AlphaFold Database</a>. Alternatively, you can provide a custom single-chain PDB file.</p>
+        <p> Optionally, you can opt for mapping the results onto a 3D structure. If the query sequence header is a Uniprot identifier (e.g. P07643), then ProteoCast will automatically retrieve the corresponding 3D model from the <a href = "https://alphafold.com/">AlphaFold Database</a>. Alternatively, you can provide a custom single-chain PDB file.  
+</p>
         
         <h3> Output </h3>
         <p>Please check our example 
@@ -100,8 +49,9 @@
         <div class="text-center">
           <img src="/static/browser/images/gemme_mutational_landscape_example.png" id='panels' alt="mutLand" style="width: 80%; height: auto;">
         </div>
-          By hovering the mouse cursor on the representation, a contextual window will indicate the mutation (here P244H) and its predicted raw score (here -6.84). You may choose to visualise the raw predicted scores or discrete classes, namely impactful, uncertain, and neutral.</p>
-            <p> The horizontal bar at the bottom of the matrix reflects the confidence in the predictions. Purple indicates reliable predictions, and white unreliable ones. We consider predictions as unreliable when evolutionary information derived from the input alignment is too scarce.
+          By hovering the mouse cursor on the representation, a contextual window will indicate the mutation (here P244H) and
+          its predicted raw score (here -6.84).<p>
+            <p> The bar at the bottom of the matrix reflects the confidence in the predictions. Blue indicates reliable predictions, and white unreliable ones. We consider predictions as unreliable when evolutionary information derived from the input alignment is too scarce.
           </p>
         <h4>Input alignement quality assessment</h4>
         <p>This plot gives an overview of the input alignment, where each horizontal line depicts a sequence and its color indicates its similarity with the query. Gaps correspond to white interruptions. The black curve reports the percentage of sequences that have an amino acid (as opposed to a gap) at each position of the query sequence. This representation is identical to the one used in <a href = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"  target="_blank">ColabFold</a> and we adapted the code from there.</p>
@@ -174,8 +124,9 @@
       </div>
 
 
-      <footer class="bg-light text-center py-3">
+    <footer class="bg-light text-center py-3">
+        <div class="container">
             <p class="mb-0">ProteoCast - This website is free and open to all users and there is no login requirement.</p>
+        </div>
     </footer>
-    </div>
-  </body></html>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html><html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -49,7 +50,7 @@
     <div class="page">
       <div class="header">
         <nav class="navbar navbar-expand-lg navbar-light text-white">
-          <a class="navbar-brand" href="{% url 'search' %}">
+          <a class="navbar-brand" href="/results/search/">
             <h1 class="text-white text-decoration-none">ProteoCast </h1>
           </a>
           <button class="navbar-toggler" type="button" aria-label="Toggle navigation" aria-controls="navbarNav" data-target="#navbarNav" data-toggle="collapse">
@@ -58,7 +59,7 @@
           <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
             <ul class="navbar-nav ml-auto" id="navbarItems">
               <li class="nav-item" id="nav-home">
-                <a class="nav-link text-white" href="{% url 'search' %}">Home</a>
+                <a class="nav-link text-white" href="/results/search/">Home</a>
               </li>
               <li class="nav-item" id="nav-documentation">
                 <a class="nav-link text-white" href="/documentation">Documentation</a>
@@ -70,7 +71,7 @@
                 <a class="nav-link text-white" href="/drosophiladb">DrosophilaDB</a>
               </li>
               <li class="nav-item" id="nav-publications">
-                <a class="nav-link text-white" href="/publications">Publications</a>
+                <a class="nav-link text-white" href="/citations">Publications</a>
               </li>
             </ul>
           </div>
@@ -78,7 +79,7 @@
       </header>
       <div class="content">
         <div class="container" style="max-width:60%;">
-        <form id="uploadForm" action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data"> 
+        <form id="uploadForm" action="/results/upload_file/" method="post" enctype="multipart/form-data">
 
       <div id="msaSection">
          <div class="form-row py-2">
@@ -105,7 +106,6 @@
         <div id="uploadStatus"></div>
       </div>
 
-      
 <!-- Collapsible Section -->
       <div id="pdbSection" style="display: none;">
         <div class="form-row py-2">
@@ -128,11 +128,11 @@
         <div class="col-md-8">
             <button type="submit" class="btn btn-primary example-button">Submit</button>
           </div>
-        </form>
         <div class="col-md-4">
-        <a href="{% url 'results' %}?q=FBpp0301274" class="btn btn-primary example-button">Load an Example Protein</a>
+        <button class="btn btn-primary example-button"><a href="/results/results/?q=FBpp0301274" class="text-white">Load an Example Protein</a></button>
       </div>
       </div>
+      </form>
 
        <div class="text-center">
           <img src="/static/browser/images/fig_search_server.png" id='panels' alt="mutLand" style="width: 100%; height: auto;">
@@ -144,6 +144,7 @@
             <p class="mb-0">ProteoCast - This website is free and open to all users and there is no login requirement.</p>
         </div>
     </footer>
+
     <script>
     document.getElementById("uploadForm").addEventListener("submit", async function (e) {
         console.log("Submit event triggered");
@@ -153,24 +154,25 @@
         document.getElementById("loading").style.display = "block";
 
         const formData = new FormData(this);
+        console.log(this.action);
         const response = await fetch(this.action, {
             method: "POST",
             body: formData,
         });
 
-        const result = await response.json();
+        const result = await response.text();
 
         // Handle response
         if (response.ok) {
           console.log("Response ok");
+            // Usamos job_id para construir la URL en JavaScript
             const jobId = result.job_id;  // El job_id debe estar en la respuesta del backend
-            window.location.href = `/results/job_running/${jobId}`;  // Redirige con job_id
+           // window.location.href = `/results/job_running/${jobId}`;  // Redirige con job_id
         } else {
             document.getElementById("loading").style.display = "none"; // Hide loading
             document.getElementById("uploadStatus").innerText = result.error || "An error occurred.";
         }
     });
-
 
 document.addEventListener("DOMContentLoaded", function () {
     const uniprotCodeSwitch = document.getElementById("uniprotCode");
@@ -198,5 +200,4 @@ document.addEventListener("DOMContentLoaded", function () {
 });
     </script>
     </div>
-
   </body></html>

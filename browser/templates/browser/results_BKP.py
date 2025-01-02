@@ -1,51 +1,84 @@
+﻿
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results</title>
+
+    <!-- Molstar CSS & JS -->
+
     <!-- CSS personalizadas -->
-    <link rel="stylesheet" type="text/css" href="/static/css/styles.css">
-    <!-- Plotly -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    
     <link crossorigin="anonymous" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" />
-    <!-- Molstar CSS & JS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pdbe-molstar@latest/build/pdbe-molstar-light.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pdbe-molstar@latest/build/pdbe-molstar-plugin.js"></script>
+
     <style>
-        .navbar {
-            background-color: #4F80C0;
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        } 
+        .main-content {
+            flex-grow: 1;
+            width: 100%;
+            padding: 20px;
         }
-
-        .example-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #4F80C0;
-            color: white;
-            border-radius: 12px;
-            border: none;
-            text-decoration: none;
-            display: inline-block;
+        .results-container {
+            display: flex;
+            flex-direction: column; 
+            align-items: center;   
+            margin: 20px;
+            gap: 20px;
+            width: 50%;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        .example-button:hover {
-            background-color: #0056b3;
+        .results-containerseg {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+            gap: 20px;
+            width: 70%;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
-        p a, p a:hover{
-          color: #BA839B;
-          text-decoration: underline;
+        .images-flex-container {
+           display: flex;
+           flex-direction: column;
+           align-items: center; 
+           margin-top: 20px;
         }
-
-        p a, p a{
-          color: #BA839B;
-          text-decoration: none;
+        .results-container h2,
+        .results-container p,
+        .images-flex-container h2,
+        .images-flex-container p {
+            text-align: center;
+            margin: 0;
         }
-
         .heatmap { 
             width: 100%;
             margin: 10px 0; 
@@ -61,11 +94,29 @@
             margin: 10px 0; 
             display: block;
         }
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            background-color: #f1f1f1;
+            position: relative;
+            bottom: 0;
+            color: grey;
+            margin-top: 20px;
+            z-index: 2;
+        }
+        #myViewer {
+            width: 70%;
+            height: 450px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
         .download-button button {
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
-            background-color: #BA839B;
+            background-color: #007bff;
             color: white;
             border-radius: 12px;
             border: none;
@@ -80,47 +131,47 @@
             vertical-align: middle;
             margin-right: 10px;
         }
-
-    </style> 
+        #colorBFactorBtn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border-radius: 12px;
+            border: none;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+        #colorBFactorBtn:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
 <body>
-<div class="page">
-      <div class="header">
-        <nav class="navbar navbar-expand-lg navbar-light text-white">
-          <a class="navbar-brand" href="{% url 'drosophiladb' %}">
-            <h1 class="text-white text-decoration-none">ProteoCast 
-              <span style="font-size: 0.6em; color: white;"> for {{ prot_name }}</span></h1>
-          </a>
-          <button class="navbar-toggler" type="button" aria-label="Toggle navigation" aria-controls="navbarNav" data-target="#navbarNav" data-toggle="collapse">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-            <ul class="navbar-nav ml-auto" id="navbarItems">
-              <li>
-                <a href="{% url 'download_folder' fbpp_id=query %}" class="download-button">
+    <header>
+        <div class="header-content" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 20px; background-color: #343a40; color: white;">
+            <div class="header-text" style="flex-grow: 1;">
+                <h1 style="font-size: 2em; text-align: left;">
+                    <a href="{% url 'drosophiladb' %}" style="text-decoration: none; color: white;">ProteoCast for {{ prot_name }}</a> 
+                </h1>
+            </div>
+            <a href="{% url 'download_folder' fbpp_id=query %}" class="download-button">
                 <button>
-                   <img src="{% static 'browser/images/download_icon.png' %}" alt="Download Icon">
+                    <img src="{% static 'browser/images/download_icon.png' %}" alt="Download Icon">
                     Download Results
                 </button>
-               </a>  
-             </li>
-            </ul>
-          </div>
-        </nav>
-      </header>
-      <div class="content">
-        <div class="container-fluid" style="width:95%;">
-        <div class="form-row py-4">
-          <h5> Here are ProteoCast results for {{ prot_name }}. If you need help in exploring and interpreting them, please go to our <a href="/documentation">documentation</a>.</h5>
+            </a>
         </div>
-        <div class="form-row" style="display: flex; align-items: flex-start;">
+    </header>
+
+    <div class="container-fluid" style="width:95%;">
+        <div class="row" style="display: flex; align-items: flex-start;">
             <div class="heatmap" style="flex: 1; autosize: true;">
                 <h2>Mutational Landscape</h2>
-                <p> The heatmap gives the predicted effects of all 19-times-the-protein-length possible amino acid substitutions. You can switch between raw scores (the darker the more negative) and variant classification into impactful (red), uncertain (pink) and neutral (blue). The horizontal bar below gives binary confidence scores, blue for reliable predictions, white otherwise.</p>
                 <div class="buttons" style="margin-left: 20px;">
                     <label style="display: inline-block; margin-right: 20px;">
                         <input type="radio" name="heatmapToggle" value="heatmap_html" checked>
-                        RAW SCORES
+                        ROW SCORES
                     </label>
                     <label style="display: inline-block;">
                         <input type="radio" name="heatmapToggle" value="heatmapClasses_html">
@@ -142,9 +193,7 @@
                 <p>No results found.</p>
                 {% endif %}
             </div>
-            </div>
-          </div>
-
+        </div>
         <script>
             // JavaScript for toggling heatmaps
             document.querySelectorAll('input[name="heatmapToggle"]').forEach(button => {
@@ -164,31 +213,34 @@
                 });
             });
         </script>
+        
 
-        <div class="form-row">
-            <div class="form-group col">
+
+        <div class="row">
+            <div class="col">
+            <div class="col-8">
                 <h2>Input Alignment</h2>
-                <p> The black curve indicates coverage. </p>
+            </div>
                 {% if fig_msarep %}
                 <div class="image-container">
                     <img src="{{ fig_msarep }}" alt="MSA Representation" class="result-image">
                 </div>
                 {% endif %}
             </div>
-            <div class="form-group col">
-                <h2>Raw Score Distribution</h2>
-                <p> The dark purple and light pink vertical lines mark the impactful-uncertain and uncertain-neutral thresholds, defined by fitting the three colored Gaussians. Known missense mutations are depicted as red dots (lethal) or blue triangles (DGRP or DEST2).</p>
+            <div class="col">
+            <div class="col-8">
+                <h2>Predicted Score Distribution<h2>
+            </div>
                 {% if image_url_1 %}
                 <div class="image-container">
                     <img src="{{ image_url_1 }}" alt="GMM" class="result-image">
                 </div>
                 {% endif %}
             </div>
+            
         </div>
-
-        <div class="form-row"> 
-            <h2>Sensitivity profile</h2>
-            <p> The pLDDT of the AlphaFold-predicted protein 3D model is shown on top and the mutational sensitivity profile (per-residue GEMME average score) at the bottom. Each delinated segment can be considered as displaying an homogeneous mean sensitivity. The color of each segment indicates whether its mean is higher than its two neighbours (purple), lower than its two neighbours (yellow), or higher than one and lower then the other (red).  </p>
+        <div class="row"> 
+            <h2>Segmentation profile</h2>
             {% if fig_segmentation %}
             <div class="image-container">
                 <img src="{{ fig_segmentation }}" alt="Segmentation" class="result-image" style="width: 80%; display: block; margin: 0 auto;">
@@ -196,20 +248,23 @@
             {% endif %}
         </div>
 
-        <div class="form-row">
-          <h2>3D Structure</h2>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-10">
-                <div id="myViewer" class="viewer-container"></div>
-            </div>
-            <div class="form-group col-2 pl-5 py-4">
-                <button id="colorBFactorBtn" class="example-button">Color by B-Factors</button>
+
+        <div class="row">
+            <div class="col-12">
+                <h2>Structure</h2>
             </div>
         </div>
-
-
+        
+        <div class="row">
+            <div class="col-12">
+                <button id="colorBFactorBtn">Color by B-Factors</button>
+            </div>
+        </div>
+        
+        <div id="myViewer" style="margin-left: 5cm;"></div>
         <script>
+        var pdbUrl1 = "{{ pdb_url_1 }}";
+        if (pdbUrl1 && pdbUrl1 !== "undefined") {
             var viewerInstance = new PDBeMolstarPlugin();            
             var options = {
                 customData: {
@@ -252,12 +307,12 @@
             viewerInstance.events.loadComplete.subscribe(() => {
                 console.log("Structure loaded! Click the button to color by B-factors.");
             });
+        }
         </script>
-       
     </div>
-
-      <footer class="bg-light text-center py-3">
-            <p class="mb-0">ProteoCast - This website is free and open to all users and there is no login requirement.</p>
+    <footer>
+        <p>ProteoCast - This website is free and open to all users and there is no login requirement.</p>
     </footer>
-    </div>
-  </body></html>
+    
+</body>
+</html>
