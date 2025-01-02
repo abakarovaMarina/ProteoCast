@@ -3,7 +3,7 @@ from .views import search_view, results_view, download_folder, upload_file, dros
 
 urlpatterns = [
     path('search/', search_view, name='search'),
-    path('results/<str:job_id>/', results_view, name='results'),
+    path('results/', results_view, name='results'),
     path('results_job/<str:job_id>/', results_job, name='results_job'),
     path('drosophiladb/',drosophiladb, name='drosophiladb'),
     path('data/<str:folder>/<str:filename>/', serve_file, name='serve_file'),

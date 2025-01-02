@@ -20,25 +20,6 @@ import subprocess
 import uuid
 from django.http import JsonResponse, HttpResponseRedirect
 
-def check_job_status(request):
-    job_id = request.GET.get('job_id')
-    if not job_id:
-        return JsonResponse({'status': 'error', 'message': 'No job_id provided.'}, status=400)
-
-    job_status_path = os.path.join('/data/jobs', job_id, 'status.txt')
-
-    if not os.path.exists(job_status_path):
-        return JsonResponse({'status': 'error', 'message': f'Status file not found at {job_status_path}'}, status=404)
-
-    with open(job_status_path, 'r') as file:
-        job_status = file.read().strip()
-
-    if job_status == 'finished':
-        redirect_url = reverse('results_job', args=[job_id])
-        return JsonResponse({'status': 'finished', 'redirect_url': redirect_url})
-    else:
-        return JsonResponse({'status': job_status, 'message': 'At the end of the process the results will be displayed.'})
-
 def contact_us(request):
     return render(request, 'browser/contact_us.html')
 
@@ -69,6 +50,26 @@ def job_running(request,job_id):
         return render(request, 'browser/error.html', {'message': f'Error reading status file: {str(e)}'}, status=500)
 
     return render(request, 'browser/job_running.html', {'job_id': job_id, 'status': status})
+
+def check_job_status(request):
+    job_id = request.GET.get('job_id')
+    if not job_id:
+        return JsonResponse({'status': 'error', 'message': 'No job_id provided.'}, status=400)
+
+    job_status_path = os.path.join('/data/jobs', job_id, 'status.txt')
+
+    if not os.path.exists(job_status_path):
+        return JsonResponse({'status': 'error', 'message': f'Status file not found at {job_status_path}'}, status=404)
+
+    with open(job_status_path, 'r') as file:
+        job_status = file.read().strip()
+
+    if job_status == 'finished':
+        redirect_url = reverse('results', args=[job_id])
+        return JsonResponse({'status': 'finished', 'redirect_url': redirect_url})
+    else:
+        return JsonResponse({'status': job_status, 'message': 'At the end of the process the results will be displayed.'})
+    
 
 DATA = '/data/Drosophila_ProteoCast/'
 
@@ -286,10 +287,13 @@ def results_job(request,job_id):
         return HttpResponse(f"An error occurred: {str(e)}", status=500)
 
 
-def results_view(request):
-    prot_name = request.GET.get('q').lower()
-    if not prot_name:
+def results_view(request, job_id=''):
+    if job_id:
         return HttpResponse(f'Please provide a protein name.')
+    else:
+        prot_name = request.GET.get('q').lower()
+        if not prot_name:
+            return HttpResponse(f'Please provide a protein name.')
     
     alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y"][::-1]
     alph = [i.upper() for i in alph]
