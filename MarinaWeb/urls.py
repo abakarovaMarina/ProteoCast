@@ -10,9 +10,9 @@ urlpatterns = [
     path('results/', include('browser.urls')),
     path('contact/', contact_us, name='contact_us'),
     path('documentation/', documentation, name='documentation'),
-    path('citations/', citation, name='citation'),
+    path('publications/', citation, name='publications'),
     path('upload/', upload_file, name='upload'),
     path('job_running/<str:job_id>/', job_running, name='job_running'),
-    path('drosophiladb/',drosophiladb, name='drosophilasb'),
+    path('drosophiladb/',drosophiladb, name='drosophiladb'),
     path('download/', download, name='download'),
 ]

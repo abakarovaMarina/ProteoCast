@@ -46,7 +46,7 @@ def documentation(request):
     return render(request, 'browser/documentation.html')
 
 def citation(request):
-    return render(request, 'browser/citation.html')
+    return render(request, 'browser/publications.html')
 
 def search_view(request):
     return render(request, 'browser/search.html')
@@ -86,12 +86,11 @@ def handle_upload(request, uploaded_file):
     global job_id
     job_id = now.strftime('%Y%m%d%H%M%S')
     folder_path = os.path.join('/data/jobs/', job_id)
+    os.makedirs(folder_path, mode=0o755, exist_ok=True)
+
+    file_path = os.path.join(folder_path, uploaded_file.name)
+
     try:
-        os.makedirs(folder_path, mode=0o755, exist_ok=True)
-
-        file_path = os.path.join(folder_path, uploaded_file.name)
-
- 
         with open(file_path, 'wb+') as destination:
             for chunk in uploaded_file.chunks():
                 destination.write(chunk)
@@ -114,13 +113,15 @@ def handle_upload(request, uploaded_file):
 #SBATCH --mail-type=END
 #SBATCH --mail-user=abakamarina@gmail.com
 #SBATCH --output=slurm_%j.out
-
+#SBATCH --error=slurm_%j.err
+                         
 docker run --rm -v "/data/jobs/{job_id}:/opt/job" elodielaine/gemme:gemme /bin/bash -c "cd / && bash run.sh {uploaded_file.name}"
 """)
         os.chmod(run_docker_script, 0o755)
-  
+        os.chdir(folder_path)
         subprocess.run(['sbatch', run_docker_script], check=True)
 
+        
         job_status_path = os.path.join(folder_path, 'status.txt')
         with open(job_status_path, 'w') as status_file:
             status_file.write('in_progress')

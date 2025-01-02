@@ -2,7 +2,6 @@ from django.urls import path
 from .views import search_view, results_view, download_folder, upload_file, drosophiladb, job_running, serve_file, check_job_status, results_job
 
 urlpatterns = [
-    path('results/download/<str:fbpp_id>/', download_folder, name='download_file'),
     path('search/', search_view, name='search'),
     path('results/', results_view, name='results'),
     path('results_job/<str:job_id>/', results_job, name='results_job'),
