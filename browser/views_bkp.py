@@ -46,13 +46,15 @@ def documentation(request):
     return render(request, 'browser/documentation.html')
 
 def citation(request):
-    return render(request, 'browser/citation.html')
+    return render(request, 'browser/publications.html')
 
 def search_view(request):
     return render(request, 'browser/search.html')
 
 def drosophiladb(request):
     return render(request, 'browser/drosophiladb.html')
+def download(request):
+    return render(request, 'browser/download.html')
 
 def job_running(request,job_id): 
     job_status_path = os.path.join('/data/jobs/', job_id, 'status.txt')
@@ -95,12 +97,12 @@ def handle_upload(request, uploaded_file):
         with open(file_path, 'r') as file:
             first_line = file.readline().strip()
         prot_name = first_line.lstrip('>')
-        new_folder_path = '/data/jobs/' + prot_name
-        job_id = prot_name
-        if not os.path.exists(new_folder_path):
-            os.rename(folder_path, new_folder_path)
-            os.chdir(new_folder_path)
-        run_docker_script = os.path.join(new_folder_path, 'run_docker.sh')
+        #new_folder_path = '/data/jobs/' + prot_name
+        #job_id = prot_name
+        #if not os.path.exists(new_folder_path):
+        #    os.rename(folder_path, new_folder_path)
+        #    os.chdir(new_folder_path)
+        run_docker_script = os.path.join(folder_path, 'run_docker.sh')
         with open(run_docker_script, 'w') as script:
             script.write(f"""#!/bin/bash
 #SBATCH --nodes=1
@@ -111,14 +113,16 @@ def handle_upload(request, uploaded_file):
 #SBATCH --mail-type=END
 #SBATCH --mail-user=abakamarina@gmail.com
 #SBATCH --output=slurm_%j.out
-
-docker run --rm -v "/data/jobs/{prot_name}:/opt/job" elodielaine/gemme:gemme /bin/bash -c "cd / && bash run.sh {uploaded_file.name}"
+#SBATCH --error=slurm_%j.err
+                         
+docker run --rm -v "/data/jobs/{job_id}:/opt/job" elodielaine/gemme:gemme /bin/bash -c "cd / && bash run.sh {uploaded_file.name}"
 """)
         os.chmod(run_docker_script, 0o755)
-  
+        os.chdir(folder_path)
         subprocess.run(['sbatch', run_docker_script], check=True)
 
-        job_status_path = os.path.join(new_folder_path, 'status.txt')
+        
+        job_status_path = os.path.join(folder_path, 'status.txt')
         with open(job_status_path, 'w') as status_file:
             status_file.write('in_progress')
         return JsonResponse({
