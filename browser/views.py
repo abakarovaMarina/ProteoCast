@@ -346,7 +346,7 @@ def results_view(request):
         pdb_check = pdb_url_1.replace('/data/', data_path)
         if not os.path.exists(pdb_check):
             pdb_url_1 = None
-            return HttpResponse(f"File not found: {check_path}", status=404)
+            return HttpResponse(f"File not found: {pdb_url_1}, {pdb_check}", status=404)
 
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
