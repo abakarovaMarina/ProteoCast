@@ -156,14 +156,14 @@ def results_view(request):
         prot_name = prot_name[3:]
         id_folder = prot_name
         files = os.listdir(f'/data/jobs/{id_folder}')
-        if prot_name:
-           return HttpResponse(f'Read succ.{files}') 
-        '''# Loop through filenames to find the first one with 'FBpp'
+        # Loop through filenames to find the first one with 'FBpp'
         prot_id = None
         for file_name in files:
             if "ProteoCast" in file_name:
                 prot_id = file_name.split('.')[1].split('_')[0]  # Extract protein ID before the first dot
-                break'''
+                if prot_id:
+                    return HttpResponse(f'{prot_id}') 
+                break
     else:
         # Only for the fly
         data_path = '/data/Drosophila_ProteoCast/'
