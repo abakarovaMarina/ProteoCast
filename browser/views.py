@@ -482,7 +482,10 @@ def results_view(request):
 
 def download_folder(request, fbpp_id):
     # Path to the folder to be downloaded
-    folder_path = os.path.join('/data/Drosophila_ProteoCast', fbpp_id)
+    if fbpp_id[:4] =='2025':
+        folder_path = os.path.join('/data/jobs', fbpp_id)
+    else:
+        folder_path = os.path.join('/data/Drosophila_ProteoCast', fbpp_id)
     
     if not os.path.exists(folder_path):
         return HttpResponse("Folder not found.", status=404)
