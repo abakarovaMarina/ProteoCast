@@ -155,7 +155,7 @@ def results_view(request):
         alias_dir = 'job'
         prot_name = prot_name[3:]
         id_folder = prot_name
-        files = os.listdir('/data/jobs/20250103010053')
+        files = os.listdir(f'/data/jobs/{id_folder}')
         if prot_name:
            return HttpResponse(f'Read succ.{files}') 
         '''# Loop through filenames to find the first one with 'FBpp'
