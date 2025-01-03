@@ -166,7 +166,7 @@ def results_view(request):
         for file_name in files:
             if "ProteoCast" in file_name:
                 prot_id = file_name.split('.')[1].split('_')[0]  # Extract protein ID before the first dot
-            if 'pdb' in files:
+            if 'pdb' in file_name:
                 pdb_id = file_name
     else:
         # Only for the fly
