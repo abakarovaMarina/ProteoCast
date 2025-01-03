@@ -1,24 +1,24 @@
 from django.urls import reverse
-from django.shortcuts import redirect
+# from django.shortcuts import redirect
 import os
 import pandas as pd
 import plotly.express as px
 from django.shortcuts import render
-from django.conf import settings
+# from django.conf import settings
 from django.http import HttpResponse, FileResponse
 import numpy as np
 import shutil
-from io import BytesIO
-import zipfile
+# from io import BytesIO
+# import zipfile
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from django.views.decorators.csrf import csrf_exempt
-from django.core.files.storage import FileSystemStorage
+# from django.core.files.storage import FileSystemStorage
 from datetime import datetime
 import subprocess
-from django.http import QueryDict
-import uuid
-from django.http import JsonResponse, HttpResponseRedirect
+# from django.http import QueryDict
+# import uuid
+from django.http import JsonResponse
 
 
 def contact_us(request):
@@ -149,11 +149,11 @@ def results_view(request):
     if not prot_name:
         return HttpResponse(f'Please provide a protein name.')
     
-    if prot_name[:3]=='job':
-        DATA='/data/jobs/'
+    if prot_name[:3] == 'job':
+        data_path = '/data/jobs/'
         alias_dir = 'job'
         id_folder = prot_name
-        files = os.listdir(DATA+id_folder)
+        files = os.listdir(data_path + id_folder)
         # Loop through filenames to find the first one with 'FBpp'
         prot_id = None
         for file_name in files:
@@ -161,10 +161,10 @@ def results_view(request):
                 prot_id = file_name.split('.')[1].split('_')[0]  # Extract protein ID before the first dot
                 break
     else:
-        ## only for the fly
-        DATA = '/data/Drosophila_ProteoCast/'
+        # Only for the fly
+        data_path = '/data/Drosophila_ProteoCast/'
         alias_dir = 'data'
-        mapping_file_path = f'{DATA}mapping_database.csv'
+        mapping_file_path = f'{data_path}mapping_database.csv'
         if not os.path.exists(mapping_file_path):
             return HttpResponse("Mapping file not found.")
 
@@ -172,41 +172,35 @@ def results_view(request):
         
         mapping_df['fbpp_low'] = mapping_df.index.str.lower()
         mapping_df['pr_sym'] = mapping_df['Protein_symbol'].str.lower()
-        if prot_name[:4]=='fbpp':
-        
-            id_folder = mapping_df.loc[mapping_df['fbpp_low']==prot_name, 'id'].item()
-            prot_id = mapping_df.loc[mapping_df['id']==id_folder].index[0]
+        if prot_name[:4] == 'fbpp':
+            id_folder = mapping_df.loc[mapping_df['fbpp_low'] == prot_name, 'id'].item()
+            prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
         else:
-            id_folder = mapping_df.loc[mapping_df['pr_sym']==prot_name, 'id'].item()
-            prot_id = mapping_df.loc[mapping_df['id']==id_folder].index[0]
-        
-    
+            id_folder = mapping_df.loc[mapping_df['pr_sym'] == prot_name, 'id'].item()
+            prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
     
     alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y"][::-1]
     alph = [i.upper() for i in alph]
     
-    ### Confidence values
-    proteocast_path = f'{DATA}{id_folder}/4.{prot_id}_ProteoCast.csv'
+    # Confidence values
+    proteocast_path = f'{data_path}{id_folder}/4.{prot_id}_ProteoCast.csv'
     if not os.path.exists(proteocast_path):
         return HttpResponse("ProteoCast file not found.")
     
-    
     df_proteocast = pd.read_csv(proteocast_path)
-    df_proteocast['GEMME_LocalConfidence'] = df_proteocast['GEMME_LocalConfidence'].replace({True:1, False:0})
+    df_proteocast['GEMME_LocalConfidence'] = df_proteocast['GEMME_LocalConfidence'].replace({True: 1, False: 0})
     confidence_values = np.array(df_proteocast.groupby('Residue')['GEMME_LocalConfidence'].apply(lambda x: x.iloc[0]).tolist()).reshape(1, -1)
     
-    
     df = pd.DataFrame(np.array(df_proteocast['GEMME_score']).reshape(20, -1, order='F'))
-    df_classes = pd.DataFrame(np.array(df_proteocast['Variant_class'].replace({'neutral':1, 'uncertain':2, 'impactful':3})).reshape(20, -1, order='F'))
+    df_classes = pd.DataFrame(np.array(df_proteocast['Variant_class'].replace({'neutral': 1, 'uncertain': 2, 'impactful': 3})).reshape(20, -1, order='F'))
     df_classesStr = pd.DataFrame(np.array(df_proteocast['Variant_class']).reshape(20, -1, order='F'))
     df_mut = pd.DataFrame(np.array(df_proteocast['Mutation']).reshape(20, -1, order='F'))
 
-    
     # Custom color scale for confidence
     variantClasses_colorscale = [
         [0, '#3688ED'],  # neutral- white
         [0.5, '#E097CE'],  # uncertain - purple
-        [1, '#F25064']      #impactful - red
+        [1, '#F25064']      # impactful - red
     ]
     # Custom color scale for confidence
     confidence_colorscale = [
@@ -284,7 +278,6 @@ def results_view(request):
     fig.update_layout(title_x=1, autosize=False, width=1500, height=600, xaxis=dict(tickmode="array", tickvals=list(range(1, df.shape[1], 10)), ticktext=[str(i) for i in range(1, df.shape[1], 10)]), yaxis=dict(title="Substituting amino acid"), xaxis2=dict(title="Residue"))
     fig_VariantClasses.update_layout(title_x=1, autosize=False, width=1500, height=600, xaxis=dict(tickmode="array", tickvals=list(range(1, df.shape[1]+1, 10)), ticktext=[str(i) for i in range(1, df.shape[1], 10)]), yaxis=dict(title="Substituting amino acid"),  xaxis2=dict(title="Residue"))
 
-
     fig.update_yaxes(visible=False, row=2, col=1)
     fig_VariantClasses.update_yaxes(visible=False, row=2, col=1)
     heatmap_html = fig.to_html(full_html=False)
@@ -296,16 +289,16 @@ def results_view(request):
 
     # Validate existence of files
     for file_path in [image_url_1, fig_msarep, fig_segmentation]:
-        if not os.path.exists(file_path.replace('/data/', DATA)):
+        if not os.path.exists(file_path.replace('/data/', data_path)):
             return HttpResponse(f"File not found: {file_path}")
         
     pdb_url_1 = f'/{alias_dir}/{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
-    if not os.path.exists(pdb_url_1.replace('/data/', DATA)):
+    if not os.path.exists(pdb_url_1.replace('/data/', data_path)):
         pdb_url_1 = None
     
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
-        'heatmapClasses_html':heatmapClasses_html,
+        'heatmapClasses_html': heatmapClasses_html,
         'query': id_folder,
         'prot_name': prot_id,
         'image_url_1': image_url_1,
