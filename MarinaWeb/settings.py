@@ -48,7 +48,6 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'browser/static'),
-    '/data/jobs/' 
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -155,7 +155,7 @@ def results_view(request):
         alias_dir = 'job'
         prot_name = prot_name[3:]
         id_folder = prot_name
-        path = os.path.join(data_path, id_folder)
+        path = os.path.join('/jobs/', id_folder)
         
         files = os.listdir(path)
         
