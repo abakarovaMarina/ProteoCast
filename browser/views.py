@@ -163,7 +163,7 @@ def results_view(request):
         alias_dir = 'jobs'
         prot_name = prot_name[3:]
         id_folder = prot_name
-        if not uniprot_id:
+        if uniprot_id:
             return HttpResponse(f'UNIPROT.{uniprot_id}')
         files = os.listdir(f'/data/jobs/{id_folder}')
         # Loop through filenames to find the first one with 'FBpp'
