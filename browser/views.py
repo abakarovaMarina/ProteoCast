@@ -153,6 +153,7 @@ def results_view(request):
     if prot_name[:3] == 'job':
         data_path = '/data/jobs/'
         alias_dir = 'job'
+        prot_name = prot_name[3:]
         id_folder = prot_name
         files = os.listdir(data_path + id_folder)
         # Loop through filenames to find the first one with 'FBpp'
