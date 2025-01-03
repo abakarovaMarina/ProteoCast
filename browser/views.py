@@ -161,6 +161,7 @@ def results_view(request):
         prot_name = prot_name[3:]
         id_folder = prot_name
         files = os.listdir(f'/data/jobs/{id_folder}')
+        uniprot_id = request.POST.get('uniprotId') 
         # Loop through filenames to find the first one with 'FBpp'
         prot_id = None
         for file_name in files:
@@ -339,7 +340,7 @@ def results_view(request):
         if not os.path.exists(check_path):
             return HttpResponse(f"File not found: {check_path}", status=404)
 
-    pdb_url_1 = f'/{alias_dir}/{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
+    pdb_url_1 = f'/{alias_dir}/{id_folder}/AF-{uniprot_id}-F1-model_v4.pdb'
     pdb_check = None
     if pdb_url_1:
         pdb_check = pdb_url_1.replace('/data/', data_path)
