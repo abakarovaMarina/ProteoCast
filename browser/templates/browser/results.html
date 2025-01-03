@@ -114,34 +114,34 @@
         </h5>
         </div>
 
-        <div class="form-row" style="display: flex; align-items: flex-start;">
-            <div class="heatmap" style="flex: 1; autosize: true;">
-                <h2>Mutational Landscape</h2>
-                <p> The heatmap gives the predicted effects of all 19-times-the-protein-length possible amino acid substitutions. You can switch between raw scores (the darker the more negative) and variant classification into impactful (red), uncertain (pink) and neutral (blue). The horizontal bar below gives binary confidence scores, blue for reliable predictions, white otherwise.</p>
-                <div class="buttons" style="margin-left: 20px;">
-                    <label style="display: inline-block; margin-right: 20px;">
-                        <input type="radio" name="heatmapToggle" value="heatmap_html" checked>
-                        RAW SCORES
-                    </label>
-                    <label style="display: inline-block;">
-                        <input type="radio" name="heatmapToggle" value="heatmapClasses_html">
-                        VARIANT CLASSES
-                    </label>
-                </div>
-                <div style="max-height: 600px; overflow-y: hidden; overflow-x: auto; border: 1px solid #ddd; padding: 10px;">
-                {% if heatmap_html %}
-                <div id="heatmap_html" style="display: block;">
-                    {{ heatmap_html|safe }}
-                </div>
-                {% endif %}
-                {% if heatmapClasses_html %}
-                <div id="heatmapClasses_html" style="display: none;">
-                    {{ heatmapClasses_html|safe }}
-                </div>
-                {% endif %}
-                {% if not heatmap_html and not heatmapClasses_html %}
-                <p>No results found.</p>
-                {% endif %}
+        <div class="form-row" style="display: flex; align-items: flex-start; justify-content: center;">
+            <div class="heatmap" style="flex: 1; autosize: true; max-width: 80%;">
+            <h2>Mutational Landscape</h2>
+            <p> The heatmap gives the predicted effects of all 19-times-the-protein-length possible amino acid substitutions. You can switch between raw scores (the darker the more negative) and variant classification into impactful (red), uncertain (pink) and neutral (blue). The horizontal bar below gives binary confidence scores, blue for reliable predictions, white otherwise.</p>
+            <div class="buttons" style="margin-left: 20px;">
+                <label style="display: inline-block; margin-right: 20px;">
+                <input type="radio" name="heatmapToggle" value="heatmap_html" checked>
+                RAW SCORES
+                </label>
+                <label style="display: inline-block;">
+                <input type="radio" name="heatmapToggle" value="heatmapClasses_html">
+                VARIANT CLASSES
+                </label>
+            </div>
+            <div style="max-height: 600px; overflow-y: hidden; overflow-x: auto; border: 1px solid #ddd; padding: 10px;">
+            {% if heatmap_html %}
+            <div id="heatmap_html" style="display: block;">
+                {{ heatmap_html|safe }}
+            </div>
+            {% endif %}
+            {% if heatmapClasses_html %}
+            <div id="heatmapClasses_html" style="display: none;">
+                {{ heatmapClasses_html|safe }}
+            </div>
+            {% endif %}
+            {% if not heatmap_html and not heatmapClasses_html %}
+            <p>No results found.</p>
+            {% endif %}
             </div>
             </div>
           </div>
