@@ -162,7 +162,7 @@ def results_view(request):
         id_folder = prot_name
         files = os.listdir(f'/data/jobs/{id_folder}')
         uniprot_id = request.POST.get('uniprotId')
-        if uniprot_id:
+        if not uniprot_id:
             return HttpResponse(f'Uniprot ID not found.{uniprot_id}') 
         # Loop through filenames to find the first one with 'FBpp'
         prot_id = None
@@ -348,6 +348,7 @@ def results_view(request):
         pdb_check = pdb_url_1.replace('/data/', data_path)
         if not os.path.exists(pdb_check):
             pdb_url_1 = None
+            return HttpResponse(f"File not found: {check_path}", status=404)
 
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
