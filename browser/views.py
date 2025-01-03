@@ -155,18 +155,20 @@ def results_view(request):
         alias_dir = 'job'
         prot_name = prot_name[3:]
         id_folder = prot_name
-        path = os.path.join('/jobs/', id_folder)
+        path = os.path.join(data_path, id_folder)
+        proteocast_path = f'{data_path}/4.FBpp0070001_ProteoCast.csv'
+        if not os.path.exists(proteocast_path):
+            return HttpResponse("ProteoCast file not found.")
+        df = pd.read_csv(proteocast_path)
+        if df: 
+            return HttpResponse("ProteoCast file not found.")
         
-        files = os.listdir(path)
-        
-        if not files:
-            return HttpResponse(f'No files found for job {id_folder}{files}.')
-        # Loop through filenames to find the first one with 'FBpp'
+        '''# Loop through filenames to find the first one with 'FBpp'
         prot_id = None
         for file_name in files:
             if "ProteoCast" in file_name:
                 prot_id = file_name.split('.')[1].split('_')[0]  # Extract protein ID before the first dot
-                break
+                break'''
     else:
         # Only for the fly
         data_path = '/data/Drosophila_ProteoCast/'
