@@ -47,7 +47,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'browser/static'), 
+    os.path.join(BASE_DIR, 'browser/static'),
+    '/data/jobs/' 
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
