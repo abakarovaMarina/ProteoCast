@@ -124,13 +124,13 @@
                         RAW SCORES
                     </label>
                     <label style="display: inline-block;">
-                        <input type="radio" name="heatmapToggle" value="heatmapClasses_html" style="margin: 0 auto; display: block;">
+                        <input type="radio" name="heatmapToggle" value="heatmapClasses_html">
                         VARIANT CLASSES
                     </label>
                 </div>
                 <div style="max-height: 600px; overflow-y: hidden; overflow-x: auto; border: 1px solid #ddd; padding: 10px;">
                 {% if heatmap_html %}
-                <div id="heatmap_html" style="display: block;">
+                <div id="heatmap_html" style="display: block; text-align: center;">
                     {{ heatmap_html|safe }}
                 </div>
                 {% endif %}
