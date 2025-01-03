@@ -48,7 +48,7 @@
             return;
         }
 
-        fetch(`/results/check_job_status/?job_id=${jobId}`)  // Corregí las comillas aquí
+        fetch(`/results/check_job_status/?job_id=${jobId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -57,7 +57,7 @@
             })
             .then(data => {
                 if (data.status === 'finished') {
-                    window.location.href = data.redirect_url;  // Esto redirige a la URL proporcionada
+                    window.location.href = data.redirect_url;
                 } else if (data.status === 'error') {
                     document.getElementById('uploadStatus').innerText = 'Error: ' + data.message;
                 } else {

@@ -12,32 +12,14 @@ from io import BytesIO
 import zipfile
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
 from datetime import datetime
 import subprocess
+from django.http import QueryDict
 import uuid
 from django.http import JsonResponse, HttpResponseRedirect
 
-def check_job_status(request):
-    job_id = request.GET.get('job_id')
-    if not job_id:
-        return JsonResponse({'status': 'error', 'message': 'No job_id provided.'}, status=400)
-
-    job_status_path = os.path.join('/data/jobs', job_id, 'status.txt')
-
-    if not os.path.exists(job_status_path):
-        return JsonResponse({'status': 'error', 'message': f'Status file not found at {job_status_path}'}, status=404)
-
-    with open(job_status_path, 'r') as file:
-        job_status = file.read().strip()
-
-    if job_status == 'finished':
-        redirect_url = reverse('results_job', args=[job_id])
-        return JsonResponse({'status': 'finished', 'redirect_url': redirect_url})
-    else:
-        return JsonResponse({'status': job_status, 'message': 'At the end of the process the results will be displayed.'})
 
 def contact_us(request):
     return render(request, 'browser/contact_us.html')
@@ -61,7 +43,6 @@ def job_running(request,job_id):
 
     if not os.path.exists(job_status_path):
         return render(request, 'browser/error.html', {'message': 'Status file not found for this job.'}, status=404)
-
     try:
         with open(job_status_path, 'r') as status_file:
             status = status_file.read().strip()
@@ -69,6 +50,26 @@ def job_running(request,job_id):
         return render(request, 'browser/error.html', {'message': f'Error reading status file: {str(e)}'}, status=500)
 
     return render(request, 'browser/job_running.html', {'job_id': job_id, 'status': status})
+
+def check_job_status(request):
+    job_id = request.GET.get('job_id')
+    if not job_id:
+        return JsonResponse({'status': 'error', 'message': 'No job_id provided.'}, status=400)
+
+    job_status_path = os.path.join('/data/jobs', job_id, 'status.txt')
+
+    if not os.path.exists(job_status_path):
+        return JsonResponse({'status': 'error', 'message': f'Status file not found at {job_status_path}'}, status=404)
+
+    with open(job_status_path, 'r') as file:
+        job_status = file.read().strip()
+
+    if job_status == 'finished':
+        # Construct the URL with the job ID as a query parameter
+        results_url = f"{reverse('results')}?q={job_id}"
+        return JsonResponse({'status': 'finished', 'redirect_url': results_url})
+    else:
+        return JsonResponse({'status': job_status, 'message': 'At the end of the process the results will be displayed.'})
 
 DATA = '/data/Drosophila_ProteoCast/'
 
@@ -288,6 +289,9 @@ def results_job(request,job_id):
 
 def results_view(request):
     prot_name = request.GET.get('q').lower()
+    if prot_name[:4]=='2025':
+       return HttpResponse(f'Here is the job ID {prot_name}.')
+     
     if not prot_name:
         return HttpResponse(f'Please provide a protein name.')
     
@@ -426,11 +430,7 @@ def results_view(request):
     for file_path in [image_url_1, pdb_url_1, fig_msarep, fig_segmentation]:
         if not os.path.exists(file_path.replace('/data/', DATA)):
             return HttpResponse(f"File not found: {file_path}")
-        
-    """image_url_1 = f'{DATA}{id_folder}/6.{FBpp_id}_GMM.jpg'
-    pdb_url_1 = f'{DATA}{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
-    fig_msarep = f'{DATA}{id_folder}/3.{FBpp_id}_msaRepresentation.jpg'
-    fig_segmentation = f'{DATA}{id_folder}/9.{FBpp_id}_SegProfile.png'"""
+    
     
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
