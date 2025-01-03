@@ -106,21 +106,45 @@
          <div class="form-row">
           <p>You may generate it with the <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb">ColabFold</a> notebook. The first sequence should be the query, without any gap.</p>
          </div>
-         <div class="form-row py-2">
-          <div class="form-group col">
-            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-            <input type="file" name="file" id="fileInput" accept=".a3m,.fasta" required>
-             <div class="custom-control custom-switch mt-2 py-1">
-            <input type="checkbox" id="uniprotCode" name="uniprotCode" class="custom-control-input" checked >
-          <label for="uniprotCode" class="custom-control-label text-dark">Map predictions on the AlphaFold 3D model for UniProt ID:</label>
+      <div class="form-row py-2">
+        <div class="form-group col">
+          <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+          <input type="file" name="file" id="fileInput" accept=".a3m,.fasta" required>
+          <div class="custom-control custom-switch mt-2 py-1">
+            <input type="checkbox" id="uniprotCode" name="uniprotCode" class="custom-control-input" checked>
+            <label for="uniprotCode" class="custom-control-label text-dark">Map predictions on the AlphaFold 3D model for UniProt ID:</label>
           </div>
+        </div>
+      
+        <div class="form-group col-md-6 offset-md-6" id="uniprotInputContainer" >
+          <label for="uniprotId" class="text-dark"></label>
+          <input type="text" id="uniprotId" name="uniprotId" class="form-control" placeholder="e.g., P12345">
+          <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        </div>
       </div>
+      
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const uniprotCodeCheckbox = document.getElementById('uniprotCode');
+          const uniprotIdInput = document.getElementById('uniprotId');
+      
+          // Function to toggle the 'required' attribute
+          function toggleUniprotIdRequirement() {
+            if (uniprotCodeCheckbox.checked) {
+              uniprotIdInput.setAttribute('required', 'required');
+            } else {
+              uniprotIdInput.removeAttribute('required');
+            }
+          }
+      
+          // Attach event listener to the checkbox
+          uniprotCodeCheckbox.addEventListener('change', toggleUniprotIdRequirement);
+      
+          // Set the initial state on page load
+          toggleUniprotIdRequirement();
+        });
+      </script>
 
-      <div class="form-group col-md-6" id="uniprotInputContainer" style="margin-left: -20px;">
-            <label for="uniprotId" class="text-dark">  </label>
-            <input type="text" id="uniprotId" name="uniprotId" class="form-control" placeholder="e.g., P12345">
-      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-      </div>
       </div>
         <div id="loading" style="display: none;">Uploading... Please wait.</div>
         <div id="uploadStatus"></div>
