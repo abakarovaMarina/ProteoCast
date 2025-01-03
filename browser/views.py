@@ -330,7 +330,7 @@ def results_view(request):
     fig_segmentation = f'/{alias_dir}/{id_folder}/9.{prot_id}_SegProfile.png'
 
     for file_path in [image_url_1, fig_msarep, fig_segmentation]:
-        check_path = file_path.replace('/data/', data_path)
+        check_path = file_path.replace(alias_dir, data_path)
         if not os.path.exists(check_path):
             return HttpResponse(f"File not found: {check_path}", status=404)
 
