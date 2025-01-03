@@ -186,7 +186,7 @@ def results_view(request):
         else:
             id_folder = mapping_df.loc[mapping_df['pr_sym'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
-    
+        uniprot_id = 'Q45VV3'
         # Basic checks
     if not data_path or not id_folder or not prot_id:
         return HttpResponse("Missing required path or protein ID.", status=500)
