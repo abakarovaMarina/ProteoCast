@@ -343,7 +343,7 @@ def results_view(request):
     pdb_url_1 = f'/{alias_dir}/{id_folder}/{pdb_id}'
     pdb_check = None
     if pdb_url_1:
-        pdb_check = pdb_url_1.replace('/data/', data_path)
+        pdb_check = pdb_url_1.replace(alias_dir, data_path)
         if not os.path.exists(pdb_check):
             pdb_url_1 = None
             return HttpResponse(f"File not found: {pdb_url_1}, {pdb_check}", status=404)
