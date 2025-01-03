@@ -181,7 +181,178 @@ def results_view(request):
             id_folder = mapping_df.loc[mapping_df['pr_sym'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
     
+        # Basic checks
+    if not data_path or not id_folder or not prot_id:
+        return HttpResponse("Missing required path or protein ID.", status=500)
+
     alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y"][::-1]
+    alph = [i.upper() for i in alph]
+
+    proteocast_path = f'{data_path}{id_folder}/4.{prot_id}_ProteoCast.csv'
+    if not os.path.exists(proteocast_path):
+        return HttpResponse(f"ProteoCast file not found: {proteocast_path}", status=404)
+
+    try:
+        df_proteocast = pd.read_csv(proteocast_path)
+    except Exception as e:
+        return HttpResponse(f"Error reading ProteoCast CSV: {e}", status=500)
+
+    required_cols = ["GEMME_LocalConfidence", "Residue", "GEMME_score", "Variant_class", "Mutation"]
+    for col in required_cols:
+        if col not in df_proteocast.columns:
+            return HttpResponse(f"Column '{col}' not found in CSV.", status=500)
+
+    try:
+        df_proteocast['GEMME_LocalConfidence'] = df_proteocast['GEMME_LocalConfidence'].replace({True: 1, False: 0})
+        confidence_values = np.array(df_proteocast.groupby('Residue')['GEMME_LocalConfidence']
+                                     .apply(lambda x: x.iloc[0]).tolist()).reshape(1, -1)
+
+        df = pd.DataFrame(np.array(df_proteocast['GEMME_score']).reshape(20, -1, order='F'))
+        df_classes = pd.DataFrame(np.array(df_proteocast['Variant_class']
+                                           .replace({'neutral': 1, 'uncertain': 2, 'impactful': 3}))
+                                  .reshape(20, -1, order='F'))
+        df_classesStr = pd.DataFrame(np.array(df_proteocast['Variant_class']
+                                              ).reshape(20, -1, order='F'))
+        df_mut = pd.DataFrame(np.array(df_proteocast['Mutation']).reshape(20, -1, order='F'))
+    except Exception as e:
+        return HttpResponse(f"Error preparing data frames: {e}", status=500)
+
+    variantClasses_colorscale = [
+        [0, '#3688ED'],
+        [0.5, '#E097CE'],
+        [1, '#F25064']
+    ]
+    confidence_colorscale = [
+        [0, 'white'],
+        [1, 'darkblue']
+    ]
+
+    try:
+        fig = make_subplots(
+            rows=2, cols=1,
+            shared_xaxes=True,
+            row_heights=[0.9, 0.1],
+            vertical_spacing=0.02,
+        )
+
+        fig_VariantClasses = make_subplots(
+            rows=2, cols=1,
+            shared_xaxes=True,
+            row_heights=[0.9, 0.1],
+            vertical_spacing=0.02,
+        )
+
+        heatmap_main = go.Heatmap(
+            z=df.values[::-1],
+            x=list(range(1, df.shape[1])),
+            y=alph,
+            colorscale=px.colors.sequential.Oranges[::-1],
+            showscale=False,
+            customdata=df_mut.values[::-1],
+            hovertemplate=("Position: %{customdata}<br>"
+                           "Score: %{z:.2f}<extra></extra>")
+        )
+        heatmap_classes = go.Heatmap(
+            z=df_classes.values[::-1],
+            x=list(range(1, df_classes.shape[1])),
+            y=alph,
+            customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1]]),
+            colorscale=variantClasses_colorscale,
+            showscale=False,
+            hovertemplate=("Position: %{customdata[0]}<br>"
+                           "Class: %{customdata[1]}<extra></extra>"),
+            xgap=0.3,
+            ygap=0.3,
+        )
+
+        fig.add_trace(heatmap_main, row=1, col=1)
+        fig_VariantClasses.add_trace(heatmap_classes, row=1, col=1)
+
+        heatmap_confidence = go.Heatmap(
+            z=confidence_values,
+            x=list(range(1, df_classes.shape[1])),
+            colorscale=confidence_colorscale,
+            showscale=False,
+            hovertemplate="%{z}<extra></extra>",
+        )
+
+        fig.add_trace(heatmap_confidence, row=2, col=1)
+        fig_VariantClasses.add_trace(heatmap_confidence, row=2, col=1)
+
+        scatter_border = go.Scatter(
+            x=[0, df.shape[1]+1, df.shape[1]+1, 0, 0],
+            y=[-0.5, -0.5, 0.5, 0.5, -0.5],
+            mode="lines",
+            line=dict(color="darkblue", width=2),
+            hoverinfo="skip",
+            showlegend=False,
+        )
+        fig.add_trace(scatter_border, row=2, col=1)
+        fig_VariantClasses.add_trace(scatter_border, row=2, col=1)
+
+        fig.update_layout(
+            title_x=1,
+            autosize=False,
+            width=1500,
+            height=600,
+            xaxis=dict(
+                tickmode="array",
+                tickvals=list(range(1, df.shape[1], 10)),
+                ticktext=[str(i) for i in range(1, df.shape[1], 10)]
+            ),
+            yaxis=dict(title="Substituting amino acid"),
+            xaxis2=dict(title="Residue")
+        )
+        fig_VariantClasses.update_layout(
+            title_x=1,
+            autosize=False,
+            width=1500,
+            height=600,
+            xaxis=dict(
+                tickmode="array",
+                tickvals=list(range(1, df.shape[1]+1, 10)),
+                ticktext=[str(i) for i in range(1, df.shape[1], 10)]
+            ),
+            yaxis=dict(title="Substituting amino acid"),
+            xaxis2=dict(title="Residue")
+        )
+
+        fig.update_yaxes(visible=False, row=2, col=1)
+        fig_VariantClasses.update_yaxes(visible=False, row=2, col=1)
+
+        heatmap_html = fig.to_html(full_html=False)
+        heatmapClasses_html = fig_VariantClasses.to_html(full_html=False)
+    except Exception as e:
+        return HttpResponse(f"Error generating heatmaps: {e}", status=500)
+
+    image_url_1 = f'/{alias_dir}/{id_folder}/6.{prot_id}_GMM.jpg'
+    fig_msarep = f'/{alias_dir}/{id_folder}/3.{prot_id}_msaRepresentation.jpg'
+    fig_segmentation = f'/{alias_dir}/{id_folder}/9.{prot_id}_SegProfile.png'
+
+    for file_path in [image_url_1, fig_msarep, fig_segmentation]:
+        check_path = file_path.replace('/data/', data_path)
+        if not os.path.exists(check_path):
+            return HttpResponse(f"File not found: {check_path}", status=404)
+
+    pdb_url_1 = f'/{alias_dir}/{id_folder}/AF-Q45VV3-F1-model_v4.pdb'
+    pdb_check = None
+    if pdb_url_1:
+        pdb_check = pdb_url_1.replace('/data/', data_path)
+        if not os.path.exists(pdb_check):
+            pdb_url_1 = None
+
+    return render(request, 'browser/results.html', {
+        'heatmap_html': heatmap_html,
+        'heatmapClasses_html': heatmapClasses_html,
+        'query': id_folder,
+        'prot_name': prot_id,
+        'image_url_1': image_url_1,
+        'pdb_url_1': pdb_url_1,
+        'fig_msarep': fig_msarep,
+        'fig_segmentation': fig_segmentation,
+    })
+
+    '''alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y"][::-1]
     alph = [i.upper() for i in alph]
     
     # Confidence values
@@ -307,7 +478,7 @@ def results_view(request):
         'pdb_url_1': pdb_url_1,
         'fig_msarep': fig_msarep,
         'fig_segmentation': fig_segmentation,
-    })
+    })'''
 
 def download_folder(request, fbpp_id):
     # Path to the folder to be downloaded
