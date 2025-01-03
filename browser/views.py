@@ -155,14 +155,9 @@ def results_view(request):
         alias_dir = 'job'
         prot_name = prot_name[3:]
         id_folder = prot_name
-        path = os.path.join(data_path, id_folder)
-        proteocast_path = f'{data_path}{id_folder}/4.FBpp0070001_ProteoCast.csv'
-        if not os.path.exists(proteocast_path):
-            return HttpResponse("ProteoCast file not found.")
-        df = pd.read_csv(proteocast_path)
-        path = os.listdir('/data/jobs/')
+        files = os.listdir('/data/jobs/20250103010053')
         if prot_name:
-           return HttpResponse(f'Read succ.{path}') 
+           return HttpResponse(f'Read succ.{files}') 
         '''# Loop through filenames to find the first one with 'FBpp'
         prot_id = None
         for file_name in files:
