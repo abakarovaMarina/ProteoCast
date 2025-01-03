@@ -155,9 +155,9 @@ def results_view(request):
         alias_dir = 'job'
         prot_name = prot_name[3:]
         id_folder = prot_name
-        if prot_name:
-            return HttpResponse(f'Please provide a protein name{id_folder}{prot_name}{data_path}.')
-        files = os.listdir(data_path + id_folder)
+        files = os.listdir(os.path.join(data_path, id_folder))
+        if not files:
+            return HttpResponse(f'No files found for job {id_folder}.')
         # Loop through filenames to find the first one with 'FBpp'
         prot_id = None
         for file_name in files:
