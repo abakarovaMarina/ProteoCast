@@ -61,7 +61,7 @@
                 } else if (data.status === 'error') {
                     document.getElementById('uploadStatus').innerText = 'Error: ' + data.message;
                 } else {
-                    document.getElementById('uploadStatus').innerHTML = 'At the end of the process the results will be displayed.<br><u>DO NOT refresh nor close the page.</u>';
+                    document.getElementById('uploadStatus').innerHTML = `Your job ID is <u>${jobId} </u>. We will keep the archive for a week. <br> At the end of the process the results will be displayed.<br><u>DO NOT refresh nor close the page.</u>`;
                 }
             })
             .catch(error => {
