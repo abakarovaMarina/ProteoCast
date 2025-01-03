@@ -156,7 +156,7 @@ def results_view(request):
         prot_name = prot_name[3:]
         id_folder = prot_name
         path = os.path.join(data_path, id_folder)
-        proteocast_path = f'{data_path}/4.FBpp0070001_ProteoCast.csv'
+        proteocast_path = f'{data_path}{id_folder}/4.FBpp0070001_ProteoCast.csv'
         if not os.path.exists(proteocast_path):
             return HttpResponse("ProteoCast file not found.")
         df = pd.read_csv(proteocast_path)
