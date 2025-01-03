@@ -156,6 +156,8 @@ def results_view(request):
         prot_name = prot_name[3:]
         id_folder = prot_name
         files = os.listdir(data_path + id_folder)
+        if not files:
+            return HttpResponse(f'No files found for job {id_folder}.')
         # Loop through filenames to find the first one with 'FBpp'
         prot_id = None
         for file_name in files:
