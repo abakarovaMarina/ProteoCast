@@ -199,7 +199,36 @@
             {% endif %}
         </div>
 
+
+
+
+        ??? new version 
+
+
         <div class="form-row">
+            <h2>3D Structure</h2>
+        </div>
+        <div class="form-row" style="min-height: 600px;">
+            <div class="form-group col-10">
+                <!-- Viewer Container -->
+                <div id="myViewer" class="viewer-container"></div>
+            </div>
+            <div class="form-group col-2 pl-5 py-4">
+                <!-- Radio Buttons for Structure Coloring -->
+                <div class="buttons" style="display: flex; flex-direction: column; gap: 10px;">
+                    <label>
+                        <input type="radio" name="structureToggle" value="pdb_url_1" checked>
+                        Color by B-Factors
+                    </label>
+                    <label>
+                        <input type="radio" name="structureToggle" value="pdb_url_2">
+                        Color by sensitivity
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        {% comment %} <div class="form-row">
           <h2>3D Structure</h2>
         </div>
         <div class="form-row" style="min-height: 600px;">
@@ -209,7 +238,7 @@
             <div class="form-group col-2 pl-5 py-4">
                 <button id="colorBFactorBtn" class="example-button">Color by B-Factors</button>
             </div>
-        </div>
+        </div> {% endcomment %}
 
 
         <script>
