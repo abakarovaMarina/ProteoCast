@@ -37,6 +37,8 @@ def drosophiladb(request):
     return render(request, 'browser/drosophiladb.html')
 def download(request):
     return render(request, 'browser/download.html')
+def browser(request):
+    return render(request, 'browser/browser.html')
 
 def job_running(request,job_id): 
     job_status_path = os.path.join('/data/jobs/', job_id, 'status.txt')

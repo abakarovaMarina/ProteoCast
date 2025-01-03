@@ -1,7 +1,7 @@
 # MarinaWeb/urls.py
 from django.contrib import admin
 from django.urls import path, include
-from browser.views import search_view, download,contact_us, documentation, citation, upload_file, drosophiladb, job_running
+from browser.views import search_view, download,contact_us, documentation, citation, upload_file, drosophiladb, job_running, browse
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -15,4 +15,5 @@ urlpatterns = [
     path('job_running/<str:job_id>/', job_running, name='job_running'),
     path('drosophiladb/',drosophiladb, name='drosophiladb'),
     path('download/', download, name='download'),
+    path('browse/', browse , name='browse'),
 ]

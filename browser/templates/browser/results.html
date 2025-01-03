@@ -82,7 +82,7 @@
 <div class="page">
       <div class="header">
         <nav class="navbar navbar-expand-lg navbar-light text-white">
-          <a class="navbar-brand" href="{% url 'drosophiladb' %}">
+          <a class="navbar-brand" href="{% url 'search' %}">
             <h1 class="text-white text-decoration-none">ProteoCast 
               <span style="font-size: 0.6em; color: white;"> for {{ prot_name }}</span></h1>
           </a>
@@ -106,7 +106,7 @@
       <div class="content">
         <div class="container-fluid" style="width:95%;">
         <div class="form-row py-4">
-          <h5> Here are ProteoCast results for {{ prot_name }}. If you need help in exploring and interpreting them, please go to our <a href="/documentation">documentation</a>.</h5>
+        <h5>Here are ProteoCast results for {{ prot_name }}. If you need help in exploring and interpreting them, please go to our <a href="/documentation" target="_blank" rel="noopener noreferrer">documentation</a>.</h5>
         </div>
         <div class="form-row" style="display: flex; align-items: flex-start;">
             <div class="heatmap" style="flex: 1; autosize: true;">
