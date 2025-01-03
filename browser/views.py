@@ -161,7 +161,6 @@ def results_view(request):
         prot_name = prot_name[3:]
         id_folder = prot_name
         files = os.listdir(f'/data/jobs/{id_folder}')
-        uniprot_id = request.GET.get('uniprotId')
         if not uniprot_id:
             return HttpResponse(f'Uniprot ID not found.{uniprot_id}') 
         # Loop through filenames to find the first one with 'FBpp'
@@ -169,7 +168,8 @@ def results_view(request):
         for file_name in files:
             if "ProteoCast" in file_name:
                 prot_id = file_name.split('.')[1].split('_')[0]  # Extract protein ID before the first dot
-                break
+            if 'pdb' in files:
+                pdb_id = file_name
     else:
         # Only for the fly
         data_path = '/data/Drosophila_ProteoCast/'
@@ -188,7 +188,7 @@ def results_view(request):
         else:
             id_folder = mapping_df.loc[mapping_df['pr_sym'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
-        uniprot_id = 'Q45VV3'
+        pdb_id = 'AF-Q45VV3-F1-model_v4.pdb'
         # Basic checks
     if not data_path or not id_folder or not prot_id:
         return HttpResponse("Missing required path or protein ID.", status=500)
@@ -342,7 +342,7 @@ def results_view(request):
         if not os.path.exists(check_path):
             return HttpResponse(f"File not found: {check_path}", status=404)
 
-    pdb_url_1 = f'/{alias_dir}/{id_folder}/AF-{uniprot_id}-F1-model_v4.pdb'
+    pdb_url_1 = f'/{alias_dir}/{id_folder}/{pdb_id}'
     pdb_check = None
     if pdb_url_1:
         pdb_check = pdb_url_1.replace('/data/', data_path)
