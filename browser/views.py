@@ -86,6 +86,9 @@ def upload_file(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def handle_upload(request, uploaded_file):
+    uniprot_id = request.POST.get('uniprotId')
+    #if not uniprot_id:
+    #    return JsonResponse({'status': 'error', 'message': 'No UniProt ID provided.'}, status=400)
     now = datetime.now()
     global job_id
     job_id = now.strftime('%Y%m%d%H%M%S')
@@ -119,7 +122,7 @@ def handle_upload(request, uploaded_file):
 #SBATCH --output=slurm_%j.out
 #SBATCH --error=slurm_%j.err
                          
-docker run --rm -v "/data/jobs/{job_id}:/opt/job" elodielaine/gemme:gemme /bin/bash -c "cd / && bash run.sh {uploaded_file.name}"
+docker run --rm -v "/data/jobs/{job_id}:/opt/job" elodielaine/gemme:gemme /bin/bash -c "cd / && bash run.sh {uploaded_file.name} {uniprot_id}"
 """)
         os.chmod(run_docker_script, 0o755)
         os.chdir(folder_path)

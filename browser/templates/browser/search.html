@@ -118,7 +118,8 @@
 
       <div class="form-group col-md-6" id="uniprotInputContainer" style="margin-left: -20px;">
           <label for="uniprotId" class="text-dark">  </label>
-          <input type="text" id="uniprotId" name="uniprotId" class="form-control" placeholder="e.g., P12345">
+            <input type="text" id="uniprotId" name="uniprotId" class="form-control" placeholder="e.g., P12345" required>
+      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
       </div>
       </div>
         <div id="loading" style="display: none;">Uploading... Please wait.</div>
