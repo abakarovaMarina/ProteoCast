@@ -152,7 +152,7 @@ def results_view(request):
     
     if prot_name[:3] == 'job':
         data_path = '/data/jobs/'
-        alias_dir = 'job'
+        alias_dir = 'jobs'
         prot_name = prot_name[3:]
         id_folder = prot_name
         files = os.listdir(f'/data/jobs/{id_folder}')
