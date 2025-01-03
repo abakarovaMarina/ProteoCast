@@ -106,7 +106,10 @@
       <div class="content">
         <div class="container-fluid" style="width:95%;">
         <div class="form-row py-4">
-        <h5>Here are ProteoCast results for {{ prot_name }}. If you need help in exploring and interpreting them, please go to our <a href="/documentation" target="_blank" rel="noopener noreferrer">documentation</a>.</h5>
+            <h5>Here are ProteoCast results for {{ prot_name }}. If you need help in exploring and interpreting them, please go to our <a href="/documentation" target="_blank" rel="noopener noreferrer">documentation</a>.</h5>
+            {% if query|slice:":4" == "2025" %}
+            <p>Your job ID is {{ query }}</p>
+            {% endif %}
         </div>
         <div class="form-row" style="display: flex; align-items: flex-start;">
             <div class="heatmap" style="flex: 1; autosize: true;">
