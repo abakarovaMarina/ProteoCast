@@ -52,7 +52,7 @@ def job_running(request,job_id):
     return render(request, 'browser/job_running.html', {'job_id': job_id, 'status': status})
 
 def check_job_status(request):
-    job_id = 'job'+request.GET.get('job_id')
+    job_id = request.GET.get('job_id')
     if not job_id:
         return JsonResponse({'status': 'error', 'message': 'No job_id provided.'}, status=400)
 
@@ -66,6 +66,7 @@ def check_job_status(request):
 
     if job_status == 'finished':
         # Construct the URL with the job ID as a query parameter
+        job_id = 'job' + job_id
         results_url = f"{reverse('results')}?q={job_id}"
         return JsonResponse({'status': 'finished', 'redirect_url': results_url})
     else:
