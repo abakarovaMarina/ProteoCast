@@ -153,8 +153,7 @@ def serve_file(request, folder, filename):
 
 def results_view(request):
     prot_name = request.GET.get('q').lower()
-    uniprot_id = request.GET.get('uniprotId')
-
+ 
     if not prot_name:
         return HttpResponse(f'Please provide a protein name.')
     
@@ -163,8 +162,6 @@ def results_view(request):
         alias_dir = 'jobs'
         prot_name = prot_name[3:]
         id_folder = prot_name
-        if uniprot_id:
-            return HttpResponse(f'UNIPROT.{uniprot_id}')
         files = os.listdir(f'/data/jobs/{id_folder}')
         # Loop through filenames to find the first one with 'FBpp'
         prot_id = None
@@ -351,7 +348,6 @@ def results_view(request):
         pdb_check = pdb_url_1.replace(alias_dir, data_path)
         if not os.path.exists(pdb_check):
             pdb_url_1 = None
-            return HttpResponse(f"File not found: {pdb_url_1}, {pdb_check}", status=404)
 
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
