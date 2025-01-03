@@ -160,7 +160,7 @@ def results_view(request):
         if not os.path.exists(proteocast_path):
             return HttpResponse("ProteoCast file not found.")
         df = pd.read_csv(proteocast_path)
-        path = os.listdir()
+        path = os.listdir('data/jobs/')
         if prot_name:
            return HttpResponse(f'Read succ.{path}') 
         '''# Loop through filenames to find the first one with 'FBpp'
