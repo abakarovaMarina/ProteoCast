@@ -156,7 +156,7 @@ def results_view(request):
         prot_name = prot_name[3:]
         id_folder = prot_name
         path = os.path.join(data_path, id_folder)
-        if path:
+        if os.path.exists(path):
             return HttpResponse(f'No files found for job {path}.') 
         files = os.listdir(os.path.join(data_path, id_folder))
         
