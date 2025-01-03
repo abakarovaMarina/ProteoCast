@@ -93,11 +93,15 @@
             <input type="file" name="file" id="fileInput" accept=".a3m,.fasta" required>
              <div class="custom-control custom-switch mt-2 py-1">
             <input type="checkbox" id="uniprotCode" name="uniprotCode" class="custom-control-input" checked >
-          <label for="uniprotCode" class="custom-control-label text-dark">Map predictions on the AlphaFold 3D model?</label>
+          <!--<label for="uniprotCode" class="custom-control-label text-dark">Map predictions on the AlphaFold 3D model?</label>-->
           </div>
       </div>
+      <div class="custom-control custom-switch mt-2 py-1">
+        <input type="checkbox" id="uniprotCode" name="uniprotCode" class="custom-control-input" checked >
+        <label for="uniprotCode" class="custom-control-label text-dark">Map predictions on the AlphaFold 3D model for</label>
+      </div>
       <div class="form-group col" id="uniprotInputContainer"> 
-          <label for="uniprotId" class="text-dark">Enter UniProt ID:</label>
+          <label for="uniprotId" class="text-dark"> UniProt ID:</label>
           <input type="text" id="uniprotId" name="uniprotId" class="form-control" placeholder="e.g., P12345">
       </div>
       </div>

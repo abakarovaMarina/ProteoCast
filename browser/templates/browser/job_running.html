@@ -61,7 +61,7 @@
                 } else if (data.status === 'error') {
                     document.getElementById('uploadStatus').innerText = 'Error: ' + data.message;
                 } else {
-                    document.getElementById('uploadStatus').innerText = 'At the end of the process the results will be displayed';
+                    document.getElementById('uploadStatus').innerText = 'At the end of the process the results will be displayed. <br> DO NOT refresh nor close the page.';
                 }
             })
             .catch(error => {
