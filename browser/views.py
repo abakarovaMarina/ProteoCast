@@ -169,7 +169,7 @@ def results_view(request):
             if "ProteoCast" in file_name:
                 prot_id = file_name.split('.')[1].split('_')[0]  # Extract protein ID before the first dot
             if 'pdb' in file_name:
-                pdb_id = file_name
+                pdb_id = file_name.split('.')[0]
     else:
         # Only for the fly
         data_path = '/data/Drosophila_ProteoCast/'
@@ -188,7 +188,9 @@ def results_view(request):
         else:
             id_folder = mapping_df.loc[mapping_df['pr_sym'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
-        pdb_id = 'AF-Q45VV3-F1-model_v4.pdb'
+        pdb_id = 'AF-Q45VV3-F1-model_v4.pdb'.split('.')[0]
+        
+
         # Basic checks
     if not data_path or not id_folder or not prot_id:
         return HttpResponse("Missing required path or protein ID.", status=500)
@@ -342,7 +344,9 @@ def results_view(request):
         if not os.path.exists(check_path):
             return HttpResponse(f"File not found: {check_path}", status=404)
 
-    pdb_url_1 = f'/{alias_dir}/{id_folder}/{pdb_id}'
+    pdb_url_1 = f'/{alias_dir}/{id_folder}/{pdb_id}.pdb'
+    pdb_url_2 = f'/{alias_dir}/{id_folder}/{pdb_id}_GEMMESensitivity.pdb'
+    pdb_url_3 = f'/{alias_dir}/{id_folder}/{pdb_id}_GEMMEResClass.pdb'
     pdb_check = None
     if pdb_url_1:
         pdb_check = pdb_url_1.replace(alias_dir, data_path)
@@ -356,6 +360,8 @@ def results_view(request):
         'prot_name': prot_id,
         'image_url_1': image_url_1,
         'pdb_url_1': pdb_url_1,
+        'pdb_url_2': pdb_url_2,
+        'pdb_url_3': pdb_url_3,
         'fig_msarep': fig_msarep,
         'fig_segmentation': fig_segmentation,
     })
