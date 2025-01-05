@@ -199,121 +199,129 @@
         <div class="form-row">
             <h2>3D Structure</h2>
         </div>
-        <div class="form-row" style="min-height: 600px;">
+        <div class="form-row">
             <div class="form-group col-10">
-                <!-- Viewer Container -->
                 <div id="myViewer" class="viewer-container"></div>
             </div>
             <div class="form-group col-2 pl-5 py-4">
-                <!-- Radio Buttons for Structure Coloring -->
-                <div class="buttons" style="display: flex; flex-direction: column; gap: 10px;">
+                <div class="buttons">
                     <label>
-                        <input type="radio" name="structureToggle" value="pdb_url_1" checked>
+                        <input type="radio" name="colorToggle" value="bfactor" checked>
                         Color by B-Factors
                     </label>
                     <label>
-                        <input type="radio" name="structureToggle" value="pdb_url_2">
-                        Color by Sensitivity
+                        <input type="radio" name="colorToggle" value="gemme">
+                        GEMME Sensitivity
                     </label>
                     <label>
-                        <input type="radio" name="structureToggle" value="pdb_url_3">
-                        Color by Residue Class
+                        <input type="radio" name="colorToggle" value="residue_class">
+                        Residue Class
                     </label>
                 </div>
             </div>
         </div>
         
         <script>
+            // Initialize the viewer
             var viewerInstance = new PDBeMolstarPlugin();
         
-            // Options for the viewer
+            var viewerContainer = document.getElementById('myViewer');
+        
+            // Options for the Mol* Viewer
             var options = {
+                customData: { url: '', format: 'pdb' }, // URL will be dynamically updated
                 alphafoldView: true,
                 bgColor: { r: 255, g: 255, b: 255 },
                 hideCanvasControls: [
-                    'selection', 'animation', 'controlToggle', 'controlInfo',
-                    'controlZoom', 'controlRotate', 'controlTranslate',
+                    'selection', 'animation', 'controlToggle', 'controlInfo', 
+                    'controlZoom', 'controlRotate', 'controlTranslate', 
                     'controlReset', 'controlFullscreen'
                 ],
                 layoutIsExpanded: false,
-                hideControls: true
+                hideControls: true // Hide the toolbar
             };
         
-            // Function to load a PDB structure dynamically
-            function loadStructure(pdbUrl, onLoadedCallback) {
-                viewerInstance.load({ customData: { url: pdbUrl, format: 'pdb' } });
-                viewerInstance.events.loadComplete.subscribe(onLoadedCallback || (() => {}));
-            }
+            // Define the PDB URLs for each condition
+            const pdbUrls = {
+                bfactor: "{{ pdb_url_1 }}",
+                gemme: "{{ pdb_url_2 }}",
+                residue_class: "{{ pdb_url_3 }}"
+            };
         
-            // Function to apply coloring based on B-factors
-            function applyBFactorColoring() {
-                viewerInstance.visual.setColor({
-                    color: {
-                        name: 'bfactor',
-                        params: {
-                            list: [
-                                { value: 30, color: { r: 0, g: 0, b: 255 } },
-                                { value: 40, color: { r: 255, g: 255, b: 255 } },
-                                { value: 50, color: { r: 255, g: 0, b: 0 } }
-                            ],
-                            min: 30,
-                            max: 50
-                        }
-                    }
-                });
-            }
-        
-            // Function to apply coloring for GEMME sensitivity
-            function applyGEMMESensColoring() {
-                viewerInstance.visual.setColor({
-                    color: {
-                        name: 'gradient',
-                        params: {
-                            gradient: [
-                                { position: 0.0, color: { r: 0, g: 0, b: 255 } },  // Blue at minimum
-                                { position: 0.5, color: { r: 255, g: 255, b: 255 } }, // White at midpoint
-                                { position: 1.0, color: { r: 255, g: 0, b: 0 } }   // Red at maximum
-                            ],
-                            min: 0,
-                            max: 100
-                        }
-                    }
-                });
-            }
-        
-            // Function to apply Residue Class coloring
-            function applyResidueClassColoring() {
-                viewerInstance.visual.setColor({
-                    color: {
-                        name: 'gradient',
-                        params: {
-                            gradient: [
-                                { position: 0, color: { r: 34, g: 139, b: 34 } },  // Forest green at minimum (0)
-                                { position: 1, color: { r: 255, g: 165, b: 0 } }   // Orange at maximum (100)
-                            ],
-                            min: 0,
-                            max: 100
-                        }
-                    }
-                });
-            }
-        
-            // Event listener for radio buttons to toggle structure and coloring
-            document.querySelectorAll('input[name="structureToggle"]').forEach(function (radio) {
-                radio.addEventListener('change', function () {
-                    let pdbUrl = "{{ " + this.value + " }}"; // Dynamically set PDB URL from Django context
-                    loadStructure(pdbUrl, function () {
-                        if (this.value === 'pdb_url_1') {
-                            applyBFactorColoring();
-                        } else if (this.value === 'pdb_url_2') {
-                            applyGEMMESensColoring();
-                        } else if (this.value === 'pdb_url_3') {
-                            applyResidueClassColoring();
+            // Define the coloring functions
+            const colorFunctions = {
+                bfactor: function () {
+                    viewerInstance.visual.setColor({
+                        color: {
+                            name: 'bfactor',
+                            params: {
+                                list: [
+                                    { value: 30, color: { r: 0, g: 0, b: 255 } },
+                                    { value: 40, color: { r: 255, g: 255, b: 255 } },
+                                    { value: 50, color: { r: 255, g: 0, b: 0 } }
+                                ],
+                                min: 30,
+                                max: 50
+                            }
                         }
                     });
+                },
+                gemme: function () {
+                    viewerInstance.visual.setColor({
+                        color: {
+                            name: 'custom',
+                            params: {
+                                gradient: {
+                                    colors: [
+                                        { position: 0, color: { r: 0, g: 0, b: 255 } },
+                                        { position: 0.5, color: { r: 255, g: 255, b: 255 } },
+                                        { position: 1, color: { r: 255, g: 0, b: 0 } }
+                                    ],
+                                    min: 0,
+                                    max: 100
+                                }
+                            }
+                        }
+                    });
+                },
+                residue_class: function () {
+                    viewerInstance.visual.setColor({
+                        color: {
+                            name: 'custom',
+                            params: {
+                                gradient: {
+                                    colors: [
+                                        { position: 0, color: { r: 34, g: 139, b: 34 } }, // Forest Green
+                                        { position: 1, color: { r: 255, g: 165, b: 0 } }  // Orange
+                                    ],
+                                    min: 0,
+                                    max: 100
+                                }
+                            }
+                        }
+                    });
+                }
+            };
+        
+            // Function to load the structure and apply coloring
+            function loadStructureAndColor(condition) {
+                options.customData.url = pdbUrls[condition]; // Set the PDB URL
+                viewerInstance.render(viewerContainer, options).then(() => {
+                    colorFunctions[condition](); // Apply the respective coloring
+                });
+            }
+        
+            // Add event listeners to the radio buttons
+            document.querySelectorAll('input[name="colorToggle"]').forEach(button => {
+                button.addEventListener('change', function () {
+                    loadStructureAndColor(this.value);
                 });
             });
+        
+            // Initial load (default to B-Factors)
+            loadStructureAndColor('bfactor');
         </script>
+        
                 {% comment %} <div class="form-row">
           <h2>3D Structure</h2>
         </div>
