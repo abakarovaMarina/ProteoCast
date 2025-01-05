@@ -194,7 +194,7 @@
             </div>
             {% endif %}
         </div>
-
+        
 
         <div class="form-row">
             <h2>3D Structure</h2>
@@ -222,8 +222,99 @@
                 </div>
             </div>
         </div>
-
-        {% comment %} <div class="form-row">
+        
+        <script>
+            var viewerInstance = new PDBeMolstarPlugin();
+        
+            // Options for the viewer
+            var options = {
+                alphafoldView: true,
+                bgColor: { r: 255, g: 255, b: 255 },
+                hideCanvasControls: [
+                    'selection', 'animation', 'controlToggle', 'controlInfo',
+                    'controlZoom', 'controlRotate', 'controlTranslate',
+                    'controlReset', 'controlFullscreen'
+                ],
+                layoutIsExpanded: false,
+                hideControls: true
+            };
+        
+            // Function to load a PDB structure dynamically
+            function loadStructure(pdbUrl, onLoadedCallback) {
+                viewerInstance.load({ customData: { url: pdbUrl, format: 'pdb' } });
+                viewerInstance.events.loadComplete.subscribe(onLoadedCallback || (() => {}));
+            }
+        
+            // Function to apply coloring based on B-factors
+            function applyBFactorColoring() {
+                viewerInstance.visual.setColor({
+                    color: {
+                        name: 'bfactor',
+                        params: {
+                            list: [
+                                { value: 30, color: { r: 0, g: 0, b: 255 } },
+                                { value: 40, color: { r: 255, g: 255, b: 255 } },
+                                { value: 50, color: { r: 255, g: 0, b: 0 } }
+                            ],
+                            min: 30,
+                            max: 50
+                        }
+                    }
+                });
+            }
+        
+            // Function to apply coloring for GEMME sensitivity
+            function applyGEMMESensColoring() {
+                viewerInstance.visual.setColor({
+                    color: {
+                        name: 'gradient',
+                        params: {
+                            gradient: [
+                                { position: 0.0, color: { r: 0, g: 0, b: 255 } },  // Blue at minimum
+                                { position: 0.5, color: { r: 255, g: 255, b: 255 } }, // White at midpoint
+                                { position: 1.0, color: { r: 255, g: 0, b: 0 } }   // Red at maximum
+                            ],
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                });
+            }
+        
+            // Function to apply Residue Class coloring
+            function applyResidueClassColoring() {
+                viewerInstance.visual.setColor({
+                    color: {
+                        name: 'gradient',
+                        params: {
+                            gradient: [
+                                { position: 0, color: { r: 34, g: 139, b: 34 } },  // Forest green at minimum (0)
+                                { position: 1, color: { r: 255, g: 165, b: 0 } }   // Orange at maximum (100)
+                            ],
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                });
+            }
+        
+            // Event listener for radio buttons to toggle structure and coloring
+            document.querySelectorAll('input[name="structureToggle"]').forEach(function (radio) {
+                radio.addEventListener('change', function () {
+                    let pdbUrl = "{{ " + this.value + " }}"; // Dynamically set PDB URL from Django context
+                    loadStructure(pdbUrl, function () {
+                        if (this.value === 'pdb_url_1') {
+                            applyBFactorColoring();
+                        } else if (this.value === 'pdb_url_2') {
+                            applyGEMMESensColoring();
+                        } else if (this.value === 'pdb_url_3') {
+                            applyResidueClassColoring();
+                        }
+                    });
+                });
+            });
+        </script>
+                {% comment %} <div class="form-row">
           <h2>3D Structure</h2>
         </div>
         <div class="form-row" style="min-height: 600px;">
@@ -234,52 +325,6 @@
                 <button id="colorBFactorBtn" class="example-button">Color by B-Factors</button>
             </div>
         </div> {% endcomment %}
-
-
-        <script>
-            var viewerInstance = new PDBeMolstarPlugin();            
-            var options = {
-                customData: {
-                    url: "{{ pdb_url_1 }}", // Dynamically set PDB URL from Django context
-                    format: 'pdb'
-                },
-                alphafoldView: true,
-                bgColor: { r: 255, g: 255, b: 255 },
-                hideCanvasControls: ['selection', 'animation', 'controlToggle', 'controlInfo', 'controlZoom', 'controlRotate', 'controlTranslate', 'controlReset', 'controlFullscreen'],
-                layoutIsExpanded: false,
-                hideControls: true // This will hide the toolbar
-            };
-        
-            var viewerContainer = document.getElementById('myViewer');
-            viewerInstance.render(viewerContainer, options);
-        
-            // Function to apply coloring based on B-factor
-            function applyBFactorColoring() {
-                viewerInstance.visual.setColor({
-                    color: {
-                      name: 'bfactor',
-                      params: {
-                          list: [
-                              { value: 30, color: { r: 0, g: 0, b: 255 } },   
-                              { value: 40, color: { r: 255, g: 255, b: 255 } },
-                              { value: 50, color: { r: 255, g: 0, b: 0 } }  
-                          ],
-                          min: 30,  
-                          max: 50 
-                      }
-                    }
-                });
-            };
-            // Add click event to the button
-            document.getElementById('colorBFactorBtn').addEventListener('click', function() {
-                applyBFactorColoring();
-            });
-        
-            // Optional: Log to console when structure is loaded
-            viewerInstance.events.loadComplete.subscribe(() => {
-                console.log("Structure loaded! Click the button to color by B-factors.");
-            });
-        </script>
        
     </div>
 
