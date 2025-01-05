@@ -269,17 +269,15 @@
                 gemme: function () {
                     viewerInstance.visual.setColor({
                         color: {
-                            name: 'custom',
+                            name: 'bfactor',
                             params: {
-                                gradient: {
-                                    colors: [
-                                        { position: 0, color: { r: 0, g: 0, b: 255 } },
-                                        { position: 0.5, color: { r: 255, g: 255, b: 255 } },
-                                        { position: 1, color: { r: 255, g: 0, b: 0 } }
-                                    ],
-                                    min: 0,
-                                    max: 100
-                                }
+                                list: [
+                                    { value: 0, color: { r: 0, g: 0, b: 255 } },
+                                    { value: 50, color: { r: 255, g: 255, b: 255 } },
+                                    { value: 100, color: { r: 255, g: 0, b: 0 } }
+                                ],
+                                min: 0,
+                                max: 100
                             }
                         }
                     });
