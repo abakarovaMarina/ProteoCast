@@ -111,7 +111,7 @@
           <div class="col">
             <div class="form-group">
               <label for="jobid" class="text-dark">Job ID</label>
-              <input name="jobid" class="form-control" id="jobid" value="EXAMPLE" data-parsley-maxlength="10" data-parsley-type="alphanum" data-parsley-pattern="EXAMPLE|[a-zA-Z0-9]{10}" />
+              <input name="jobid" class="form-control" id="jobid" value="EXAMPLE" data-parsley-maxlength="14" data-parsley-type="alphanum" data-parsley-pattern="EXAMPLE|[a-zA-Z0-9]{14}" />
               <small class="form-text text-muted">Insert your Job ID to see the results
             </small>
             </div>
@@ -131,8 +131,8 @@
     const jobId = jobIdInput.value.trim();
 
     // Basic validation for job ID
-    if (!jobId || !/^[a-zA-Z0-9]{10}$/.test(jobId)) {
-      alert("Please enter a valid Job ID (10 alphanumeric characters).");
+    if (!jobId || !/^[a-zA-Z0-9]{14}$/.test(jobId)) {
+      alert("Please enter a valid Job ID (14 numeric characters).");
       return;
     }
 
@@ -143,7 +143,7 @@
 
     try {
       // Fetch the job results
-      const response = await fetch(`/results?jobid=${jobId}`, { method: "GET" });
+      const response = await fetch(`results/results/?q=${jobId}`, { method: "GET" });
       if (!response.ok) {
         throw new Error("Failed to retrieve results. Please check the Job ID.");
       }
