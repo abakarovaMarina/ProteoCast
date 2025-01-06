@@ -254,26 +254,6 @@
             console.log("Loading structure for condition:", condition);
             console.log("PDB URL:", pdbUrls[condition]);
             options.customData.url = pdbUrls[condition]; // Set the PDB URL
-
-            // Customize options based on condition
-            if (condition === 'gemme') {
-                console.log("Coloring by GEMME Sensitivity");
-                var options = {
-                    alphafoldView: true,
-                    bgColor: { r: 255, g: 255, b: 255 },
-                    hideCanvasControls: [
-                        'selection', 'animation', 'controlToggle', 'controlInfo', 
-                        'controlZoom', 'controlRotate', 'controlTranslate', 
-                        'controlReset', 'controlFullscreen'
-                    ],
-                    layoutIsExpanded: false,
-                    hideControls: true, 
-                    visualStyle: {
-                        polymer: {color: 'uncertainty'}
-                    }
-                };
-            }
-
             viewerInstance.render(viewerContainer, options);
         }
         
