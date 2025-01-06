@@ -112,17 +112,10 @@
           <div class="col">
             <div class="form-group">
                 <label for="jobid">Job ID</label>
-                <input 
-                    type="text" 
-                    name="jobid" 
-                    class="form-control" 
-                    id="jobid" 
-                    placeholder="Enter your 14-character Job ID" 
-                    data-base-url="{% url 'results' %}"
-                    required
-                >
+                <input type="text" name="jobid" class="form-control" id="jobid" placeholder="Enter your 14-character Job ID" data-base-url="{% url 'results' %}" required  />
                 <small class="form-text text-muted">Your Job ID must be 14 alphanumeric characters.</small>
             </div>
+            <div class="form-group row float-right pr-3 py-2">
             <button type="submit" class="btn btn-primary">Show Results</button>
           </div>
         </div>
@@ -130,6 +123,7 @@
       </div>
     </form>
 
+    
     <script>
         document.getElementById("resultForm").addEventListener("submit", function (event) {
             event.preventDefault(); // Prevent default form submission
