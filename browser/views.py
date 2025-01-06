@@ -156,7 +156,7 @@ def results_view(request):
  
     if not prot_name:
         return HttpResponse(f'Please provide a protein name.')
-    
+    pdb_id = '' 
     if prot_name[:3] == 'job':
         data_path = '/data/jobs/'
         alias_dir = 'jobs'
