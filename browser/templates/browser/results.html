@@ -175,7 +175,7 @@
             </div>
             <div class="form-group col px-4">
                 <h2>Raw Score Distribution</h2>
-                <p> The dark purple and light pink vertical lines mark the impactful-uncertain and uncertain-neutral thresholds. Known missense mutations are depicted as red dots (lethal) or blue triangles (DGRP or DEST2).</p>
+                <p> The dark purple and light pink vertical lines mark the impactful-uncertain and uncertain-neutral thresholds. {% if query|slice:":4" != "2025" %}Known missense mutations are depicted as red dots (lethal) or blue triangles (DGRP or DEST2).{% endif %}</p>
                 {% if image_url_1 %}
                 <div class="image-container">
                     <img src="{{ image_url_1 }}" alt="GMM" class="img-fluid">
@@ -249,8 +249,9 @@
             };
         
             // Define the coloring functions
-            const colorFunctions = {
+            const colorFunctions = 
                 bfactor: function () {
+                    console.log("Applying B-factor coloring");
                     viewerInstance.visual.setColor({
                         color: {
                             name: 'bfactor',
@@ -267,9 +268,10 @@
                     });
                 },
                 gemme: function () {
+                    console.log("Applying GEMME coloring");
                     viewerInstance.visual.setColor({
                         color: {
-                            name: 'bfactor',
+                            name: 'custom',
                             params: {
                                 list: [
                                     { value: 0, color: { r: 0, g: 0, b: 255 } },
@@ -283,6 +285,7 @@
                     });
                 },
                 residue_class: function () {
+                    console.log("Applying residue class coloring");
                     viewerInstance.visual.setColor({
                         color: {
                             name: 'custom',
