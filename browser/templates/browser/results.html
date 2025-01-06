@@ -257,9 +257,8 @@
 
             // Customize options based on condition
             if (condition === 'gemme') {
+                console.log("Coloring by GEMME Sensitivity");
                 options.visualStyle.polymer.color = "uncertainty";
-            } else if (condition === 'residue_class') {
-                options.bgColor = { r: 220, g: 220, b: 220 };
             }
 
             viewerInstance.render(viewerContainer, options);
