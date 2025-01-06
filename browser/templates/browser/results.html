@@ -250,24 +250,13 @@
                 gemme: "{{ pdb_url_2 }}",
                 residue_class: "{{ pdb_url_3 }}"
             };
-        
+            const UNIFORM_QUERY_COLOR = '#cccccc';
+            
             // Define the coloring functions
             const colorFunctions = {
                 bfactor: function () {
                     console.log("Applying B-Factors coloring");
-                    viewerInstance.visual.setColor({ 
-                        color: {
-                            params: {
-                                list: [
-                                    { value: 30, color: { r: 0, g: 0, b: 255 } },
-                                    { value: 40, color: { r: 255, g: 255, b: 255 } },
-                                    { value: 50, color: { r: 255, g: 0, b: 0 } }
-                                ],
-                                min: 30,
-                                max: 100
-                            }
-                        }
-                    });
+                    viewerInstance.visual.select({ data: [{ color: UNIFORM_QUERY_COLOR }], structureId: 'main' });
                 },
                 gemme: function () {
                     console.log("Applying GEMME Sensitivity coloring");
