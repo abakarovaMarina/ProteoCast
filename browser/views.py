@@ -352,6 +352,15 @@ def results_view(request):
         pdb_check = pdb_url_1.replace(alias_dir, data_path)
         if not os.path.exists(pdb_check):
             pdb_url_1 = None
+    if pdb_url_2:
+        pdb_check = pdb_url_2.replace(alias_dir, data_path)
+        if not os.path.exists(pdb_check):
+            pdb_url_2 = None
+
+    if pdb_url_3:
+        pdb_check = pdb_url_3.replace(alias_dir, data_path)
+        if not os.path.exists(pdb_check):
+            pdb_url_3 = None
 
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
