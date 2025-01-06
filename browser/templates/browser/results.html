@@ -267,8 +267,7 @@
                 },
                 gemme: function () {
                     console.log("Applying GEMME Sensitivity coloring");
-                    viewerInstance.visual.setColor({
-                        color: {
+                    viewerInstance.visual.select({ data: [{ start_residue_number: 1, end_residue_number: 395, color: {
                             params: {
                                 list: [
                                     { value: 10.0, color: { r: 0, g: 0, b: 255 } },
