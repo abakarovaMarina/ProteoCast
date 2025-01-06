@@ -251,6 +251,7 @@
             // Define the coloring functions
             const colorFunctions = {
                 bfactor: function () {
+                    console.log("Applying B-Factors coloring");
                     viewerInstance.visual.setColor({
                         color: {
                             params: {
@@ -266,12 +267,13 @@
                     });
                 },
                 gemme: function () {
+                    console.log("Applying GEMME Sensitivity coloring");
                     viewerInstance.visual.setColor({
                         color: {
                             params: {
                                 list: [
-                                    { value : 10.0, color: '#0000FF' },
-                                    { value : 40.0 , color: { r: 255, g: 255, b: 255 } },
+                                    { value: 10.0, color: { r: 0, g: 0, b: 255 } },
+                                    { value: 40.0, color: { r: 255, g: 255, b: 255 } },
                                     { value: 50.0, color: { r: 0, g: 0, b: 0 } }
                                 ],
                                 min: 0,
@@ -281,6 +283,7 @@
                     });
                 },
                 residue_class: function () {
+                    console.log("Applying Residue Class coloring");
                     viewerInstance.visual.setColor({
                         color: {
                             params: {
@@ -298,9 +301,14 @@
         
             // Function to load the structure and apply coloring
             function loadStructureAndColor(condition) {
+                console.log("Loading structure for condition:", condition);
+                console.log("PDB URL:", pdbUrls[condition]);
                 options.customData.url = pdbUrls[condition]; // Set the PDB URL
                 viewerInstance.render(viewerContainer, options).then(() => {
+                    console.log("Structure loaded, applying coloring");
                     colorFunctions[condition](); // Apply the respective coloring
+                }).catch(error => {
+                    console.error("Error loading structure:", error);
                 });
             }
         
