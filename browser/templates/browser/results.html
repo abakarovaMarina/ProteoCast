@@ -238,7 +238,7 @@
                     'controlReset', 'controlFullscreen'
                 ],
                 layoutIsExpanded: false,
-                hideControls: true, // Hide the toolbar
+                hideControls: false, // Hide the toolbar
                 visualStyle: {
                     polymer: {type: 'cartoon', size:'uniform'},
                 },
@@ -260,6 +260,12 @@
             if (condition === 'gemme') {
                 console.log("Applying GEMME sensitivity coloring");
                 options.visualStyle.polymer.color = 'uncertainty';
+            } else if (condition === 'residue_class') {
+                console.log("Applying Residue Class coloring");
+                options.visualStyle.polymer.color = '';
+            } else {
+                console.log("Applying B-Factor coloring");
+                options.alphafoldView = true;
             }
             viewerInstance.render(viewerContainer, options);
         }
