@@ -143,7 +143,7 @@
 
     try {
       // Fetch the job results
-      const response = await fetch("{% url 'results' %}?q=" + encodeURIComponent(jobId), { method: "GET" });
+      const response = await fetch("{% url 'results' %}?q=job" + encodeURIComponent(jobId), { method: "GET" });
       if (!response.ok) {
         throw new Error("Failed to retrieve results. Please check the Job ID.");
       }
