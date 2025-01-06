@@ -249,9 +249,8 @@
             };
         
             // Define the coloring functions
-            const colorFunctions = 
+            const colorFunctions = {
                 bfactor: function () {
-                    console.log("Applying B-factor coloring");
                     viewerInstance.visual.setColor({
                         color: {
                             name: 'bfactor',
@@ -268,10 +267,9 @@
                     });
                 },
                 gemme: function () {
-                    console.log("Applying GEMME coloring");
                     viewerInstance.visual.setColor({
                         color: {
-                            name: 'custom',
+                            name: 'bfactor',
                             params: {
                                 list: [
                                     { value: 0, color: { r: 0, g: 0, b: 255 } },
@@ -285,7 +283,6 @@
                     });
                 },
                 residue_class: function () {
-                    console.log("Applying residue class coloring");
                     viewerInstance.visual.setColor({
                         color: {
                             name: 'custom',
