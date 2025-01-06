@@ -125,47 +125,70 @@
 
 
     <script>
-      document.getElementById("resultForm").addEventListener("submit", async function (event) {
-          event.preventDefault(); // Prevent default form submission
-  
-          const jobIdInput = document.getElementById("jobid");
-          const jobId = jobIdInput.value.trim();
-          const baseUrl = jobIdInput.getAttribute("data-base-url");
-  
-          // Validate Job ID
-          if (!/^[a-zA-Z0-9]{14}$/.test(jobId)) {
-              alert("Please enter a valid 14-character alphanumeric Job ID.");
-              return;
-          }
-  
-          // Display a loading indicator
-          const submitButton = this.querySelector("button[type='submit']");
-          submitButton.disabled = true;
-          submitButton.textContent = "Loading...";
-  
-          try {
-              // Attempt to fetch the job results
-              const response = await fetch(`/results?jobid=${jobId}`, { method: "GET" });
-              
-              // Check if the response is OK
-              if (!response.ok) {
-                  throw new Error("Failed to retrieve results. Please check the Job ID.");
-              }
-  
-              // If successful, redirect to the results page
-              const resultUrl = `${baseUrl}?q=job${jobId}`;
-              window.location.href = resultUrl;
-          } catch (error) {
-              // Handle errors gracefully
-              alert(error.message);
-          } finally {
-              // Re-enable the button
-              submitButton.disabled = false;
-              submitButton.textContent = "Show results";
-          }
-      });
-  </script>
-  
+        document.getElementById("resultForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const jobIdInput = document.getElementById("jobid");
+            const jobId = jobIdInput.value.trim();
+            const baseUrl = jobIdInput.getAttribute("data-base-url");
+
+            // Validate Job ID
+            if (!/^[a-zA-Z0-9]{14}$/.test(jobId)) {
+                alert("Please enter a valid 14-character alphanumeric Job ID.");
+                return;
+            }
+            // Display a loading indicator (optional)
+            const submitButton = this.querySelector("button[type='submit']");
+            submitButton.disabled = true;
+            submitButton.textContent = "Loading...";
+
+            // Redirect to results page
+            window.location.href = `${baseUrl}?q=job${jobId}`;
+        });
+    </script>
 </body>
 </html>
+
+
+<script>
+  document.getElementById("resultForm").addEventListener("submit", async function (event) {
+      event.preventDefault(); // Prevent default form submission
+
+      const jobIdInput = document.getElementById("jobid");
+      const jobId = jobIdInput.value.trim();
+      const baseUrl = jobIdInput.getAttribute("data-base-url");
+
+      // Validate Job ID
+      if (!/^[a-zA-Z0-9]{14}$/.test(jobId)) {
+          alert("Please enter a valid 14-character alphanumeric Job ID.");
+          return;
+      }
+
+      // Display a loading indicator
+      const submitButton = this.querySelector("button[type='submit']");
+      submitButton.disabled = true;
+      submitButton.textContent = "Loading...";
+
+      try {
+          // Attempt to fetch the job results
+          const response = await fetch(`/results?job=${jobId}`, { method: "GET" });
+          
+          // Check if the response is OK
+          if (!response.ok) {
+              throw new Error("Failed to retrieve results. Please check the Job ID.");
+          }
+
+          // If successful, redirect to the results page
+          const resultUrl = `${baseUrl}?q=job${jobId}`;
+          window.location.href = resultUrl;
+      } catch (error) {
+          // Handle errors gracefully
+          alert(error.message);
+      } finally {
+          // Re-enable the button
+          submitButton.disabled = false;
+          submitButton.textContent = "Show results";
+      }
+  });
+</script>
 
