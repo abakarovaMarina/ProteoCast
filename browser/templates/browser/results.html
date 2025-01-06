@@ -259,7 +259,7 @@
             options.customData.url = pdbUrls[condition]; // Set the PDB URL
             if (condition === 'gemme') {
                 console.log("Applying GEMME sensitivity coloring");
-                options.visualStyle.polymer.type = 'spacefill';
+                options.visualStyle.polymer.color = 'uncertainty';
             }
             viewerInstance.render(viewerContainer, options);
         }
