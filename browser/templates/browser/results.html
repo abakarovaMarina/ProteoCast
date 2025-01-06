@@ -230,7 +230,7 @@
             // Options for the Mol* Viewer
             var options = {
                 customData: { url: '', format: 'pdb' }, // URL will be dynamically updated
-                alphafoldView: true,
+                alphafoldView: false,
                 bgColor: { r: 255, g: 255, b: 255 },
                 hideCanvasControls: [
                     'selection', 'animation', 'controlToggle', 'controlInfo', 
@@ -243,7 +243,7 @@
         
             // Define the PDB URLs for each condition
             const pdbUrls = {
-                bfactor: "{{ pdb_url_1 }}",
+                bfactor: "{{ pdb_url_2 }}",
                 gemme: "{{ pdb_url_2 }}",
                 residue_class: "{{ pdb_url_3 }}"
             };
