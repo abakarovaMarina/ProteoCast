@@ -137,6 +137,10 @@
                 alert("Please enter a valid 14-character alphanumeric Job ID.");
                 return;
             }
+            // Display a loading indicator (optional)
+            const submitButton = this.querySelector("button[type='submit']");
+            submitButton.disabled = true;
+            submitButton.textContent = "Loading...";
 
             // Redirect to results page
             window.location.href = `${baseUrl}?q=job${jobId}`;
@@ -144,3 +148,4 @@
     </script>
 </body>
 </html>
+
