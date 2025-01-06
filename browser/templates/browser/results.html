@@ -243,7 +243,7 @@
         
             // Define the PDB URLs for each condition
             const pdbUrls = {
-                bfactor: "{{ pdb_url_2 }}",
+                bfactor: "{{ pdb_url_1 }}",
                 gemme: "{{ pdb_url_2 }}",
                 residue_class: "{{ pdb_url_3 }}"
             };
@@ -253,7 +253,6 @@
                 bfactor: function () {
                     viewerInstance.visual.setColor({
                         color: {
-                            name: 'bfactor',
                             params: {
                                 list: [
                                     { value: 30, color: { r: 0, g: 0, b: 255 } },
@@ -269,7 +268,6 @@
                 gemme: function () {
                     viewerInstance.visual.setColor({
                         color: {
-                            name: 'custom',
                             params: {
                                 list: [
                                     { value : 10.0, color: '#0000FF' },
@@ -285,7 +283,6 @@
                 residue_class: function () {
                     viewerInstance.visual.setColor({
                         color: {
-                            name: 'custom',
                             params: {
                                 list: [
                                     { value: 100, color: { r: 34, g: 139, b: 34 } }, // Forest Green
