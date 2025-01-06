@@ -93,8 +93,23 @@
         </nav>
       </div>
       </header>
-    <div class="container mt-5">
+
+
+    <div class="content">
+      <div class="container" style="max-width:80%;">
         <form id="resultForm" method="get">
+          <div class="row py-4">
+            <div class="col-md-3"></div>
+            <div class="col-md-8">
+            <div class="form-group">
+              <h4 class="form-text text-dark">You may access the results of any completed job</h4> 
+         </div>
+       </div>
+       <div class="col-md-3"></div>
+     </div>
+        <div class="row">
+          <div class="col"></div>
+          <div class="col">
             <div class="form-group">
                 <label for="jobid">Job ID</label>
                 <input 
@@ -109,8 +124,11 @@
                 <small class="form-text text-muted">Your Job ID must be 14 alphanumeric characters.</small>
             </div>
             <button type="submit" class="btn btn-primary">Show Results</button>
-        </form>
-    </div>
+          </div>
+        </div>
+        <div class="col"></div>
+      </div>
+    </form>
 
     <script>
         document.getElementById("resultForm").addEventListener("submit", function (event) {
