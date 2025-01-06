@@ -262,10 +262,10 @@
                 options.visualStyle.polymer.color = 'uncertainty';
             } else if (condition === 'residue_class') {
                 console.log("Applying Residue Class coloring");
-                options.visualStyle.polymer.color = 'rainbow';
+                options.visualStyle.polymer.color = 'uncertainty';
             } else {
                 console.log("Applying B-Factor coloring");
-                options.alphafoldView = true;
+                options.visualStyle.polymer.color = 'plddt-confidence';
             }
             viewerInstance.render(viewerContainer, options);
         }
