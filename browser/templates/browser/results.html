@@ -240,7 +240,7 @@
                 layoutIsExpanded: false,
                 hideControls: true, // Hide the toolbar
                 visualStyle: {
-                    polymer: {type: 'putty', size:'uniform'},
+                    polymer: {type: 'cartoon', size:'uniform'},
                 },
             };
         
@@ -257,6 +257,10 @@
             console.log("Loading structure for condition:", condition);
             console.log("PDB URL:", pdbUrls[condition]);
             options.customData.url = pdbUrls[condition]; // Set the PDB URL
+            if (condition === 'gemme') {
+                console.log("Applying GEMME sensitivity coloring");
+                options.visualStyle.polymer.type = 'spacefill';
+            }
             viewerInstance.render(viewerContainer, options);
         }
         
