@@ -16,6 +16,10 @@
     <!-- Molstar CSS & JS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pdbe-molstar@latest/build/pdbe-molstar-light.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pdbe-molstar@latest/build/pdbe-molstar-plugin.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pdbe-molstar@latest/build/pdbe-molstar-component.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pdbe-molstar@latest/build/pdbe-molstar.css"></script>
+    
+
     <style>
         .navbar {
             background-color: #4F80C0;
@@ -267,7 +271,8 @@
                 },
                 gemme: function () {
                     console.log("Applying GEMME Sensitivity coloring");
-                    viewerInstance.visual.select({ data: [{ start_residue_number: 1, end_residue_number: 395, color: {
+                    viewerInstance.visual.setColor({
+                         color: {
                             params: {
                                 list: [
                                     { value: 10.0, color: { r: 0, g: 0, b: 255 } },
@@ -278,7 +283,6 @@
                                 max: 100
                             }
                         }
-                    }] 
                     });
                 },
                 residue_class: function () {
