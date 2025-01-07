@@ -92,7 +92,7 @@ def upload_file(request):
             return handle_upload(request, uploaded_file, pdb_file)
         elif 'file' in files:
             main_file = files['file']
-            return handle_upload(request, uploaded_file, None)    
+            return handle_upload(request, main_file, None)    
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def handle_upload(request, uploaded_file, pdb_file):
