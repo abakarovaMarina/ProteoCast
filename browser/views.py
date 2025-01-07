@@ -80,14 +80,22 @@ DATA = '/data/Drosophila_ProteoCast/'
 
 @csrf_exempt
 def upload_file(request):
+#    if request.method == 'POST':
+#        if 'file' in request.FILES:
+#            uploaded_file = request.FILES['file']
+#            return handle_upload(request, uploaded_file)
     if request.method == 'POST':
-        if 'file' in request.FILES:
-            uploaded_file = request.FILES['file']
-            return handle_upload(request, uploaded_file)
-    
+        files = request.FILES
+        if 'file' in files and 'pdbFile' in files:
+            uploaded_file = files['file']
+            pdb_file = files['pdbFile']
+            return handle_upload(request, uploaded_file, pdb_file)
+        elif 'file' in files:
+            main_file = files['file']
+            return handle_upload(request, uploaded_file, None)    
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
-def handle_upload(request, uploaded_file):
+def handle_upload(request, uploaded_file, pdb_file):
     uniprot_id = request.POST.get('uniprotId')
     #if not uniprot_id:
     #    return JsonResponse({'status': 'error', 'message': 'No UniProt ID provided.'}, status=400)
@@ -106,6 +114,11 @@ def handle_upload(request, uploaded_file):
         with open(file_path, 'r') as file:
             first_line = file.readline().strip()
         prot_name = first_line.lstrip('>')
+        if pdb_file:
+            pdb_file_path = os.path.join(folder_path, pdb_file.name)
+            with open(pdb_file_path, 'wb+') as destination:
+               for chunk in pdb_file.chunks():
+                   destination.write(chunk)
         #new_folder_path = '/data/jobs/' + prot_name
         #job_id = prot_name
         #if not os.path.exists(new_folder_path):
