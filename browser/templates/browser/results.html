@@ -215,7 +215,10 @@
         </div>
         <div class="form-row" style="min-height: 600px;">
             <div class="form-group col-10">
-                <div id="myViewer" class="viewer-container"></div>
+                <!-- Viewer containers for each structure -->
+                <div id="viewer-bfactor" class="viewer-container" style="display: none;"></div>
+                <div id="viewer-gemme" class="viewer-container" style="display: none;"></div>
+                <div id="viewer-residue-class" class="viewer-container" style="display: none;"></div>
             </div>
             <div class="form-group col-2 pl-5 py-4">
                 <div class="buttons">
@@ -236,73 +239,62 @@
         </div>
         
         <script>
-            // Initialize the viewer
-            const viewerInstance = new PDBeMolstarPlugin();
-            const viewerContainer = document.getElementById('myViewer');
+            // Initialize the viewer instances
+            const viewerInstances = {
+                bfactor: new PDBeMolstarPlugin(),
+                gemme: new PDBeMolstarPlugin(),
+                residue_class: new PDBeMolstarPlugin(),
+            };
         
-            // URLs for preloading structures
+            // Viewer containers
+            const viewerContainers = {
+                bfactor: document.getElementById('viewer-bfactor'),
+                gemme: document.getElementById('viewer-gemme'),
+                residue_class: document.getElementById('viewer-residue-class'),
+            };
+        
+            // URLs for the structures
             const pdbUrls = {
                 bfactor: "{{ pdb_url_1 }}",
                 gemme: "{{ pdb_url_2 }}",
-                residue_class: "{{ pdb_url_3 }}"
+                residue_class: "{{ pdb_url_3 }}",
             };
         
-            // Store preloaded data
-            const preloadedData = {};
+            // Options for the viewer
+            const baseOptions = {
+                alphafoldView: true,
+                bgColor: { r: 255, g: 255, b: 255 },
+                hideCanvasControls: [
+                    'selection', 'animation', 'controlToggle', 'controlInfo',
+                    'controlZoom', 'controlRotate', 'controlTranslate',
+                    'controlReset', 'controlFullscreen',
+                ],
+                layoutIsExpanded: false,
+                hideControls: true,
+                visualStyle: { polymer: { type: 'cartoon', size: 'uniform' } },
+            };
         
-            // Function to preload all structures
+            // Function to preload structures
             async function preloadStructures() {
-                for (const [condition, url] of Object.entries(pdbUrls)) {
-                    const options = {
-                        customData: { url: url, format: 'pdb' },
-                        alphafoldView: true,
-                        bgColor: { r: 255, g: 255, b: 255 },
-                        hideCanvasControls: [
-                            'selection', 'animation', 'controlToggle', 'controlInfo',
-                            'controlZoom', 'controlRotate', 'controlTranslate',
-                            'controlReset', 'controlFullscreen'
-                        ],
-                        layoutIsExpanded: false,
-                        hideControls: true,
-                        visualStyle: { polymer: { type: 'cartoon', size: 'uniform' } },
-                    };
-                    // Preload the structure data
-                    const pluginData = await viewerInstance.plugin.dataTransaction(async () => {
-                        const data = await viewerInstance.plugin.builders.data.download(
-                            { url: url },
-                            { state: { isGhost: true } }
-                        );
-                        const trajectory = await viewerInstance.plugin.builders.structure.parseTrajectory(
-                            data,
-                            { formats: 'pdb' }
-                        );
-                        return trajectory;
-                    });
+                for (const [key, viewer] of Object.entries(viewerInstances)) {
+                    const options = { ...baseOptions, customData: { url: pdbUrls[key], format: 'pdb' } };
         
-                    preloadedData[condition] = pluginData;
+                    await viewer.render(viewerContainers[key], options);
+        
+                    // Initially hide all viewers except the default
+                    if (key !== 'bfactor') {
+                        viewerContainers[key].style.display = 'none';
+                    } else {
+                        viewerContainers[key].style.display = 'block';
+                    }
                 }
-                // Show the default structure
-                toggleStructure('bfactor');
             }
         
-            // Function to toggle the visibility of preloaded structures
+            // Function to toggle visibility of viewers
             function toggleStructure(condition) {
-                // Remove all loaded structures
-                viewerInstance.plugin.managers.structure.hierarchy.removeAll();
-        
-                // Load the selected structure and apply the correct coloring
-                const trajectory = preloadedData[condition];
-                viewerInstance.plugin.managers.structure.hierarchy.add(
-                    trajectory,
-                    {
-                        representation: {
-                            type: 'cartoon',
-                            coloring: condition === 'gemme' ? 'uncertainty' :
-                                      condition === 'residue_class' ? 'uncertainty' :
-                                      'bfactor'
-                        }
-                    }
-                );
+                for (const key of Object.keys(viewerInstances)) {
+                    viewerContainers[key].style.display = key === condition ? 'block' : 'none';
+                }
             }
         
             // Add event listeners to the radio buttons
@@ -315,6 +307,7 @@
             // Preload all structures
             preloadStructures();
         </script>
+        
         
         
         {% comment %} <div class="form-row">
