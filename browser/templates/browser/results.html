@@ -178,7 +178,7 @@
                 <p> The dark purple and light pink vertical lines mark the impactful-uncertain and uncertain-neutral thresholds. {% if query|slice:":4" != "2025" %}Known missense mutations are depicted as red dots (lethal) or blue triangles (DGRP or DEST2).{% endif %}</p>
             </div>
         </div>
-        
+
         <div class="form-row">
             <div class="form-group col px-4">
                 {% if fig_msarep %}
@@ -195,29 +195,6 @@
                 {% endif %}
             </div>
         </div>
-
-        {% comment %} <div class="form-row">
-            <div class="form-group col px-4">
-                <h2>Input Alignment</h2>
-                <p> Each horizontal line in the plot represents a sequence and its color indicates its percentage of identity to the query (on top). The black curve indicates coverage. </p>
-                {% if fig_msarep %}
-                <div class="image-container">
-                     <img src="{{ fig_msarep }}" alt="MSA Representation" class="img-fluid">
-                </div>
-                {% endif %}
-                
-            </div>
-            <div class="form-group col px-4">
-                <h2>Raw Score Distribution</h2>
-                <p> The dark purple and light pink vertical lines mark the impactful-uncertain and uncertain-neutral thresholds. {% if query|slice:":4" != "2025" %}Known missense mutations are depicted as red dots (lethal) or blue triangles (DGRP or DEST2).{% endif %}</p>
-                {% if image_url_1 %}
-                <div class="image-container">
-                    <img src="{{ image_url_1 }}" alt="GMM" class="img-fluid">
-                </div>
-                {% endif %}
-                
-            </div>
-        </div> {% endcomment %}
         <div class="form-row"> 
             <h2>Sensitivity profile</h2>
             <p> The pLDDT of the AlphaFold-predicted protein 3D model is shown on top and the mutational sensitivity profile (per-residue GEMME average score) at the bottom. Each delinated segment can be considered as displaying an homogeneous mean sensitivity. The color of each segment indicates whether its mean is higher than its two neighbours (purple), lower than its two neighbours (yellow), or higher than one and lower then the other (red).  </p>
@@ -228,8 +205,99 @@
             {% endif %}
         </div>
         
-
         <div class="form-row">
+            <h2>3D Structure</h2>
+            <p>
+                If a UniProt code or a structure is provided, it will be visualized with its B-factors.
+                If the sequence matches the one in the MSA, it can be visualized with GEMME Sensitivity
+                (per-residue GEMME average score) or Residue Class.
+            </p>
+        </div>
+        <div class="form-row" style="min-height: 600px;">
+            <div class="form-group col-10">
+                <div id="myViewer" class="viewer-container"></div>
+            </div>
+            <div class="form-group col-2 pl-5 py-4">
+                <div class="buttons">
+                    <label>
+                        <input type="radio" name="colorToggle" value="bfactor" checked>
+                        Color by B-Factors
+                    </label>
+                    <label>
+                        <input type="radio" name="colorToggle" value="gemme">
+                        GEMME Sensitivity
+                    </label>
+                    <label>
+                        <input type="radio" name="colorToggle" value="residue_class">
+                        Residue Class
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            // Initialize the viewer
+            const viewerInstance = new PDBeMolstarPlugin();
+            const viewerContainer = document.getElementById('myViewer');
+        
+            // URLs for preloading structures
+            const pdbUrls = {
+                bfactor: "{{ pdb_url_1 }}",
+                gemme: "{{ pdb_url_2 }}",
+                residue_class: "{{ pdb_url_3 }}"
+            };
+        
+            // Store preloaded structures
+            const preloadedStructures = {};
+        
+            // Function to load all structures into memory
+            async function preloadStructures() {
+                for (const [condition, url] of Object.entries(pdbUrls)) {
+                    preloadedStructures[condition] = await viewerInstance.loadStructureFromUrl({
+                        url: url,
+                        format: 'pdb',
+                        defaultRepresentation: false
+                    });
+                }
+                // Show the default structure (B-Factors)
+                toggleStructure('bfactor');
+            }
+        
+            // Function to toggle the visibility and coloring of the structures
+            function toggleStructure(condition) {
+                // Hide all structures
+                Object.keys(preloadedStructures).forEach(key => {
+                    viewerInstance.plugin.managers.structure.hierarchy
+                        .remove(preloadedStructures[key]);
+                });
+        
+                // Show the selected structure with the appropriate coloring
+                const structure = preloadedStructures[condition];
+                viewerInstance.plugin.managers.structure.hierarchy.add(
+                    structure,
+                    {
+                        representation: {
+                            type: 'cartoon',
+                            coloring: condition === 'gemme' ? 'uncertainty' :
+                                      condition === 'residue_class' ? 'uncertainty' :
+                                      'bfactor'
+                        }
+                    }
+                );
+            }
+        
+            // Add event listeners to the radio buttons
+            document.querySelectorAll('input[name="colorToggle"]').forEach(button => {
+                button.addEventListener('change', function () {
+                    toggleStructure(this.value);
+                });
+            });
+        
+            // Preload all structures and initialize the viewer
+            preloadStructures();
+        </script>
+        
+        {% comment %} <div class="form-row">
             <h2>3D Structure</h2>
             <p> If a UniProt code or a structure is provided, it will be visualized with its B-factors. If the sequence matches the one in the MSA, it can be visualized with GEMME Sensitivity (per-residue GEMME average score) or Residue Class. </p>
         </div>
@@ -313,19 +381,7 @@
         
             // Initial load (default to B-Factors)
             loadStructureAndColor('bfactor');
-        </script>
-        
-                {% comment %} <div class="form-row">
-          <h2>3D Structure</h2>
-        </div>
-        <div class="form-row" style="min-height: 600px;">
-            <div class="form-group col-10">
-                <div id="myViewer" class="viewer-container"></div>
-            </div>
-            <div class="form-group col-2 pl-5 py-4">
-                <button id="colorBFactorBtn" class="example-button">Color by B-Factors</button>
-            </div>
-        </div> {% endcomment %}
+        </script> {% endcomment %}
        
     </div>
 
