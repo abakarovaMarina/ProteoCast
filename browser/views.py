@@ -298,13 +298,14 @@ def results_view(request):
             colorscale=confidence_colorscale,
             showscale=False,
             hovertemplate="%{z}<extra></extra>",
+            xgap=0.3
         )
 
         fig.add_trace(heatmap_confidence, row=2, col=1)
         fig_VariantClasses.add_trace(heatmap_confidence, row=2, col=1)
 
         scatter_border = go.Scatter(
-            x=[1, df.shape[1]+1, df.shape[1]+1, 1, 0],
+            x=[0.5, df.shape[1]+0.5, df.shape[1]+0.5, 0.5, 0.5],
             y=[-0.5, -0.5, 0.5, 0.5, -0.5],
             mode="lines",
             line=dict(color="darkblue", width=2),
