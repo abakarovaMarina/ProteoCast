@@ -169,6 +169,7 @@ def results_view(request):
  
     if not prot_name:
         return HttpResponse(f'Please provide a protein name.')
+    
     pdb_id = '' 
     if prot_name[:3] == 'job':
         data_path = '/data/jobs/'
@@ -180,7 +181,7 @@ def results_view(request):
         prot_id = None
         for file_name in files:
             if "ProteoCast" in file_name:
-                prot_id = file_name.split('.')[1].split('_')[0]  # Extract protein ID before the first dot
+                prot_id = file_name.split('.')[1].split('_')[0]  # Extract protein ID 
             if ('pdb' in file_name) and ('GEMME' not in file_name):
                 pdb_id = file_name.split('.')[0]
     else:
@@ -303,7 +304,7 @@ def results_view(request):
         fig_VariantClasses.add_trace(heatmap_confidence, row=2, col=1)
 
         scatter_border = go.Scatter(
-            x=[0, df.shape[1]+1, df.shape[1]+1, 0, 0],
+            x=[1, df.shape[1]+1, df.shape[1]+1, 1, 0],
             y=[-0.5, -0.5, 0.5, 0.5, -0.5],
             mode="lines",
             line=dict(color="darkblue", width=2),
