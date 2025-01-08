@@ -204,7 +204,9 @@
             </div>
             {% endif %}
         </div>
-        
+
+
+
         <div class="form-row">
             <h2>3D Structure</h2>
             <p>
@@ -215,10 +217,7 @@
         </div>
         <div class="form-row" style="min-height: 600px;">
             <div class="form-group col-10">
-                <!-- Viewer containers for each structure -->
-                <div id="viewer-bfactor" class="viewer-container" style="display: none;"></div>
-                <div id="viewer-gemme" class="viewer-container" style="display: none;"></div>
-                <div id="viewer-residue-class" class="viewer-container" style="display: none;"></div>
+                <div id="myViewer" class="viewer-container"></div>
             </div>
             <div class="form-group col-2 pl-5 py-4">
                 <div class="buttons">
@@ -239,78 +238,84 @@
         </div>
         
         <script>
-            // Initialize the viewer instances
-            const viewerInstances = {
-                bfactor: new PDBeMolstarPlugin(),
-                gemme: new PDBeMolstarPlugin(),
-                residue_class: new PDBeMolstarPlugin(),
-            };
+            // Initialize the viewer
+            const viewerInstance = new PDBeMolstarPlugin();
         
-            // Viewer containers
-            const viewerContainers = {
-                bfactor: document.getElementById('viewer-bfactor'),
-                gemme: document.getElementById('viewer-gemme'),
-                residue_class: document.getElementById('viewer-residue-class'),
-            };
+            const viewerContainer = document.getElementById('myViewer');
         
-            // URLs for the structures
-            const pdbUrls = {
-                bfactor: "{{ pdb_url_1 }}",
-                gemme: "{{ pdb_url_2 }}",
-                residue_class: "{{ pdb_url_3 }}",
-            };
-        
-            // Options for the viewer
-            const baseOptions = {
+            // Options for the Mol* Viewer
+            const defaultOptions = {
                 alphafoldView: true,
                 bgColor: { r: 255, g: 255, b: 255 },
                 hideCanvasControls: [
-                    'selection', 'animation', 'controlToggle', 'controlInfo',
-                    'controlZoom', 'controlRotate', 'controlTranslate',
-                    'controlReset', 'controlFullscreen',
+                    'selection', 'animation', 'controlToggle', 'controlInfo', 
+                    'controlZoom', 'controlRotate', 'controlTranslate', 
+                    'controlReset', 'controlFullscreen'
                 ],
                 layoutIsExpanded: false,
                 hideControls: true,
-                visualStyle: { polymer: { type: 'cartoon', size: 'uniform' } },
+                visualStyle: {
+                    polymer: { type: 'cartoon', size: 'uniform' },
+                },
             };
         
-            // Function to preload structures
+            // PDB URLs for preloading
+            const pdbUrls = {
+                bfactor: "{{ pdb_url_1 }}",
+                gemme: "{{ pdb_url_2 }}",
+                residue_class: "{{ pdb_url_3 }}"
+            };
+        
+            // Preload all three structures
             async function preloadStructures() {
-                for (const [key, viewer] of Object.entries(viewerInstances)) {
-                    const options = { ...baseOptions, customData: { url: pdbUrls[key], format: 'pdb' } };
-        
-                    await viewer.render(viewerContainers[key], options);
-        
-                    // Initially hide all viewers except the default
-                    if (key !== 'bfactor') {
-                        viewerContainers[key].style.display = 'none';
-                    } else {
-                        viewerContainers[key].style.display = 'block';
-                    }
-                }
+                const preloadPromises = Object.keys(pdbUrls).map(async (key) => {
+                    const options = {
+                        ...defaultOptions,
+                        customData: { url: pdbUrls[key], format: 'pdb' },
+                    };
+                    console.log(`Preloading structure: ${key} with URL: ${pdbUrls[key]}`);
+                    await viewerInstance.load(options);
+                });
+                await Promise.all(preloadPromises);
+                console.log("All structures preloaded.");
             }
         
-            // Function to toggle visibility of viewers
-            function toggleStructure(condition) {
-                for (const key of Object.keys(viewerInstances)) {
-                    viewerContainers[key].style.display = key === condition ? 'block' : 'none';
+            // Function to load the structure and apply coloring
+            function loadStructureAndColor(condition) {
+                console.log("Loading structure for condition:", condition);
+                console.log("PDB URL:", pdbUrls[condition]);
+                const options = {
+                    ...defaultOptions,
+                    customData: { url: pdbUrls[condition], format: 'pdb' },
+                };
+                if (condition === 'gemme') {
+                    console.log("Applying GEMME sensitivity coloring");
+                    options.visualStyle.polymer.color = 'uncertainty';
+                } else if (condition === 'residue_class') {
+                    console.log("Applying Residue Class coloring");
+                    options.visualStyle.polymer.color = 'uncertainty';
+                } else {
+                    console.log("Applying B-Factor coloring");
+                    options.visualStyle.polymer.color = 'plddt-confidence';
                 }
+                viewerInstance.render(viewerContainer, options);
             }
         
             // Add event listeners to the radio buttons
             document.querySelectorAll('input[name="colorToggle"]').forEach(button => {
                 button.addEventListener('change', function () {
-                    toggleStructure(this.value);
+                    loadStructureAndColor(this.value);
                 });
             });
         
-            // Preload all structures
-            preloadStructures();
+            // Preload structures and initialize the viewer
+            preloadStructures().then(() => {
+                console.log("Viewer initialized with preloaded structures.");
+                loadStructureAndColor('bfactor'); // Initial load (default to B-Factors)
+            });
         </script>
-        
-        
-        
-        {% comment %} <div class="form-row">
+    </div>
+       {% comment %} <div class="form-row">
             <h2>3D Structure</h2>
             <p> If a UniProt code or a structure is provided, it will be visualized with its B-factors. If the sequence matches the one in the MSA, it can be visualized with GEMME Sensitivity (per-residue GEMME average score) or Residue Class. </p>
         </div>
@@ -394,9 +399,9 @@
         
             // Initial load (default to B-Factors)
             loadStructureAndColor('bfactor');
-        </script> {% endcomment %}
+        </script>
        
-    </div>
+    </div> {% endcomment %}
 
       <footer class="bg-light text-center py-3">
             <p class="mb-0">ProteoCast - This website is free and open to all users and there is no login requirement.</p>
