@@ -247,34 +247,53 @@
                 residue_class: "{{ pdb_url_3 }}"
             };
         
-            // Store preloaded structures
-            const preloadedStructures = {};
+            // Store preloaded data
+            const preloadedData = {};
         
-            // Function to load all structures into memory
+            // Function to preload all structures
             async function preloadStructures() {
                 for (const [condition, url] of Object.entries(pdbUrls)) {
-                    preloadedStructures[condition] = await viewerInstance.loadStructureFromUrl({
-                        url: url,
-                        format: 'pdb',
-                        defaultRepresentation: false
+                    const options = {
+                        customData: { url: url, format: 'pdb' },
+                        alphafoldView: true,
+                        bgColor: { r: 255, g: 255, b: 255 },
+                        hideCanvasControls: [
+                            'selection', 'animation', 'controlToggle', 'controlInfo',
+                            'controlZoom', 'controlRotate', 'controlTranslate',
+                            'controlReset', 'controlFullscreen'
+                        ],
+                        layoutIsExpanded: false,
+                        hideControls: true,
+                        visualStyle: { polymer: { type: 'cartoon', size: 'uniform' } },
+                    };
+                    // Preload the structure data
+                    const pluginData = await viewerInstance.plugin.dataTransaction(async () => {
+                        const data = await viewerInstance.plugin.builders.data.download(
+                            { url: url },
+                            { state: { isGhost: true } }
+                        );
+                        const trajectory = await viewerInstance.plugin.builders.structure.parseTrajectory(
+                            data,
+                            { formats: 'pdb' }
+                        );
+                        return trajectory;
                     });
+        
+                    preloadedData[condition] = pluginData;
                 }
-                // Show the default structure (B-Factors)
+                // Show the default structure
                 toggleStructure('bfactor');
             }
         
-            // Function to toggle the visibility and coloring of the structures
+            // Function to toggle the visibility of preloaded structures
             function toggleStructure(condition) {
-                // Hide all structures
-                Object.keys(preloadedStructures).forEach(key => {
-                    viewerInstance.plugin.managers.structure.hierarchy
-                        .remove(preloadedStructures[key]);
-                });
+                // Remove all loaded structures
+                viewerInstance.plugin.managers.structure.hierarchy.removeAll();
         
-                // Show the selected structure with the appropriate coloring
-                const structure = preloadedStructures[condition];
+                // Load the selected structure and apply the correct coloring
+                const trajectory = preloadedData[condition];
                 viewerInstance.plugin.managers.structure.hierarchy.add(
-                    structure,
+                    trajectory,
                     {
                         representation: {
                             type: 'cartoon',
@@ -293,9 +312,10 @@
                 });
             });
         
-            // Preload all structures and initialize the viewer
+            // Preload all structures
             preloadStructures();
         </script>
+        
         
         {% comment %} <div class="form-row">
             <h2>3D Structure</h2>
