@@ -92,7 +92,7 @@
       <div class="content">
         <div class="container">
          <br>
-        <p>The <b>ProteoCast Server</b> allows you to rapidly and easily explore how and to what extent missense mutations affect protein function. ProteoCast relies on GEMME, a highly efficient, unsupervised, and fully interpretable variant effect predictor (<a href="https://academic.oup.com/mbe/article/36/11/2604/5548199" target="_blank">Laine et al., 2019</a>). By focusing on how protein residues segregate along the topology of evolutionary trees, GEMME has proven instrumental for studying protein stability, function, and disease mechanisms in several studies -- see, for instance, (<a href="https://www.nature.com/articles/s41586-023-06328-6" target="_blank">Tsuboyama et al., 2023</a>). It was extensively tested against over 2.5M experimental measurements (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676" target="_blank">Abakarova et al., 2023</a>, <a href="https://academic.oup.com/mbe/article/36/11/2604/5548199" target="_blank">Laine et al., 2019</a>). It is among the top-performing methods on the widely adopted <a href="https://proteingym.org/">ProteinGym benchmark</a>. </p>
+        <p>The <b>ProteoCast Server</b> allows you to rapidly and easily explore how and to what extent missense mutations affect protein function. ProteoCast relies on GEMME, a highly efficient, unsupervised, and fully interpretable variant effect predictor (<a href="https://academic.oup.com/mbe/article/36/11/2604/5548199" target="_blank">Laine et al., 2019</a>). By focusing on how protein residues segregate along the topology of evolutionary trees, GEMME has proven instrumental for studying protein stability, function, and disease mechanisms in several studies -- see, for instance, (<a href="https://www.nature.com/articles/s41586-023-06328-6" target="_blank">Tsuboyama et al., 2023</a>). It was extensively tested against over 2.5M experimental measurements (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676" target="_blank">Abakarova et al., 2023</a>, <a href="https://academic.oup.com/mbe/article/36/11/2604/5548199" target="_blank">Laine et al., 2019</a>). It is among the top-performing methods on the widely adopted <a href="https://proteingym.org/" target="_blank">ProteinGym benchmark</a>. </p>
           
      <!--   <p>For a quick start, you can see our 
           <a href="https://youtu.be/k44U0WNwzC4">YouTube tutorial</a>:</p>
@@ -100,15 +100,14 @@
           <iframe height="315" allow="accelerometer; autoplay; clipboard-write;
       encrypted-media; gyroscope; picture-in-picture" src="https://www.youtube.com/embed/k44U0WNwzC4" title="YouTube video player" width="560" frameborder="0" allowfullscreen=""></iframe>
         </p> -->
-        <p> You want to know more, collaborate, or you encounter a problem with the server? Please feel free to 
-          <a href="mailto: elodie.laine@sorbonne-universite.fr">contact us</a>!</p>
-        <h3> Input </h3>
+        <p> <b>You want to know more, collaborate, or you encounter a problem with the server? Please feel free to 
+              <a href="mailto: elodie.laine@sorbonne-universite.fr">contact us</b></a>!</p>  <h3> Input </h3>
         <p> Please provide a multiple sequence alignement in FASTA or A3M format. The protein of interest should be the first one in the alignment and should not contain any gap. We recommend generating the alignment with the highly efficient MMseqs2-based protocol implemented in <a href = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"  target="_blank">ColabFold</a> for an optimal balance between speed and accuracy </a>. Using this protocol, the input alignment should contain at least a couple hundred sequences to obtain reliable predictions (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676" target="_blank">Abakarova et al., 2023</a>).</p>
-        <p> Optionally, you can opt for mapping the results onto a 3D structure. If the query sequence header is a Uniprot identifier (e.g. P07643), then ProteoCast will automatically retrieve the corresponding 3D model from the <a href = "https://alphafold.com/">AlphaFold Database</a>. Alternatively, you can provide a custom single-chain PDB file.</p>
+        <p> Optionally, you can opt for mapping the results onto a 3D structure. If the query sequence header is a Uniprot identifier (e.g. P07643), then ProteoCast will automatically retrieve the corresponding 3D model from the <a href = "https://alphafold.com/" target="_blank">AlphaFold Database</a>. Alternatively, you can provide a custom single-chain PDB file.</p>
         
         <h3> Output </h3>
         <p>Please check our example 
-          <a href="https://proteocast.ijm.fr/results/results/?q=FBpp0301274">result page</a>. </p>
+          <a href="https://proteocast.ijm.fr/results/results/?q=job20250107194828" target="_blank">result page</a>. </p>
 
         <h4>Mutational landscape</h4>
         <p> In this interactive heatmap, each 
