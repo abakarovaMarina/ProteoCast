@@ -204,118 +204,9 @@
             </div>
             {% endif %}
         </div>
-
-
-
-        <div class="form-row">
-            <h2>3D Structure</h2>
-            <p>
-                If a UniProt code or a structure is provided, it will be visualized with its B-factors.
-                If the sequence matches the one in the MSA, it can be visualized with GEMME Sensitivity
-                (per-residue GEMME average score) or Residue Class.
-            </p>
-        </div>
-        <div class="form-row" style="min-height: 600px;">
-            <div class="form-group col-10">
-                <div id="myViewer" class="viewer-container"></div>
-            </div>
-            <div class="form-group col-2 pl-5 py-4">
-                <div class="buttons">
-                    <label>
-                        <input type="radio" name="colorToggle" value="bfactor" checked>
-                        Color by B-Factors
-                    </label>
-                    <label>
-                        <input type="radio" name="colorToggle" value="gemme">
-                        GEMME Sensitivity
-                    </label>
-                    <label>
-                        <input type="radio" name="colorToggle" value="residue_class">
-                        Residue Class
-                    </label>
-                </div>
-            </div>
-        </div>
         
-        <script>
-            // Initialize the viewer
-            const viewerInstance = new PDBeMolstarPlugin();
         
-            const viewerContainer = document.getElementById('myViewer');
-        
-            // Options for the Mol* Viewer
-            const defaultOptions = {
-                alphafoldView: true,
-                bgColor: { r: 255, g: 255, b: 255 },
-                hideCanvasControls: [
-                    'selection', 'animation', 'controlToggle', 'controlInfo', 
-                    'controlZoom', 'controlRotate', 'controlTranslate', 
-                    'controlReset', 'controlFullscreen'
-                ],
-                layoutIsExpanded: false,
-                hideControls: true,
-                visualStyle: {
-                    polymer: { type: 'cartoon', size: 'uniform' },
-                },
-            };
-        
-            // PDB URLs for preloading
-            const pdbUrls = {
-                bfactor: "{{ pdb_url_1 }}",
-                gemme: "{{ pdb_url_2 }}",
-                residue_class: "{{ pdb_url_3 }}"
-            };
-        
-            // Preload all three structures
-            async function preloadStructures() {
-                const preloadPromises = Object.keys(pdbUrls).map(async (key) => {
-                    const options = {
-                        ...defaultOptions,
-                        customData: { url: pdbUrls[key], format: 'pdb' },
-                    };
-                    console.log(`Preloading structure: ${key} with URL: ${pdbUrls[key]}`);
-                    await viewerInstance.load(options);
-                });
-                await Promise.all(preloadPromises);
-                console.log("All structures preloaded.");
-            }
-        
-            // Function to load the structure and apply coloring
-            function loadStructureAndColor(condition) {
-                console.log("Loading structure for condition:", condition);
-                console.log("PDB URL:", pdbUrls[condition]);
-                const options = {
-                    ...defaultOptions,
-                    customData: { url: pdbUrls[condition], format: 'pdb' },
-                };
-                if (condition === 'gemme') {
-                    console.log("Applying GEMME sensitivity coloring");
-                    options.visualStyle.polymer.color = 'uncertainty';
-                } else if (condition === 'residue_class') {
-                    console.log("Applying Residue Class coloring");
-                    options.visualStyle.polymer.color = 'uncertainty';
-                } else {
-                    console.log("Applying B-Factor coloring");
-                    options.visualStyle.polymer.color = 'plddt-confidence';
-                }
-                viewerInstance.render(viewerContainer, options);
-            }
-        
-            // Add event listeners to the radio buttons
-            document.querySelectorAll('input[name="colorToggle"]').forEach(button => {
-                button.addEventListener('change', function () {
-                    loadStructureAndColor(this.value);
-                });
-            });
-        
-            // Preload structures and initialize the viewer
-            preloadStructures().then(() => {
-                console.log("Viewer initialized with preloaded structures.");
-                loadStructureAndColor('bfactor'); // Initial load (default to B-Factors)
-            });
-        </script>
-    </div>
-       {% comment %} <div class="form-row">
+       <div class="form-row">
             <h2>3D Structure</h2>
             <p> If a UniProt code or a structure is provided, it will be visualized with its B-factors. If the sequence matches the one in the MSA, it can be visualized with GEMME Sensitivity (per-residue GEMME average score) or Residue Class. </p>
         </div>
@@ -401,7 +292,7 @@
             loadStructureAndColor('bfactor');
         </script>
        
-    </div> {% endcomment %}
+    </div>
 
       <footer class="bg-light text-center py-3">
             <p class="mb-0">ProteoCast - This website is free and open to all users and there is no login requirement.</p>
