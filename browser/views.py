@@ -298,7 +298,7 @@ def results_view(request):
             colorscale=confidence_colorscale,
             showscale=False,
             hovertemplate="%{z}<extra></extra>",
-            xgap=0.3
+            xgap=0.2
         )
 
         fig.add_trace(heatmap_confidence, row=2, col=1)
