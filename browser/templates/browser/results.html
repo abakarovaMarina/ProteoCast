@@ -198,7 +198,7 @@
         <div class="form-row"> 
             <h2>Sensitivity profile</h2>
             <p> 
-                {% if query|slice:":4" != "2025" %} 
+                {% if query|slice:":4" == "2025" %} 
                     The mutational sensitivity profile (per-residue GEMME average score) is shown here.
                 {% else %}
                     The pLDDT of the AlphaFold-predicted protein 3D model is shown on top and the mutational sensitivity profile (per-residue GEMME average score) at the bottom.
