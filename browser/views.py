@@ -353,15 +353,15 @@ def results_view(request):
         highlight_mask[df_snps_STR.isin(['DEST2', 'DGRP', 'DEST2/DGRP', 'DGRP/DEST2'])] = 2  # Blue for DEST or DGRP
 
         highlighted_positions = (highlight_mask > 0)  # Cells with highlights (red or blue)
-        df_modified = df.copy()  # Create a copy to avoid modifying the original dataframe
+        df_modified = df.values[::-1].copy()  # Create a copy to avoid modifying the original dataframe
         df_modified[highlighted_positions] = 0
-
+        
         # Main heatmap (greyscale background)
         heatmap_snps = go.Heatmap(
-            z=df_modified.values[::-1],
+            z=df_modified,
             x=list(range(1, df.shape[1] + 1)),
-            y=alph[::-1],
-            customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1], df_snps_STR.values[::-1]]),
+            y=alph,
+            customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1], df_snps_STR.values]),
             colorscale=px.colors.sequential.Greys[::-1],
             showscale=False,
             hovertemplate=("Mutation: %{customdata[0]}<br>"
@@ -372,7 +372,7 @@ def results_view(request):
 
         # Highlight heatmap (overlay with colors for specific SNPs)
         highlight_layer = go.Heatmap(
-            z=highlight_mask[::-1],  # Use the mask to determine colors
+            z=highlight_mask,  # Use the mask to determine colors
             x=list(range(1, df.shape[1] + 1)),
             y=alph,
             colorscale=[
