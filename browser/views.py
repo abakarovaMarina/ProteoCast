@@ -303,7 +303,7 @@ def results_view(request):
             colorscale=px.colors.sequential.Oranges[::-1],
             showscale=False,
             customdata=df_mut.values[::-1],
-            hovertemplate=("Position: %{customdata}<br>"
+            hovertemplate=("Mutation: %{customdata}<br>"
                            "Score: %{z:.2f}<extra></extra>")
         )
         fig.add_trace(heatmap_main, row=1, col=1)
@@ -323,7 +323,7 @@ def results_view(request):
             customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1]]),
             colorscale=variantClasses_colorscale,
             showscale=False,
-            hovertemplate=("Position: %{customdata[0]}<br>"
+            hovertemplate=("Mutation: %{customdata[0]}<br>"
                            "Class: %{customdata[1]}<extra></extra>"),
             xgap=0.3,
             ygap=0.3,
@@ -339,19 +339,20 @@ def results_view(request):
                 vertical_spacing=0.02,
             )
         
-        """df_snps_STR = pd.DataFrame(columns=df_classesStr.columns, index=df_classesStr.index)
+        df_snps_STR = pd.DataFrame(columns=df_classesStr.columns, index=df_classesStr.index)
         for snp in df_snps['Mutation'].unique():
             ind_mut = alph.index(snp[-1])
-            df_snps_STR.loc[ind_mut, int(snp[1:-1])] = '/'.join(df_snps.loc[df_snps['Mutation']==snp, 'Set_name'].tolist())"""
+            df_snps_STR.loc[ind_mut, int(snp[1:-1])] = '/'.join(df_snps.loc[df_snps['Mutation']==snp, 'Set_name'].tolist())
 
         heatmap_snps = go.Heatmap(
             z=df.values[::-1],
             x=list(range(1, df.shape[1])),
             y=alph,
-            customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1]]), #, df_snps_STR.values[::-1]]
+            customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1], df_snps_STR.values[::-1]]),
             colorscale=px.colors.sequential.Greys[::-1],
             showscale=False,
-            hovertemplate=("Position: %{customdata[0]}<br>"
+            hovertemplate=("Mutation: %{customdata[0]}<br>"
+                   "Score: %{z:.2f}<br>"
                    "Class: %{customdata[1]}<br>"
                    "SNPs: %{customdata[2]}<extra></extra>")
         )
