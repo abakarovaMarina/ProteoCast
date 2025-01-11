@@ -347,7 +347,9 @@ def results_view(request):
             except (ValueError, IndexError) as e:
                 print(f"Error processing SNP {snp}: {e}")
                 continue
-            
+        if not df_snps_STR.empty:
+            unique_values = pd.unique(df_snps_STR.values.ravel('K'))
+            return HttpResponse(f"Error processing SNPs: {unique_values}", status=500) 
         df_snps_STR = df_snps_STR.fillna('-')
         
         heatmap_snps = go.Heatmap(
