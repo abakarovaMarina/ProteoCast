@@ -349,18 +349,18 @@ def results_view(request):
 
         # Create a numerical mask for highlights
         highlight_mask = np.zeros(df_snps_STR.shape)  # Default is no highlight (0)
-        highlight_mask[df_snps_STR.isin(['Lethal'])] = 1  # Red for Lethal
-        highlight_mask[df_snps_STR.isin(['DEST2', 'DGRP', 'DEST2/DGRP', 'DGRP/DEST2'])] = 2  # Blue for DEST or DGRP
+        highlight_mask[df_snps_STR.isin(['Lethal'])] = 0.3  # Red for Lethal
+        highlight_mask[df_snps_STR.isin(['DEST2', 'DGRP', 'DEST2/DGRP', 'DGRP/DEST2'])] = 0.6  # Blue for DEST or DGRP
 
-        highlighted_positions = (highlight_mask > 0)  # Cells with highlights (red or blue)
-        df_modified = df.values[::-1].copy()  # Create a copy to avoid modifying the original dataframe
-        df_modified[highlighted_positions] = 0
+        #highlighted_positions = (highlight_mask > 0)  # Cells with highlights (red or blue)
+        #df_modified = df.values[::-1].copy()  # Create a copy to avoid modifying the original dataframe
+        #df_modified[highlighted_positions] = 0
         
         # Main heatmap (greyscale background)
         heatmap_snps = go.Heatmap(
-            z=df_modified,
+            z=df.values[::-1],
             x=list(range(1, df.shape[1] + 1)),
-            y=alph,
+            y=alph[::-1],
             customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1], df_snps_STR.values]),
             colorscale=px.colors.sequential.Greys[::-1],
             showscale=False,
@@ -377,8 +377,8 @@ def results_view(request):
             y=alph,
             colorscale=[
                 [0, "rgba(0,0,0,0)"],  # Transparent for no highlight
-                [1 / 3, "rgba(255,50,50,1)"],  # Red for 'Lethal'
-                [2 / 3, "rgba(0,0,255,0.7)"],  # Blue for 'DEST2' or 'DGRP'
+                [0.3, "rgba(255,0,0,1)"],  # Red for 'Lethal'
+                [0.6, "rgba(0,0,255,0.7)"],  # Blue for 'DEST2' or 'DGRP'
                 [1, "rgba(0,0,255,0.7)"],  # Blue continued
             ],
             showscale=False,
