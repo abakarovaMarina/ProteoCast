@@ -370,24 +370,24 @@ def results_view(request):
                         "SNPs: %{customdata[2]}<extra></extra>")
         )
 
-        """# Highlight heatmap (overlay with colors for specific SNPs)
+        # Highlight heatmap (overlay with colors for specific SNPs)
         highlight_layer = go.Heatmap(
             z=highlight_mask,  # Use the mask to determine colors
             x=list(range(1, df.shape[1] + 1)),
             y=alph,
             colorscale=[
                 [0, "rgba(0,0,0,0)"],  # Transparent for no highlight
-                [1 / 3, "rgba(255,0,0,1)"],  # Red for 'Lethal'
+                [1 / 3, "rgba(255,50,50,1)"],  # Red for 'Lethal'
                 [2 / 3, "rgba(0,0,255,0.7)"],  # Blue for 'DEST2' or 'DGRP'
                 [1, "rgba(0,0,255,0.7)"],  # Blue continued
             ],
             showscale=False,
             hoverinfo="skip"  # Skip hover info for the highlight layer
-        )"""
+        )
 
         # Add traces to the figure
         fig_SNPs.add_trace(heatmap_snps, row=1, col=1)
-        #fig_SNPs.add_trace(highlight_layer, row=1, col=1)
+        fig_SNPs.add_trace(highlight_layer, row=1, col=1)
 
 
     if confidence_values is not None:
