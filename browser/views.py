@@ -374,7 +374,7 @@ def results_view(request):
         highlight_layer = go.Heatmap(
             z=highlight_mask[::-1],  # Use the mask to determine colors
             x=list(range(1, df.shape[1] + 1)),
-            y=alph[::-1],
+            y=alph,
             colorscale=[
                 [0, "rgba(0,0,0,0)"],  # Transparent for no highlight
                 [1 / 3, "rgba(255,0,0,1)"],  # Red for 'Lethal'
