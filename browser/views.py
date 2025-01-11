@@ -461,7 +461,7 @@ def results_view(request):
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
         'heatmapClasses_html': heatmapClasses_html,
-        'heatmapSNPs_html': heatmapSNPs_html,
+        'heatmapSNPs_html': heatmap_html,
         'query': id_folder,
         'prot_name': prot_id,
         'image_url_1': image_url_1,
