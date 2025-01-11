@@ -345,6 +345,10 @@ def results_view(request):
             df_snps_STR.loc[ind_mut, position-1] = '/'.join(df_snps.loc[df_snps['Mutation'] == snp, 'Set_name'].tolist())
 
         df_snps_STR = df_snps_STR.fillna('-')
+        # Define a mask for red (Lethal) and blue (DEST or DGRP) cells
+        highlight_colors = np.full(df_snps_STR.shape, 'rgba(0,0,0,0)')  # Default transparent
+        highlight_colors[df_snps_STR.isin(['Lethal'])] = 'rgba(255,0,0,0.7)'  # Red for Lethal
+        highlight_colors[df_snps_STR.isin(['DEST2', 'DGRP', 'DEST2/DGRP', 'DGRP/DEST2'])] = 'rgba(0,0,255,0.7)'  # Blue for DEST or DGRP
         
         heatmap_snps = go.Heatmap(
             z=df.values[::-1],
@@ -358,8 +362,20 @@ def results_view(request):
                    "Class: %{customdata[1]}<br>"
                    "SNPs: %{customdata[2]}<extra></extra>")
         )
+        # Overlay heatmap for highlights
+        highlight_layer = go.Heatmap(
+            z=np.zeros_like(df.values[::-1]),  # No data for z
+            x=list(range(1, df.shape[1] + 1)),
+            y=alph[::-1],
+            colorscale=[[0, "rgba(0,0,0,0)"], [1, "rgba(0,0,0,0)"]],  # Transparent base
+            showscale=False,
+            hoverinfo="skip",
+            customdata=df_snps_STR.values[::-1],
+            marker=dict(color=highlight_colors[::-1]),  # Apply the highlights
+        )
         fig_SNPs.add_trace(heatmap_snps, row=1, col=1)
-
+        fig_SNPs.add_trace(highlight_layer, row=1, col=1)
+        
     if confidence_values is not None:
         heatmap_confidence = go.Heatmap(
             z=confidence_values,
