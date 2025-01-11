@@ -208,7 +208,9 @@ def results_view(request):
             pdb_id = mapping_df.loc[prot_id, 'Structure_3D_file'].split('.')[0]
         except:
             pdb_id = ''
-    
+
+    if prot_name:
+        return HttpResponse(f'Please provide a protein name.') 
     ## reading SNPs file
     try:
         snps_file = f'{data_path}{id_folder}/7.{prot_id}.csv'
