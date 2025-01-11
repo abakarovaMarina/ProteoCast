@@ -338,13 +338,14 @@ def results_view(request):
                 row_heights=[0.9, 0.1],
                 vertical_spacing=0.02,
             )
-        
+         
         df_snps_STR = pd.DataFrame(columns=df_classesStr.columns, index=df_classesStr.index)
         for snp in df_snps['Mutation'].unique():
             ind_mut = alph.index(snp[-1])
             df_snps_STR.loc[ind_mut, int(snp[1:-1])] = '/'.join(df_snps.loc[df_snps['Mutation']==snp, 'Set_name'].tolist())
-        df = df.fillna('')
-        
+        df_snps_STR = df_snps_STR.fillna('')
+        if df_snps_STR:
+            return HttpResponse(f"Error while preparing SNPs heatmap: {df_snps_STR}", status=500)
         heatmap_snps = go.Heatmap(
             z=df.values[::-1],
             x=list(range(1, df.shape[1])),
