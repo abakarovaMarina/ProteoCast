@@ -209,8 +209,6 @@ def results_view(request):
         except:
             pdb_id = ''
 
-    if prot_name:
-        return HttpResponse(f'Please provide a protein name.') 
     ## reading SNPs file
     try:
         snps_file = f'{data_path}{id_folder}/7.{prot_id}.csv'
@@ -278,7 +276,8 @@ def results_view(request):
         [0, 'white'],
         [1, 'darkblue']
     ]
-
+    if prot_name:
+        return HttpResponse(f'Please provide a protein name.') 
     ## GENERATING HEATMAPS
         #--- GEMME heatmap
     if df is not None:
