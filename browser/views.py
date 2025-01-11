@@ -343,7 +343,8 @@ def results_view(request):
         for snp in df_snps['Mutation'].unique():
             ind_mut = alph.index(snp[-1])
             df_snps_STR.loc[ind_mut, int(snp[1:-1])] = '/'.join(df_snps.loc[df_snps['Mutation']==snp, 'Set_name'].tolist())
-
+        df = df.fillna('')
+        
         heatmap_snps = go.Heatmap(
             z=df.values[::-1],
             x=list(range(1, df.shape[1])),
