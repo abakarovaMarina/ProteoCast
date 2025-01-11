@@ -329,53 +329,63 @@ def results_view(request):
         )
         fig_VariantClasses.add_trace(heatmap_classes, row=1, col=1)
 
-        #--- SNPs heatmap
+        # --- SNPs heatmap
     if df_snps is not None:
         fig_SNPs = make_subplots(
-                rows=2, cols=1,
-                shared_xaxes=True,
-                row_heights=[0.9, 0.1],
-                vertical_spacing=0.02,
-            )
-         
+            rows=2, cols=1,
+            shared_xaxes=True,
+            row_heights=[0.9, 0.1],
+            vertical_spacing=0.02,
+        )
+
+        # Prepare the SNPs data structure
         df_snps_STR = pd.DataFrame(columns=df_classesStr.columns, index=df_classesStr.index)
         for snp in df_snps['Mutation'].unique():
             ind_mut = alph.index(snp[-1])
             position = int(snp[1:-1])
-            df_snps_STR.loc[ind_mut, position-1] = '/'.join(df_snps.loc[df_snps['Mutation'] == snp, 'Set_name'].tolist())
+            df_snps_STR.loc[ind_mut, position - 1] = '/'.join(df_snps.loc[df_snps['Mutation'] == snp, 'Set_name'].tolist())
 
         df_snps_STR = df_snps_STR.fillna('-')
-        # Define a mask for red (Lethal) and blue (DEST or DGRP) cells
-        highlight_colors = np.full(df_snps_STR.shape, 'rgba(0,0,0,0)')  # Default transparent
-        highlight_colors[df_snps_STR.isin(['Lethal'])] = 'rgba(255,0,0,0.7)'  # Red for Lethal
-        highlight_colors[df_snps_STR.isin(['DEST2', 'DGRP', 'DEST2/DGRP', 'DGRP/DEST2'])] = 'rgba(0,0,255,0.7)'  # Blue for DEST or DGRP
-        
+
+        # Create a numerical mask for highlights
+        highlight_mask = np.zeros(df_snps_STR.shape)  # Default is no highlight (0)
+        highlight_mask[df_snps_STR.isin(['Lethal'])] = 1  # Red for Lethal
+        highlight_mask[df_snps_STR.isin(['DEST2', 'DGRP', 'DEST2/DGRP', 'DGRP/DEST2'])] = 2  # Blue for DEST or DGRP
+
+        # Main heatmap (greyscale background)
         heatmap_snps = go.Heatmap(
             z=df.values[::-1],
-            x=list(range(1, df.shape[1])),
-            y=alph,
-            customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1], df_snps_STR.values]),
+            x=list(range(1, df.shape[1] + 1)),
+            y=alph[::-1],
+            customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1], df_snps_STR.values[::-1]]),
             colorscale=px.colors.sequential.Greys[::-1],
             showscale=False,
             hovertemplate=("Mutation: %{customdata[0]}<br>"
-                   "Score: %{z:.2f}<br>"
-                   "Class: %{customdata[1]}<br>"
-                   "SNPs: %{customdata[2]}<extra></extra>")
+                        "Score: %{z:.2f}<br>"
+                        "Class: %{customdata[1]}<br>"
+                        "SNPs: %{customdata[2]}<extra></extra>")
         )
-        # Overlay heatmap for highlights
+
+        # Highlight heatmap (overlay with colors for specific SNPs)
         highlight_layer = go.Heatmap(
-            z=np.zeros_like(df.values[::-1]),  # No data for z
+            z=highlight_mask[::-1],  # Use the mask to determine colors
             x=list(range(1, df.shape[1] + 1)),
             y=alph[::-1],
-            colorscale=[[0, "rgba(0,0,0,0)"], [1, "rgba(0,0,0,0)"]],  # Transparent base
+            colorscale=[
+                [0, "rgba(0,0,0,0)"],  # Transparent for no highlight
+                [1 / 3, "rgba(255,0,0,0.7)"],  # Red for 'Lethal'
+                [2 / 3, "rgba(0,0,255,0.7)"],  # Blue for 'DEST2' or 'DGRP'
+                [1, "rgba(0,0,255,0.7)"],  # Blue continued
+            ],
             showscale=False,
-            hoverinfo="skip",
-            customdata=df_snps_STR.values[::-1],
-            marker=dict(color=highlight_colors[::-1]),  # Apply the highlights
+            hoverinfo="skip"  # Skip hover info for the highlight layer
         )
+
+        # Add traces to the figure
         fig_SNPs.add_trace(heatmap_snps, row=1, col=1)
         fig_SNPs.add_trace(highlight_layer, row=1, col=1)
-        
+
+
     if confidence_values is not None:
         heatmap_confidence = go.Heatmap(
             z=confidence_values,
