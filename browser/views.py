@@ -342,7 +342,7 @@ def results_view(request):
         for snp in df_snps['Mutation'].unique():
             ind_mut = alph.index(snp[-1])
             position = int(snp[1:-1])
-            df_snps_STR.loc[ind_mut, position] = '/'.join(df_snps.loc[df_snps['Mutation'] == snp, 'Set_name'].tolist())
+            df_snps_STR.loc[ind_mut, position-1] = '/'.join(df_snps.loc[df_snps['Mutation'] == snp, 'Set_name'].tolist())
 
         df_snps_STR = df_snps_STR.fillna('-')
         
