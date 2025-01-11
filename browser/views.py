@@ -276,8 +276,11 @@ def results_view(request):
         [0, 'white'],
         [1, 'darkblue']
     ]
-    if prot_name:
-        return HttpResponse(f'Please provide a protein name.') 
+    
+    heatmap_html = ""
+    heatmapClasses_html = ""
+    heatmapSNPs_html = ""
+
     ## GENERATING HEATMAPS
         #--- GEMME heatmap
     if df is not None:
@@ -350,6 +353,9 @@ def results_view(request):
         )
         fig_SNPs.add_trace(heatmap_snps, row=1, col=1)
 
+    if prot_name:
+        return HttpResponse(f'Please provide a protein name.') 
+    
     if confidence_values is not None:
         heatmap_confidence = go.Heatmap(
             z=confidence_values,
