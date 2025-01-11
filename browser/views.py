@@ -344,7 +344,7 @@ def results_view(request):
             ind_mut = alph.index(snp[-1])
             df_snps_STR.loc[ind_mut, int(snp[1:-1])] = '/'.join(df_snps.loc[df_snps['Mutation']==snp, 'Set_name'].tolist())
         df_snps_STR = df_snps_STR.fillna('')
-        if df_snps_STR:
+        if not df_snps_STR.empty:
             return HttpResponse(f"Error while preparing SNPs heatmap: {df_snps_STR}", status=500)
         heatmap_snps = go.Heatmap(
             z=df.values[::-1],
