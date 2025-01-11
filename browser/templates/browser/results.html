@@ -125,7 +125,7 @@
                         VARIANT CLASSES
                     </label>
                     <label style="display: inline-block;">
-                        <input type="radio" name="heatmapToggle" value="heatmap_new_option">
+                        <input type="radio" name="heatmapToggle" value="heatmapSNPs_html">
                         SNPs
                     </label>
                 </div>
@@ -152,7 +152,10 @@
                     {{ heatmapClasses_html|safe }}
                 </div>
                 {% endif %}
-                {% if not heatmap_html and not heatmapClasses_html %}
+                {% if heatmapSNPs_html %}
+                <div id="heatmapSNPs_html" style="display: none;">
+                    {{ heatmapSNPs_html|safe }}
+                {% if not heatmap_html or not heatmapClasses_html or not heatmapSNPs_html %}
                 <p>No results found.</p>
                 {% endif %}
             </div>
