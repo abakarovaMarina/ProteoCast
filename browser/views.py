@@ -340,16 +340,10 @@ def results_view(request):
          
         df_snps_STR = pd.DataFrame(columns=df_classesStr.columns, index=df_classesStr.index)
         for snp in df_snps['Mutation'].unique():
-            try:
-                ind_mut = alph.index(snp[-1])
-                position = int(snp[1:-1])
-                df_snps_STR.loc[ind_mut, position] = '/'.join(df_snps.loc[df_snps['Mutation'] == snp, 'Set_name'].tolist())
-            except (ValueError, IndexError) as e:
-                print(f"Error processing SNP {snp}: {e}")
-                continue
-        if not df_snps_STR.empty:
-            unique_values = pd.unique(df_snps_STR.values.ravel('K'))
-            return HttpResponse(f"Error processing SNPs: {unique_values}", status=500) 
+            ind_mut = alph.index(snp[-1])
+            position = int(snp[1:-1])
+            df_snps_STR.loc[ind_mut, position] = '/'.join(df_snps.loc[df_snps['Mutation'] == snp, 'Set_name'].tolist())
+
         df_snps_STR = df_snps_STR.fillna('-')
         
         heatmap_snps = go.Heatmap(
