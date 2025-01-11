@@ -171,6 +171,7 @@ def results_view(request):
         return HttpResponse(f'Please provide a protein name.')
     
     pdb_id = '' 
+    ## job
     if prot_name[:3] == 'job':
         data_path = '/data/jobs/'
         alias_dir = 'jobs'
@@ -184,6 +185,7 @@ def results_view(request):
                 prot_id = file_name.split('.')[1].split('_')[0]  # Extract protein ID 
             if ('pdb' in file_name) and ('GEMME' not in file_name):
                 pdb_id = file_name.split('.')[0]
+    ## drosophila db
     else:
         # Only for the fly
         data_path = '/data/Drosophila_ProteoCast/'
@@ -193,7 +195,6 @@ def results_view(request):
             return HttpResponse("Mapping file not found.")
 
         mapping_df = pd.read_csv(mapping_file_path, index_col=0)
-        
         mapping_df['fbpp_low'] = mapping_df.index.str.lower()
         mapping_df['pr_sym'] = mapping_df['Protein_symbol'].str.lower()
         if prot_name[:4] == 'fbpp':
@@ -202,10 +203,23 @@ def results_view(request):
         else:
             id_folder = mapping_df.loc[mapping_df['pr_sym'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
-        pdb_id = 'AF-Q45VV3-F1-model_v4.pdb'.split('.')[0]
+        ## getting pdb_id for the fly
+        try:
+            pdb_id = mapping_df.loc[prot_id, 'Structure_3D_file'].split('.')[0]
+        except:
+            pdb_id = ''
+    
+    ## reading SNPs file
+    try:
+        snps_file = f'{data_path}{id_folder}/7.{prot_id}.csv'
+        df_snps = pd.read_csv(snps_file)
+        if df_snps.shape[0]==0:
+            df_snps = None
         
+    except:
+        df_snps = None
 
-        # Basic checks
+    # Basic checks
     if not data_path or not id_folder or not prot_id:
         return HttpResponse("Missing required path or protein ID.", status=500)
 
@@ -221,51 +235,57 @@ def results_view(request):
     except Exception as e:
         return HttpResponse(f"Error reading ProteoCast CSV: {e}", status=500)
 
-    required_cols = ["GEMME_LocalConfidence", "Residue", "GEMME_score", "Variant_class", "Mutation"]
+    #if 'Variant_class' not in df_proteocast.columns:
+
+    '''required_cols = ["GEMME_LocalConfidence", "Residue", "GEMME_score", "Variant_class", "Mutation"]
     for col in required_cols:
         if col not in df_proteocast.columns:
-            return HttpResponse(f"Column '{col}' not found in CSV.", status=500)
+            return HttpResponse(f"Column '{col}' not found in CSV.", status=500)'''
 
     try:
         df_proteocast['GEMME_LocalConfidence'] = df_proteocast['GEMME_LocalConfidence'].replace({True: 1, False: 0})
         confidence_values = np.array(df_proteocast.groupby('Residue')['GEMME_LocalConfidence']
                                      .apply(lambda x: x.iloc[0]).tolist()).reshape(1, -1)
-
-        df = pd.DataFrame(np.array(df_proteocast['GEMME_score']).reshape(20, -1, order='F'))
-        df_classes = pd.DataFrame(np.array(df_proteocast['Variant_class']
-                                           .replace({'neutral': 1, 'uncertain': 2, 'impactful': 3}))
-                                  .reshape(20, -1, order='F'))
-        df_classesStr = pd.DataFrame(np.array(df_proteocast['Variant_class']
-                                              ).reshape(20, -1, order='F'))
-        df_mut = pd.DataFrame(np.array(df_proteocast['Mutation']).reshape(20, -1, order='F'))
     except Exception as e:
-        return HttpResponse(f"Error preparing data frames: {e}", status=500)
+        confidence_values = None
+        return HttpResponse(f"Error while preparing confidence values : {e}", status=500)
+    
+    try:
+        df = pd.DataFrame(np.array(df_proteocast['GEMME_score']).reshape(20, -1, order='F'))
+        df_mut = pd.DataFrame(np.array(df_proteocast['Mutation']).reshape(20, -1, order='F'))
+        
+    except Exception as e:
+        df = None
+        return HttpResponse(f"Error while preparing GEMME heatmap: {e}", status=500)
+    
+    try:
+        df_classes = pd.DataFrame(np.array(df_proteocast['Variant_class'].replace({'neutral': 1, 'uncertain': 2, 'impactful': 3})).reshape(20, -1, order='F'))
+        df_classesStr = pd.DataFrame(np.array(df_proteocast['Variant_class']).reshape(20, -1, order='F'))
+    except Exception as e:
+        df_classes = None
+        return HttpResponse(f"Error while preparing VARAINT class heatmap: {e}", status=500)
 
     variantClasses_colorscale = [
+
         [0, '#3688ED'],
         [0.5, '#E097CE'],
         [1, '#F25064']
     ]
+
     confidence_colorscale = [
         [0, 'white'],
         [1, 'darkblue']
     ]
 
-    try:
+    ## GENERATING HEATMAPS
+        #--- GEMME heatmap
+    if df is not None:
         fig = make_subplots(
             rows=2, cols=1,
             shared_xaxes=True,
             row_heights=[0.9, 0.1],
             vertical_spacing=0.02,
         )
-
-        fig_VariantClasses = make_subplots(
-            rows=2, cols=1,
-            shared_xaxes=True,
-            row_heights=[0.9, 0.1],
-            vertical_spacing=0.02,
-        )
-
         heatmap_main = go.Heatmap(
             z=df.values[::-1],
             x=list(range(1, df.shape[1])),
@@ -276,6 +296,16 @@ def results_view(request):
             hovertemplate=("Position: %{customdata}<br>"
                            "Score: %{z:.2f}<extra></extra>")
         )
+        fig.add_trace(heatmap_main, row=1, col=1)
+        
+        #--- Variant classes heatmap
+    if df_classes is not None:
+        fig_VariantClasses = make_subplots(
+                rows=2, cols=1,
+                shared_xaxes=True,
+                row_heights=[0.9, 0.1],
+                vertical_spacing=0.02,
+            )
         heatmap_classes = go.Heatmap(
             z=df_classes.values[::-1],
             x=list(range(1, df_classes.shape[1])),
@@ -288,10 +318,38 @@ def results_view(request):
             xgap=0.3,
             ygap=0.3,
         )
-
-        fig.add_trace(heatmap_main, row=1, col=1)
         fig_VariantClasses.add_trace(heatmap_classes, row=1, col=1)
 
+        #--- SNPs heatmap
+    if df_snps is not None:
+        fig_SNPs = make_subplots(
+                rows=2, cols=1,
+                shared_xaxes=True,
+                row_heights=[0.9, 0.1],
+                vertical_spacing=0.02,
+            )
+        
+        df_snps_STR = pd.DataFrame(columns=df_classesStr.columns, index=df_classesStr.index)
+        for snp in df_snps['Mutation'].unique():
+            ind_mut = alph.index(snp[-1])
+            df_snps_STR.loc[ind_mut, int(snp[1:-1])] = '/'.join(df_snps.loc[df_snps['Mutation']==snp, 'Set_name'].tolist())
+
+        heatmap_snps = go.Heatmap(
+            z=df.values[::-1],
+            x=list(range(1, df.shape[1])),
+            y=alph,
+            customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1], df_snps_STR.values[::-1]]),
+            colorscale='Greys',
+            showscale=False,
+            hovertemplate=("Position: %{customdata[0]}<br>"
+                   "Class: %{customdata[1]}<br>"
+                   "SNPs: %{customdata[2]}<extra></extra>"),
+            xgap=0.3,
+            ygap=0.3,
+        )
+        fig_SNPs.add_trace(heatmap_snps, row=1, col=1)
+
+    if confidence_values is not None:
         heatmap_confidence = go.Heatmap(
             z=confidence_values,
             x=list(range(1, df_classes.shape[1])),
@@ -300,10 +358,6 @@ def results_view(request):
             hovertemplate="%{z}<extra></extra>",
             xgap=0.2
         )
-
-        fig.add_trace(heatmap_confidence, row=2, col=1)
-        fig_VariantClasses.add_trace(heatmap_confidence, row=2, col=1)
-
         scatter_border = go.Scatter(
             x=[0.5, df.shape[1]+0.5, df.shape[1]+0.5, 0.5, 0.5],
             y=[-0.5, -0.5, 0.5, 0.5, -0.5],
@@ -312,43 +366,64 @@ def results_view(request):
             hoverinfo="skip",
             showlegend=False,
         )
-        fig.add_trace(scatter_border, row=2, col=1)
-        fig_VariantClasses.add_trace(scatter_border, row=2, col=1)
+        if df is not None:
+            fig.add_trace(heatmap_confidence, row=2, col=1)
+            fig.add_trace(scatter_border, row=2, col=1)
+            fig.update_layout(
+                title_x=1,
+                autosize=False,
+                width=1500,
+                height=600,
+                xaxis=dict(
+                    tickmode="array",
+                    tickvals=list(range(1, df.shape[1], 10)),
+                    ticktext=[str(i) for i in range(1, df.shape[1], 10)]
+                ),
+                yaxis=dict(title="Substituting amino acid"),
+                xaxis2=dict(title="Residue")
+            )
+            fig.update_yaxes(visible=False, row=2, col=1)
+            heatmap_html = fig.to_html(full_html=False)
 
-        fig.update_layout(
-            title_x=1,
-            autosize=False,
-            width=1500,
-            height=600,
-            xaxis=dict(
-                tickmode="array",
-                tickvals=list(range(1, df.shape[1], 10)),
-                ticktext=[str(i) for i in range(1, df.shape[1], 10)]
-            ),
-            yaxis=dict(title="Substituting amino acid"),
-            xaxis2=dict(title="Residue")
-        )
-        fig_VariantClasses.update_layout(
-            title_x=1,
-            autosize=False,
-            width=1500,
-            height=600,
-            xaxis=dict(
-                tickmode="array",
-                tickvals=list(range(1, df.shape[1]+1, 10)),
-                ticktext=[str(i) for i in range(1, df.shape[1], 10)]
-            ),
-            yaxis=dict(title="Substituting amino acid"),
-            xaxis2=dict(title="Residue")
-        )
 
-        fig.update_yaxes(visible=False, row=2, col=1)
-        fig_VariantClasses.update_yaxes(visible=False, row=2, col=1)
+        if df_classes is not None:
+            fig_VariantClasses.add_trace(heatmap_confidence, row=2, col=1)
+            fig_VariantClasses.add_trace(scatter_border, row=2, col=1)
+            fig_VariantClasses.update_layout(
+                title_x=1,
+                autosize=False,
+                width=1500,
+                height=600,
+                xaxis=dict(
+                    tickmode="array",
+                    tickvals=list(range(1, df.shape[1]+1, 10)),
+                    ticktext=[str(i) for i in range(1, df.shape[1], 10)]
+                ),
+                yaxis=dict(title="Substituting amino acid"),
+                xaxis2=dict(title="Residue")
+            )
+            fig_VariantClasses.update_yaxes(visible=False, row=2, col=1)
+            heatmapClasses_html = fig_VariantClasses.to_html(full_html=False)
 
-        heatmap_html = fig.to_html(full_html=False)
-        heatmapClasses_html = fig_VariantClasses.to_html(full_html=False)
-    except Exception as e:
-        return HttpResponse(f"Error generating heatmaps: {e}", status=500)
+        if df_snps is not None:
+            fig_SNPs.add_trace(heatmap_confidence, row=2, col=1)
+            fig_SNPs.add_trace(scatter_border, row=2, col=1)
+            fig_SNPs.update_layout(
+                title_x=1,
+                autosize=False,
+                width=1500,
+                height=600,
+                xaxis=dict(
+                    tickmode="array",
+                    tickvals=list(range(1, df.shape[1]+1, 10)),
+                    ticktext=[str(i) for i in range(1, df.shape[1], 10)]
+                ),
+                yaxis=dict(title="Substituting amino acid"),
+                xaxis2=dict(title="Residue")
+            )
+            fig_SNPs.update_yaxes(visible=False, row=2, col=1)
+            heatmapSNPs_html = fig_SNPs.to_html(full_html=False)
+
 
     image_url_1 = f'/{alias_dir}/{id_folder}/6.{prot_id}_GMM.jpg'
     fig_msarep = f'/{alias_dir}/{id_folder}/3.{prot_id}_msaRepresentation.jpg'
@@ -380,6 +455,7 @@ def results_view(request):
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
         'heatmapClasses_html': heatmapClasses_html,
+        'heatmapSNPs_html': heatmapSNPs_html,
         'query': id_folder,
         'prot_name': prot_id,
         'image_url_1': image_url_1,

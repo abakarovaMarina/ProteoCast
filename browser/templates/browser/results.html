@@ -114,16 +114,33 @@
             <div class="heatmap" style="flex: 1; autosize: true;">
                 <h2>Mutational Landscape</h2>
                 <p> The heatmap gives the predicted effects of all 19-times-the-protein-length possible amino acid substitutions. You can switch between raw scores (the darker the more negative) and variant classification into impactful (red), uncertain (pink) and neutral (blue). The horizontal bar below gives binary confidence scores, blue for reliable predictions, white otherwise.</p>
+                {% if query|slice:":4" != "2025" %}
+                <div class="buttons" style="margin-left: 20px;">
+                    <label style="display: inline-block; margin-right: 20px;">
+                        <input type="radio" name="heatmapToggle" value="heatmap_html" checked>
+                        RAW SCORES
+                    </label>
+                    <label style="display: inline-block; margin-right: 20px;">
+                        <input type="radio" name="heatmapToggle" value="heatmapClasses_html">
+                        VARIANT CLASSES
+                    </label>
+                    <label style="display: inline-block;">
+                        <input type="radio" name="heatmapToggle" value="heatmap_new_option">
+                        SNPs
+                    </label>
+                </div>
+                {% else %}
                 <div class="buttons" style="margin-left: 20px;">
                     <label style="display: inline-block; margin-right: 20px;">
                         <input type="radio" name="heatmapToggle" value="heatmap_html" checked>
                         RAW SCORES
                     </label>
                     <label style="display: inline-block;">
-                        <input type="radio" name="heatmapToggle" value="heatmapClasses_html">
+                        <input type="radio" name="heatmapToggle" value="heatmap_snps">
                         VARIANT CLASSES
                     </label>
                 </div>
+                {% endif %}
                 <div style="max-height: 600px; overflow-y: hidden; overflow-x: auto; border: 1px solid #ddd; padding: 10px;">
                 {% if heatmap_html %}
                 <div id="heatmap_html" style="display: block;">
@@ -149,14 +166,21 @@
                     // Get all heatmap divs
                     const heatmapHtmlDiv = document.getElementById('heatmap_html');
                     const heatmapClassesHtmlDiv = document.getElementById('heatmapClasses_html');
+                    const heatmapSNPsHtmlDiv = document.getElementById('heatmapSNPs_html');
                     
                     // Toggle visibility based on selected button
                     if (this.value === 'heatmap_html') {
                         heatmapHtmlDiv.style.display = 'block';
                         heatmapClassesHtmlDiv.style.display = 'none';
+                        heatmapSNPsHtmlDiv.style.display = 'none';
                     } else if (this.value === 'heatmapClasses_html') {
                         heatmapHtmlDiv.style.display = 'none';
                         heatmapClassesHtmlDiv.style.display = 'block';
+                        heatmapSNPsHtmlDiv.style.display = 'none';
+                    }else if (this.value === 'heatmapSNPs_html') {
+                        heatmapHtmlDiv.style.display = 'none';
+                        heatmapClassesHtmlDiv.style.display = 'none';
+                        heatmapSNPsHtmlDiv.style.display = 'block';
                     }
                 });
             });
