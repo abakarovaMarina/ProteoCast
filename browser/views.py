@@ -349,13 +349,11 @@ def results_view(request):
             x=list(range(1, df.shape[1])),
             y=alph,
             customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1], df_snps_STR.values[::-1]]),
-            colorscale='Greys',
+            colorscale=px.colors.sequential.Greys[::-1],
             showscale=False,
             hovertemplate=("Position: %{customdata[0]}<br>"
                    "Class: %{customdata[1]}<br>"
-                   "SNPs: %{customdata[2]}<extra></extra>"),
-            xgap=0.3,
-            ygap=0.3,
+                   "SNPs: %{customdata[2]}<extra></extra>")
         )
         fig_SNPs.add_trace(heatmap_snps, row=1, col=1)
 
