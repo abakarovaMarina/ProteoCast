@@ -213,9 +213,8 @@ def results_view(request):
     try:
         snps_file = f'{data_path}{id_folder}/7.{prot_id}_SNPs.csv'
         df_snps = pd.read_csv(snps_file)
-        if df_snps.shape[0]==0:
+        if df_snps.shape[0] == 0:
             df_snps = None
-        
     except:
         df_snps = None
 
@@ -341,11 +340,16 @@ def results_view(request):
          
         df_snps_STR = pd.DataFrame(columns=df_classesStr.columns, index=df_classesStr.index)
         for snp in df_snps['Mutation'].unique():
-            ind_mut = alph.index(snp[-1])
-            df_snps_STR.loc[ind_mut, int(snp[1:-1])] = '/'.join(df_snps.loc[df_snps['Mutation']==snp, 'Set_name'].tolist())
-        df_snps_STR = df_snps_STR.fillna('')
-        """if not df_snps_STR.empty:
-            return HttpResponse(f"Error while preparing SNPs heatmap: {df_snps_STR}", status=500)"""
+            try:
+                ind_mut = alph.index(snp[-1])
+                position = int(snp[1:-1])
+                df_snps_STR.loc[ind_mut, position] = '/'.join(df_snps.loc[df_snps['Mutation'] == snp, 'Set_name'].tolist())
+            except (ValueError, IndexError) as e:
+                print(f"Error processing SNP {snp}: {e}")
+                continue
+            
+        df_snps_STR = df_snps_STR.fillna('-')
+        
         heatmap_snps = go.Heatmap(
             z=df.values[::-1],
             x=list(range(1, df.shape[1])),
