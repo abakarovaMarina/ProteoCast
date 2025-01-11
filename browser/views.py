@@ -332,28 +332,30 @@ def results_view(request):
 
         #--- SNPs heatmap
     if df_snps is not None:
-        fig_SNPs = make_subplots(
+        return HttpResponse("Missing required path or protein ID.", status=500) 
+        """fig_SNPs = make_subplots(
                 rows=2, cols=1,
                 shared_xaxes=True,
                 row_heights=[0.9, 0.1],
                 vertical_spacing=0.02,
             )
         
-        """df_snps_STR = pd.DataFrame(columns=df_classesStr.columns, index=df_classesStr.index)
+        df_snps_STR = pd.DataFrame(columns=df_classesStr.columns, index=df_classesStr.index)
         for snp in df_snps['Mutation'].unique():
             ind_mut = alph.index(snp[-1])
-            df_snps_STR.loc[ind_mut, int(snp[1:-1])] = '/'.join(df_snps.loc[df_snps['Mutation']==snp, 'Set_name'].tolist())"""
+            df_snps_STR.loc[ind_mut, int(snp[1:-1])] = '/'.join(df_snps.loc[df_snps['Mutation']==snp, 'Set_name'].tolist())
 
-        heatmap_snps = go.Heatmap(
+        heatmap_snps = heatmap_main = go.Heatmap(
             z=df.values[::-1],
             x=list(range(1, df.shape[1])),
             y=alph,
-            customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1]]), #, df_snps_STR.values[::-1]]
-            colorscale=px.colors.sequential.Greys[::-1],
+            colorscale=px.colors.sequential.Oranges[::-1],
             showscale=False,
-            hovertemplate=("Position: %{customdata[0]}<br>")
+            customdata=df_mut.values[::-1],
+            hovertemplate=("Position: %{customdata}<br>"
+                           "Score: %{z:.2f}<extra></extra>")
         )
-        fig_SNPs.add_trace(heatmap_snps, row=1, col=1)
+        fig_SNPs.add_trace(heatmap_snps, row=1, col=1)"""
 
     if confidence_values is not None:
         heatmap_confidence = go.Heatmap(
@@ -461,7 +463,7 @@ def results_view(request):
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
         'heatmapClasses_html': heatmapClasses_html,
-        'heatmapSNPs_html': heatmap_html,
+        'heatmapSNPs_html': heatmapSNPs_html,
         'query': id_folder,
         'prot_name': prot_id,
         'image_url_1': image_url_1,
