@@ -172,7 +172,7 @@ def results_view(request):
     
     pdb_id = '' 
     ## job
-    if prot_name[:3] == 'job':
+    if (prot_name[:3] == 'job'):
         data_path = '/data/jobs/'
         alias_dir = 'jobs'
         prot_name = prot_name[3:]
@@ -280,6 +280,12 @@ def results_view(request):
     heatmap_html = ""
     heatmapClasses_html = ""
     heatmapSNPs_html = ""
+    image_url_1 = ""
+    fig_msarep = ""
+    fig_segmentation = ""
+    pdb_url_1 = ""
+    pdb_url_2 = ""
+    pdb_url_3 = ""
 
     ## GENERATING HEATMAPS
         #--- GEMME heatmap

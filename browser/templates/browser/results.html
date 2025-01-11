@@ -165,28 +165,30 @@
           </div>
 
         <script>
-            // JavaScript for toggling heatmaps
-            document.querySelectorAll('input[name="heatmapToggle"]').forEach(button => {
-                button.addEventListener('change', function() {
-                    // Get all heatmap divs
-                    const heatmapHtmlDiv = document.getElementById('heatmap_html');
-                    const heatmapClassesHtmlDiv = document.getElementById('heatmapClasses_html');
-                    const heatmapSNPsHtmlDiv = document.getElementById('heatmapSNPs_html');
-                    
-                    // Toggle visibility based on selected button
-                    if (this.value === 'heatmap_html') {
-                        heatmapHtmlDiv.style.display = 'block';
-                        heatmapClassesHtmlDiv.style.display = 'none';
-                        heatmapSNPsHtmlDiv.style.display = 'none';
-                    } else if (this.value === 'heatmapClasses_html') {
-                        heatmapHtmlDiv.style.display = 'none';
-                        heatmapClassesHtmlDiv.style.display = 'block';
-                        heatmapSNPsHtmlDiv.style.display = 'none';
-                    }else if (this.value === 'heatmapSNPs_html') {
-                        heatmapHtmlDiv.style.display = 'none';
-                        heatmapClassesHtmlDiv.style.display = 'none';
-                        heatmapSNPsHtmlDiv.style.display = 'block';
-                    }
+            document.addEventListener('DOMContentLoaded', function() {
+                // JavaScript for toggling heatmaps
+                document.querySelectorAll('input[name="heatmapToggle"]').forEach(button => {
+                    button.addEventListener('change', function() {
+                        // Get all heatmap divs
+                        const heatmapHtmlDiv = document.getElementById('heatmap_html');
+                        const heatmapClassesHtmlDiv = document.getElementById('heatmapClasses_html');
+                        const heatmapSNPsHtmlDiv = document.getElementById('heatmapSNPs_html');
+                        
+                        // Toggle visibility based on selected button
+                        if (this.value === 'heatmap_html') {
+                            heatmapHtmlDiv.style.display = 'block';
+                            heatmapClassesHtmlDiv.style.display = 'none';
+                            heatmapSNPsHtmlDiv.style.display = 'none';
+                        } else if (this.value === 'heatmapClasses_html') {
+                            heatmapHtmlDiv.style.display = 'none';
+                            heatmapClassesHtmlDiv.style.display = 'block';
+                            heatmapSNPsHtmlDiv.style.display = 'none';
+                        } else if (this.value === 'heatmapSNPs_html') {
+                            heatmapHtmlDiv.style.display = 'none';
+                            heatmapClassesHtmlDiv.style.display = 'none';
+                            heatmapSNPsHtmlDiv.style.display = 'block';
+                        }
+                    });
                 });
             });
         </script>
