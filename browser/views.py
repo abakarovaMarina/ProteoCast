@@ -455,8 +455,6 @@ def results_view(request):
         pdb_check = pdb_url_3.replace(alias_dir, data_path)
         if not os.path.exists(pdb_check):
             pdb_url_3 = None
-    if prot_name:
-        return HttpResponse(f'ENNND Please provide a protein name.') 
     
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
