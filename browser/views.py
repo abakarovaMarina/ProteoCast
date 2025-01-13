@@ -168,10 +168,12 @@ def serve_file(request, folder, filename):
 def segmentation_dico(path_segF,path_bfactors):
 
     if not os.path.exists(path_segF):
-        print('Segmentation file does not exist')
-        return None
+        return HttpResponse(f"Protein name: {path_segF}")
+        #print('Segmentation file does not exist')
+        #return None
     if not os.path.exists(path_bfactors):
-        return None
+        return HttpResponse(f"Protein name: {path_bfactors}")
+        #return None
     
     dico_colors = {1:{'r': 182, 'g': 132, 'b': 187 },2:{'r': 243, 'g': 119, 'b': 140 }}
     print('We got both segmentation files')
@@ -522,8 +524,7 @@ def results_view(request):
         pdb_check = pdb_url_3.replace(alias_dir, data_path)
         if not os.path.exists(pdb_check):
             pdb_url_3 = None
-    if prot_name:
-        return HttpResponse(f"Protein name: {prot_name}")
+    
     ## segmentation data for 3D
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv')
     
