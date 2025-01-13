@@ -535,21 +535,16 @@ def results_view(request):
     resi_70 = np.array(df_bfactors[df_bfactors['pLDDT'] <= 0.7].index)+1
     seg_dico=[]
     for _, row in df_segmentation.loc[df_segmentation['type']=='GEMME'].iterrows():
-        if resi_70.size > 1:
-            print(row['start'])
         if row['start'] in resi_70:
-            print('We are in')
             state = row['state']
             if state == 1 or state == 2:
                 dico={'start_residue_number':int(row['start']), 
                     'end_residue_number':int(row['end']), 
                     'color': dico_colors[state],
-                    'representation': 'putty',  
+                    'representation': 'putty',
                     'representationColor': dico_colors[state]}
-            
-
-        seg_dico.append(dico)
-
+                seg_dico.append(dico)
+    print(seg_dico)
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
         'heatmapClasses_html': heatmapClasses_html,

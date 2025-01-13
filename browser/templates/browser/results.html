@@ -287,7 +287,7 @@
             // Define the segments that are 1 (red) or 2 (purple)
             // in regions of low pLDDT -- we do not load a new structure, 
             // we directly encode the selections in the page
-            var selectSections = {{ seg_dico | default:"[]"|safe}};
+            var selectSections = {{ select_segments | default:"[]"|safe}};
             console.log("Segments to highlight:", selectSections);
             // Options for the Mol* Viewer
             var options = {
