@@ -380,21 +380,6 @@
                     loadStructureAndColor(this.value);
                 });
             });
-
-            // Handle full screen events for Mol* viewer
-            const footer = document.querySelector('footer');
-             function handleFullScreenChange() {
-                if (document.fullscreenElement === viewerContainer) {
-                    footer.style.display = 'none';
-                } else {
-                    footer.style.display = 'block';
-                }
-            }
-
-            viewerContainer.addEventListener('fullscreenchange', handleFullScreenChange);
-            viewerContainer.addEventListener('webkitfullscreenchange', handleFullScreenChange);
-            viewerContainer.addEventListener('mozfullscreenchange', handleFullScreenChange);
-            viewerContainer.addEventListener('MSFullscreenChange', handleFullScreenChange);
         
             // Initial load (default to B-Factors)
            initialiseView();
@@ -418,6 +403,24 @@
               footer.style.display = 'none'; // Hide the footer otherwise
             }
           });
+
+          // Hide footer when Mol* viewer is in full screen
+          const viewerContainer = document.getElementById('myViewer');
+          function handleFullScreenChange() {
+              if (document.fullscreenElement === viewerContainer ||
+                  document.webkitFullscreenElement === viewerContainer ||
+                  document.mozFullScreenElement === viewerContainer ||
+                  document.msFullscreenElement === viewerContainer) {
+                  footer.style.display = 'none';
+              } else {
+                  footer.style.display = 'block';
+              }
+          }
+
+          document.addEventListener('fullscreenchange', handleFullScreenChange);
+          document.addEventListener('webkitfullscreenchange', handleFullScreenChange);
+          document.addEventListener('mozfullscreenchange', handleFullScreenChange);
+          document.addEventListener('MSFullscreenChange', handleFullScreenChange);
         });
         </script>
 
