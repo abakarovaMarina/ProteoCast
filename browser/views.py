@@ -407,7 +407,7 @@ def results_view(request):
         heatmap_snps = go.Heatmap(
             z=df.values[::-1],
             x=list(range(1, df.shape[1] + 1)),
-            y=alph[::-1],
+            y=alph,
             customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1], df_snps_STR.values]),
             colorscale=px.colors.sequential.Greys[::-1],
             showscale=False,
