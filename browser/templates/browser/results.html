@@ -380,6 +380,7 @@
                     loadStructureAndColor(this.value);
                 });
             });
+
         
             // Initial load (default to B-Factors)
            initialiseView();
@@ -388,7 +389,7 @@
        
     </div> 
 
-      <footer class="bg-light text-center py-3">
+      <footer id="footer" class="bg-light text-center py-3">
             <p class="mb-0">ProteoCast - This website is free and open to all users and there is no login requirement.</p>
     </footer>
     <script>
@@ -405,6 +406,23 @@
           });
         });
         </script>
+
+        <script>
+            document.addEventListener('fullscreenchange', function () {
+              const footer = document.getElementById('footer');
+              const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement;
+              
+              if (fullscreenElement && fullscreenElement.id === 'myViewer') {
+                // If Molstar is in full screen, hide the footer
+                footer.style.display = 'none';
+              } else {
+                // Show the footer when exiting full screen
+                footer.style.display = 'block';
+              }
+            });
+          </script>
+
+          
 
     </div>
   </body></html>
