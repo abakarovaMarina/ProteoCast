@@ -533,17 +533,18 @@ def results_view(request):
     df_bfactors = pd.read_csv(path_bfactors)
 
     resi_70 = np.array(df_bfactors[df_bfactors['pLDDT'] <= 0.7].index)+1
-    if resi_70.size > 1:
-        return HttpResponse(f'No residues with pLDDT <= 0.7 {resi_70}', status=404)
     seg_dico=[]
     for _, row in df_segmentation.loc[df_segmentation['type']=='GEMME'].iterrows():
+        if resi_70.size > 1:
+            print(row['start'])
         if row['start'] in resi_70:
+            print('We are in')
             state = row['state']
             if state == 1 or state == 2:
                 dico={'start_residue_number':int(row['start']), 
                     'end_residue_number':int(row['end']), 
                     'color': dico_colors[state],
-                    'representation': 'putty',
+                    'representation': 'putty',  
                     'representationColor': dico_colors[state]}
             
 
