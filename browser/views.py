@@ -165,9 +165,8 @@ def serve_file(request, folder, filename):
     
 
 def segmentation_dico(path_segF,path_bfactors):
-    if True: 
-        return HttpResponse(f'Segmentation file does not exist {path_bfactors, path_segF}', status=404)
-    """if not os.path.exists(path_segF):
+
+    if os.path.exists(path_segF):
         return HttpResponse("Segmentation file does not exist", status=404)
     if not os.path.exists(path_bfactors):
         return HttpResponse("B-factors file does not exist", status=404)
@@ -193,7 +192,7 @@ def segmentation_dico(path_segF,path_bfactors):
             
 
         seg_dico.append(dico)
-    return seg_dico"""
+    return seg_dico
 
 
 def results_view(request):
