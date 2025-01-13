@@ -180,11 +180,15 @@ def segmentation_dico(path_segF,path_bfactors):
         if row['start'] in resi_70:
             state = row['state']
             if state == 1 or state == 2:
-                dico={'start_residue_number':int(row['start']), 
+                dico = {'residues': list(range(int(row['start']), int(row['end'])+1)),
+                        'color': dico_colors[state],
+                        'representation': 'putty',
+                        'representationColor': dico_colors[state]}
+                """dico={'start_residue_number':int(row['start']), 
                     'end_residue_number':int(row['end']), 
                     'color': dico_colors[state],
                     'representation': 'putty',
-                    'representationColor': dico_colors[state]}
+                    'representationColor': dico_colors[state]}"""
                 seg_dico.append(dico)
     return seg_dico
 

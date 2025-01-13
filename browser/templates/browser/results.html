@@ -114,9 +114,6 @@
       </header>
 
 
-
-
-
       <div class="content">
         <div class="container-fluid" style="width:95%;">
 
@@ -290,7 +287,6 @@
         <script>
             // Initialize the viewer
             const viewerInstance = new PDBeMolstarPlugin();
-        
             const viewerContainer = document.getElementById('myViewer');
         
             // Define the PDB URLs for each condition
@@ -361,14 +357,6 @@
             console.log("Loading structure for condition:", condition);
             console.log("PDB URL:", pdbUrls[condition]);
             addStructure(condition);
-
-            // Restore the camera state -- not needed anymore
-/*            if (cameraState) {
-                console.log("about to update...",cameraState);
-                viewerInstance.plugin.canvas3d?.camera.setState(cameraState);
-                console.log("updated...",viewerInstance.plugin.canvas3d?.camera.getSnapshot());
-            }*/
-
         }
         
         var checkbox = document.querySelector('input[name="segments"]');
@@ -387,7 +375,7 @@
            document.querySelectorAll('input[name="colorToggle"]').forEach(button => {
                 button.addEventListener('change', function () {
                     // Get the camera state -- not needed anymore
-/*                  const cameraState = viewerInstance.plugin.canvas3d?.camera.getSnapshot()
+                    /* const cameraState = viewerInstance.plugin.canvas3d?.camera.getSnapshot()
                     console.log("camera state before");
                     console.log(cameraState);*/
                     checkbox.checked = false;
