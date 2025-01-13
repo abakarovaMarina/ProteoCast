@@ -186,7 +186,7 @@ def segmentation_dico(path_segF,path_bfactors):
         'color': dico_colors[state],
         'representation': 'putty',
         'representationColor': dico_colors[state]}"""
-    dico = {'residues': list(range(1, 100)),
+    dico = {'residues': [102, 103, 104, 105, 106, 107],
             'color': dico_colors[1],
             'representation': 'putty',
             'representationColor': dico_colors[1]}
