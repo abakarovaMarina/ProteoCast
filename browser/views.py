@@ -166,9 +166,9 @@ def serve_file(request, folder, filename):
 def segmentation_dico(path_segF,path_bfactors):
 
     if not os.path.exists(path_segF):
-        return []
+        return '[]'
     if not os.path.exists(path_bfactors):
-        return []
+        return '[]'
     
     dico_colors = {1:{'r': 182, 'g': 132, 'b': 187 },2:{'r': 243, 'g': 119, 'b': 140 }}
     df_segmentation = pd.read_csv(path_segF)
@@ -310,7 +310,6 @@ def results_view(request):
     pdb_url_1 = ""
     pdb_url_2 = ""
     pdb_url_3 = ""
-    seg_dico = []
 
     ## GENERATING HEATMAPS
         #--- GEMME heatmap
