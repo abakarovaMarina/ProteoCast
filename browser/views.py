@@ -168,20 +168,21 @@ def serve_file(request, folder, filename):
 def segmentation_dico(path_segF,path_bfactors):
 
     if not os.path.exists(path_segF):
-        return HttpResponse(f"Protein name: {path_segF}")
-        #print('Segmentation file does not exist')
-        #return None
+        print('Segmentation file does not exist')
+        return None
     if not os.path.exists(path_bfactors):
-        return HttpResponse(f"Protein name: {path_bfactors}")
-        #return None
+        return None
     
     dico_colors = {1:{'r': 182, 'g': 132, 'b': 187 },2:{'r': 243, 'g': 119, 'b': 140 }}
     print('We got both segmentation files')
     df_segmentation = pd.read_csv(path_segF)
     df_bfactors = pd.read_csv(path_bfactors)
-    resi_70 = np.array(df_bfactors[df_bfactors['bfactor'] <= 70].index)+1
+
+    resi_70 = np.array(df_bfactors[df_bfactors['pLDDT'] <= 0.7].index)+1
+    if os.path.exists(path_segF):
+        return HttpResponse(f"Protein name: {resi_70}")
     seg_dico=[]
-    for index, row in df_segmentation.loc[df_segmentation['type']=='GEMME'].iterrows():
+    for _, row in df_segmentation.loc[df_segmentation['type']=='GEMME'].iterrows():
         if row['start'] in resi_70:
             state = row['state']
             if state == 1 or state == 2:
