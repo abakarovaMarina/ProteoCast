@@ -553,7 +553,7 @@ def results_view(request):
         bfactors = df_sefPrep['pLDDT'].tolist()
         # Define palette and bin ranges
         palette_bis = {0: '#FF7D45', 1: '#FFDB13', 2: '#65CBF3', 3: '#0053D6'}
-        bins = [0, 50, 70, 90, 100]
+        bins = [0, 0.5, 0.7, 0.9, 1]
         df_plddt = pd.DataFrame(bfactors, columns=['value'])
 
         # Bin the values into groups
@@ -646,11 +646,14 @@ def results_view(request):
         fig_Seg.update_layout(
             width=1500,
             height=600,
-            title_text="Interactive Plot with Heatmap and GEMME Trace",
-            xaxis=dict(title="Residue Index"),
+            plot_bgcolor="white", # Set the background color to white
+            paper_bgcolor="white",
+            #title_text="Interactive Plot with Heatmap and GEMME Trace",
+            #xaxis=dict(title="Residue Index"),
             xaxis2=dict(title="Residue Index"),
             yaxis=dict(title="pLDDT Bin", visible=False),
-            yaxis2=dict(title="Average GEMME Score"),
+            #yaxis2=dict(title="Average GEMME Score"),
+            yaxis2=dict(title="Average GEMME Score", range=[0, 1],),
             hovermode="x unified"
         )
 
