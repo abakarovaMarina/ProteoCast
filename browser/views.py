@@ -166,9 +166,9 @@ def serve_file(request, folder, filename):
 def segmentation_dico(path_segF,path_bfactors):
 
     if not os.path.exists(path_segF):
-        return '[]'
+        return HttpResponse("Segmentation file does not exist", status=404)
     if not os.path.exists(path_bfactors):
-        return '[]'
+        return HttpResponse("B-factors file does not exist", status=404)
     
     dico_colors = {1:{'r': 182, 'g': 132, 'b': 187 },2:{'r': 243, 'g': 119, 'b': 140 }}
     df_segmentation = pd.read_csv(path_segF)
