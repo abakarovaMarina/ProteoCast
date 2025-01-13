@@ -241,6 +241,8 @@
             </div>
             {% endif %}
         </div>
+
+        <!-- 3D structure -->
         <div class="form-row">
             <h2>3D Structure</h2>
             <p> If a UniProt code or a structure is provided, it will be visualized with its B-factors. If the sequence matches the one in the MSA, it can be visualized with GEMME Sensitivity (per-residue GEMME average score) or Residue Class. </p>
@@ -400,6 +402,16 @@
             } else {
               footer.style.display = 'none'; // Hide the footer otherwise
             }
+          });
+
+          // Hide footer when Mol* viewer is in full screen
+          const viewerContainer = document.getElementById('myViewer');
+          viewerContainer.addEventListener('fullscreenchange', function () {
+              if (document.fullscreenElement) {
+                  footer.style.display = 'none';
+              } else {
+                  footer.style.display = 'block';
+              }
           });
         });
         </script>
