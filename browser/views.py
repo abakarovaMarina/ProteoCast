@@ -170,7 +170,7 @@ def segmentation_dico(path_segF,path_bfactors):
     if not os.path.exists(path_bfactors):
         return None #HttpResponse("B-factors file does not exist", status=404)
     
-    dico_colors = {1:{'r': 182, 'g': 132, 'b': 187 },2:{'r': 243, 'g': 119, 'b': 140 }}
+    dico_colors = {2:{'r': 182, 'g': 132, 'b': 187 },1:{'r': 243, 'g': 119, 'b': 140 }}
     df_segmentation = pd.read_csv(path_segF)
     df_bfactors = pd.read_csv(path_bfactors)
 
@@ -539,7 +539,27 @@ def results_view(request):
         pdb_check = pdb_url_3.replace(alias_dir, data_path)
         if not os.path.exists(pdb_check):
             pdb_url_3 = None
-    
+
+    """if df_classes is not None:
+        fig_VariantClasses = make_subplots(
+                rows=2, cols=1,
+                shared_xaxes=True,
+                row_heights=[0.9, 0.1],
+                vertical_spacing=0.02,
+            )
+        heatmap_classes = go.Heatmap(
+            z=df_classes.values[::-1],
+            x=list(range(1, df_classes.shape[1])),
+            y=alph,
+            customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1]]),
+            colorscale=variantClasses_colorscale,
+            showscale=False,
+            hovertemplate=("Mutation: %{customdata[0]}<br>"
+                           "Class: %{customdata[1]}<extra></extra>"),
+            xgap=0.3,
+            ygap=0.3,
+        )
+        fig_VariantClasses.add_trace(heatmap_classes, row=1, col=1) """
     ## segmentation data for 3D
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv') 
 
