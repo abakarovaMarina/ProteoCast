@@ -19,7 +19,8 @@ import subprocess
 # from django.http import QueryDict
 # import uuid
 from django.http import JsonResponse
-
+import logging
+logger = logging.getLogger(__name__)
 
 
 def contact_us(request):
@@ -168,10 +169,11 @@ def serve_file(request, folder, filename):
 def segmentation_dico(path_segF,path_bfactors):
 
     if not os.path.exists(path_segF):
-        print('Segmentation file does not exist')
-        return None
+        logger.info('Segmentation file does not exist')
+
+        return HttpResponse("Segmentation file does not exist", status=404)
     if not os.path.exists(path_bfactors):
-        return None
+        return HttpResponse("B-factors file does not exist", status=404)
     
     dico_colors = {1:{'r': 182, 'g': 132, 'b': 187 },2:{'r': 243, 'g': 119, 'b': 140 }}
     print('We got both segmentation files')
