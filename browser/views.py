@@ -164,9 +164,9 @@ def serve_file(request, folder, filename):
         return HttpResponse(f"File not found: {filename}", status=404)
     
 
-def segmentation_dico(path_segF,path_bfactors):
+"""def segmentation_dico(path_segF,path_bfactors):
 
-    if os.path.exists(path_segF):
+    if not os.path.exists(path_segF):
         return HttpResponse("Segmentation file does not exist", status=404)
     if not os.path.exists(path_bfactors):
         return HttpResponse("B-factors file does not exist", status=404)
@@ -177,8 +177,7 @@ def segmentation_dico(path_segF,path_bfactors):
     df_bfactors = pd.read_csv(path_bfactors)
 
     resi_70 = np.array(df_bfactors[df_bfactors['pLDDT'] <= 0.7].index)+1
-    if os.path.exists(path_segF):
-        return HttpResponse(f"Protein name: {resi_70}")
+
     seg_dico=[]
     for _, row in df_segmentation.loc[df_segmentation['type']=='GEMME'].iterrows():
         if row['start'] in resi_70:
@@ -192,7 +191,7 @@ def segmentation_dico(path_segF,path_bfactors):
             
 
         seg_dico.append(dico)
-    return seg_dico
+    return seg_dico"""
 
 
 def results_view(request):
@@ -525,8 +524,31 @@ def results_view(request):
             pdb_url_3 = None
     
     ## segmentation data for 3D
-    seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv')
-    
+    #seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv')
+    path_segF = f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv'
+    path_bfactors = f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'
+    dico_colors = {1:{'r': 182, 'g': 132, 'b': 187 },2:{'r': 243, 'g': 119, 'b': 140 }}
+    print('We got both segmentation files')
+    df_segmentation = pd.read_csv(path_segF)
+    df_bfactors = pd.read_csv(path_bfactors)
+
+    resi_70 = np.array(df_bfactors[df_bfactors['pLDDT'] <= 0.7].index)+1
+    if resi_70.size > 1:
+        return HttpResponse(f'No residues with pLDDT <= 0.7 {resi_70}', status=404)
+    seg_dico=[]
+    for _, row in df_segmentation.loc[df_segmentation['type']=='GEMME'].iterrows():
+        if row['start'] in resi_70:
+            state = row['state']
+            if state == 1 or state == 2:
+                dico={'start_residue_number':int(row['start']), 
+                    'end_residue_number':int(row['end']), 
+                    'color': dico_colors[state],
+                    'representation': 'putty',
+                    'representationColor': dico_colors[state]}
+            
+
+        seg_dico.append(dico)
+
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
         'heatmapClasses_html': heatmapClasses_html,
