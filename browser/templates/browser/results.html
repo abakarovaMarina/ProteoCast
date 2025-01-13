@@ -378,7 +378,6 @@
                     loadStructureAndColor(this.value);
                 });
             });
-
         
             // Initial load (default to B-Factors)
            initialiseView();
@@ -386,203 +385,6 @@
         </script>
        
     </div> 
-        {% comment %} <div class="form-row">
-            <h2>3D Structure</h2>
-            <p> If a UniProt code or a structure is provided, it will be visualized with its B-factors. If the sequence matches the one in the MSA, it can be visualized with GEMME Sensitivity (per-residue GEMME average score) or Residue Class. </p>
-        </div>
-        <div class="form-row" style="min-height: 600px;">
-            <div class="form-group col-10">
-                <div id="myViewer" class="viewer-container"></div>
-            </div>
-            <div class="form-group col-2 pl-5 py-4">
-                <div class="buttons">
-                    <label>
-                        <input type="radio" name="colorToggle" value="bfactor" checked>
-                        Color by B-Factors
-                    </label>
-                    <label>
-                        <input type="radio" name="colorToggle" value="gemme">
-                        GEMME Sensitivity
-                    </label>
-                    <label>
-                        <input type="radio" name="colorToggle" value="residue_class">
-                        Residue Class
-                    </label>
-                </div>
-            </div>
-        </div>
-        
-        <script>
-            // Initialize the viewer
-            const viewerInstance = new PDBeMolstarPlugin();
-        
-            const viewerContainer = document.getElementById('myViewer');
-        
-            // Options for the Mol* Viewer
-            var options = {
-                customData: { url: '', format: 'pdb' }, // URL will be dynamically updated
-                alphafoldView: true,
-                bgColor: { r: 255, g: 255, b: 255 },
-                hideCanvasControls: [
-                    'selection', 'animation', 'controlToggle', 'controlInfo', 
-                    'controlZoom', 'controlRotate', 'controlTranslate', 
-                    'controlReset', 'controlFullscreen'
-                ],
-                layoutIsExpanded: false,
-                hideControls: true, // Hide the toolbar
-                visualStyle: {
-                    polymer: {type: 'cartoon', size:'uniform'},
-                },
-            };
-        
-            // Define the PDB URLs for each condition
-            const pdbUrls = {
-                bfactor: "{{ pdb_url_1 }}",
-                gemme: "{{ pdb_url_2 }}",
-                residue_class: "{{ pdb_url_3 }}"
-            };
-        
-
-        // Function to load the structure and apply coloring
-        function loadStructureAndColor(condition) {
-            console.log("Loading structure for condition:", condition);
-            console.log("PDB URL:", pdbUrls[condition]);
-            options.customData.url = pdbUrls[condition]; // Set the PDB URL
-            if (condition === 'gemme') {
-                console.log("Applying GEMME sensitivity coloring");
-                options.visualStyle.polymer.color = 'uncertainty';
-            } else if (condition === 'residue_class') {
-                console.log("Applying Residue Class coloring");
-                options.visualStyle.polymer.color = 'uncertainty';
-            } else {
-                console.log("Applying B-Factor coloring");
-                options.visualStyle.polymer.color = 'plddt-confidence';
-            }
-            viewerInstance.render(viewerContainer, options);
-        }
-        
-            // Add event listeners to the radio buttons
-            document.querySelectorAll('input[name="colorToggle"]').forEach(button => {
-                button.addEventListener('change', function () {
-                    loadStructureAndColor(this.value);
-                });
-            });
-        
-            // Initial load (default to B-Factors)
-            loadStructureAndColor('bfactor');
-        </script>
-       
-    </div> {% endcomment %}
-
-       {% comment %} <div class="form-row">
-            <h2>3D Structure</h2>
-            <p> If a UniProt code or a structure is provided, it will be visualized with its B-factors. If the sequence matches the one in the MSA, it can be visualized with GEMME Sensitivity (per-residue GEMME average score) or Residue Class. </p>
-        </div>
-        <div class="form-row" style="min-height: 600px;">
-            <div class="form-group col-10">
-                <div id="myViewer" class="viewer-container"></div>
-            </div>
-            <div class="form-group col-2 pl-5 py-4">
-                <div class="buttons">
-                    <label>
-                        <input type="radio" name="colorToggle" onclick="handleCheckboxClick(this)" value="bfactor" checked />
-                        Color by B-Factors
-                    </label>
-                    <label>
-                        <input type="radio" name="colorToggle" onclick="handleCheckboxClick(this)" value="gemme"/>
-                        GEMME Sensitivity
-                    </label>
-                    <label>
-                        <input type="radio" name="colorToggle" onclick="handleCheckboxClick(this)" value="residue_class"/>
-                        Residue Class
-                    </label>
-                </div>
-            </div>
-        </div>
-        
-        <script>
-            // Initialize the viewer
-            const viewerInstance = new PDBeMolstarPlugin();
-        
-            const viewerContainer = document.getElementById('myViewer');
-        
-            // Options for the Mol* Viewer
-            var options = {
-                customData: { url: '', format: 'pdb' }, // URL will be dynamically updated
-                alphafoldView: true,
-                bgColor: { r: 255, g: 255, b: 255 },
-                hideCanvasControls: [
-                    'selection', 'animation', 'controlToggle', 'controlInfo', 
-                    'controlZoom', 'controlRotate', 'controlTranslate', 
-                    'controlReset', 'controlFullscreen'
-                ],
-                layoutIsExpanded: false,
-                hideControls: true, // Hide the toolbar
-                visualStyle: {
-                    polymer: {type: 'cartoon', size:'uniform'},
-                },
-            };
-        
-            // Define the PDB URLs for each condition
-            const pdbUrls = {
-                bfactor: "{{ pdb_url_1 }}",
-                gemme: "{{ pdb_url_2 }}",
-                residue_class: "{{ pdb_url_3 }}"
-            };
-        
-        const loadingTargets = new Set(); 
-        
-
-
-
-        // Function to load the structure and apply coloring
-        function loadStructureAndColor(condition) {
-            console.log("Loading structure for condition:", condition);
-            console.log("PDB URL:", pdbUrls[condition]);
-            options.customData.url = pdbUrls[condition]; // Set the PDB URL
-            if (condition === 'gemme') {
-                console.log("Applying GEMME sensitivity coloring");
-                options.visualStyle.polymer.color = 'uncertainty';
-            } else if (condition === 'residue_class') {
-                console.log("Applying Residue Class coloring");
-                options.visualStyle.polymer.color = 'uncertainty';
-            } else {
-                console.log("Applying B-Factor coloring");
-                options.visualStyle.polymer.color = 'plddt-confidence';
-            }
-            viewerInstance.render(viewerContainer, options);
-        }
-
-
-        function handleCheckboxClick(target) {
-            const { id, checked } = target;
-            if (checked) {
-                loadTarget(id).then(() => {
-                    document.getElementById(`${id}-visibility`).style['display'] = null;
-                    document.getElementById(`${id}-visibility`).style['text-decoration'] = 'none';
-                });
-            } else {
-                viewerInstance.deleteStructure(id).then(() => {
-                    document.getElementById(`${id}-visibility`).style['display'] = 'none';
-                });
-            }
-        }
-
-
-        // Add event listeners to the radio buttons
-        document.querySelectorAll('input[name="colorToggle"]').forEach(button => {
-            button.addEventListener('change', function () {
-                loadStructureAndColor(this.value);
-            });
-        });
-        
-        // Initial load (default to B-Factors)
-        loadStructureAndColor('bfactor');
-
-
-        </script>
-       
-    </div> {% endcomment %}
 
       <footer class="bg-light text-center py-3">
             <p class="mb-0">ProteoCast - This website is free and open to all users and there is no login requirement.</p>
@@ -591,7 +393,7 @@
         document.addEventListener('DOMContentLoaded', function () {
           const footer = document.querySelector('footer');
           footer.style.display = 'none'; // Initially hide the footer
-    
+
           window.addEventListener('scroll', function () {
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
               footer.style.display = 'block'; // Show the footer when scrolled to the bottom
@@ -599,8 +401,20 @@
               footer.style.display = 'none'; // Hide the footer otherwise
             }
           });
+
+          const viewerContainer = document.getElementById('myViewer');
+          const observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+              if (mutation.attributeName === 'class') {
+                const isFullScreen = viewerContainer.classList.contains('fullscreen');
+                footer.style.display = isFullScreen ? 'none' : 'block';
+              }
+            });
+          });
+
+          observer.observe(viewerContainer, { attributes: true });
         });
-        </script>
+    </script>
 
     </div>
   </body></html>
