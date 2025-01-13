@@ -540,26 +540,125 @@ def results_view(request):
         if not os.path.exists(pdb_check):
             pdb_url_3 = None
 
-    """if df_classes is not None:
-        fig_VariantClasses = make_subplots(
+
+
+
+    ###### SEGMENTATINO TRY ######
+
+    if os.path.exists(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'):
+        df_segmentation = pd.read_csv(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv')
+        df_sefPrep = pd.read_csv(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv')
+
+        # Prepare the one-row heatmap data
+        bfactors = df_sefPrep['pLDDT'].tolist()
+        # Define palette and bin ranges
+        palette_bis = {0: '#FF7D45', 1: '#FFDB13', 2: '#65CBF3', 3: '#0053D6'}
+        bins = [0, 50, 70, 90, 100]
+        df_plddt = pd.DataFrame(bfactors, columns=['value'])
+
+        # Bin the values into groups
+        df_plddt['group'] = pd.cut(df_plddt['value'], bins=bins, labels=[0, 1, 2, 3], right=False)
+        grouped_values_numeric = np.array(df_plddt['group'])
+
+        # Reshape to a one-row matrix
+        data_matrix = grouped_values_numeric.reshape(1, -1)
+
+        # Map colors
+        heatmap_colorscale = [
+            [0, '#FF7D45'],  # Bin 0
+            [0.33, '#FFDB13'],  # Bin 1
+            [0.66, '#65CBF3'],  # Bin 2
+            [1, '#0053D6']  # Bin 3
+        ]
+        # Prepare the trace plot data
+        GEMME_mean = df_sefPrep['GEMME_mean'].tolist()
+        n_res = len(GEMME_mean)
+        signal = pd.DataFrame({
+            'x': list(range(1, n_res + 1)),
+            'y': list(GEMME_mean),
+            'type': ['GEMME'] * n_res
+        })
+        # Segmentation data
+        gemme = df_segmentation[df_segmentation['type'] == 'GEMME']
+        cp = pd.DataFrame({
+            'x': list(gemme['end'][:-1]),
+            'type': ['GEMME'] * (len(gemme) - 1)
+        })
+        mean = pd.DataFrame({
+            'x': list(gemme['start'] - 1),
+            'xend': list(gemme['end']),
+            'y': list(gemme['mean']),
+            'type': ['GEMME'] * len(gemme),
+            'state': list(gemme['state'])
+        })
+
+        fig_Seg = make_subplots(
                 rows=2, cols=1,
                 shared_xaxes=True,
-                row_heights=[0.9, 0.1],
+                row_heights=[0.1, 0.9],
                 vertical_spacing=0.02,
             )
-        heatmap_classes = go.Heatmap(
-            z=df_classes.values[::-1],
-            x=list(range(1, df_classes.shape[1])),
-            y=alph,
-            customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1]]),
-            colorscale=variantClasses_colorscale,
+                # Add the one-row heatmap
+        heatmapSeg = go.Heatmap(
+            z=data_matrix,
+            colorscale=heatmap_colorscale,
             showscale=False,
-            hovertemplate=("Mutation: %{customdata[0]}<br>"
-                           "Class: %{customdata[1]}<extra></extra>"),
-            xgap=0.3,
-            ygap=0.3,
+            x=list(range(1, n_res + 1)),
+            y=[''],
+            hovertemplate="Residue %{x}<br>pLDDT Bin: %{z}<extra></extra>"
         )
-        fig_VariantClasses.add_trace(heatmap_classes, row=1, col=1) """
+        fig_Seg.add_trace(heatmapSeg, row=1, col=1)
+        # Add the GEMME trace plot
+
+        trace = go.Scatter(
+            x=signal['x'],
+            y=signal['y'],
+            mode='lines',
+            line=dict(color='blue'),
+            name='GEMME',
+            hovertemplate="Residue %{x}<br>GEMME Score: %{y}<extra></extra>"
+        )
+        fig_Seg.add_trace(trace, row=2, col=1)
+
+        # Add segmentation regions (axvspan equivalent)
+        for _, row in mean.iterrows():
+            fig_Seg.add_shape(
+                type="rect",
+                x0=row['x'], x1=row['xend'],
+                y0=0, y1=max(GEMME_mean),
+                line=dict(width=0),
+                fillcolor='white' if row['state'] == 0 else 'red' if row['state'] == 1 else 'purple',
+                opacity=0.1,
+                row=2, col=1
+            )
+
+        # Add segmentation change points (axvline equivalent)
+        for _, row in cp.iterrows():
+            fig_Seg.add_shape(
+                type="line",
+                x0=row['x'], x1=row['x'],
+                y0=0, y1=max(GEMME_mean),
+                line=dict(color="red", width=2, dash="dash"),
+                row=2, col=1
+            )
+
+        # Update layout
+        fig_Seg.update_layout(
+            width=1500,
+            height=600,
+            title_text="Interactive Plot with Heatmap and GEMME Trace",
+            xaxis=dict(title="Residue Index"),
+            xaxis2=dict(title="Residue Index"),
+            yaxis=dict(title="pLDDT Bin", visible=False),
+            yaxis2=dict(title="Average GEMME Score"),
+            hovermode="x unified"
+        )
+
+        # Generate HTML for Django
+        fig_segmentation = fig_Seg.to_html(full_html=False)
+
+
+
     ## segmentation data for 3D
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv') 
 
