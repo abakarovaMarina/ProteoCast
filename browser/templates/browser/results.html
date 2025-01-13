@@ -600,7 +600,18 @@
             }
           });
         });
-        </script>
+
+        // Override addEventListener to add passive option to wheel events
+        (function() {
+            const originalAddEventListener = EventTarget.prototype.addEventListener;
+            EventTarget.prototype.addEventListener = function(type, listener, options) {
+                if (type === 'wheel' && typeof options === 'object') {
+                    options.passive = true;
+                }
+                originalAddEventListener.call(this, type, listener, options);
+            };
+        })();
+    </script>
 
     </div>
   </body></html>
