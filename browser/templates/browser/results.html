@@ -86,12 +86,20 @@
             <h1 class="text-white text-decoration-none">ProteoCast 
               <span style="font-size: 0.6em; color: white;"> for {{ prot_name }}</span></h1>
           </a>
-          <button class="navbar-toggler" type="button" aria-label="Toggle navigation" aria-controls="navbarNav" data-target="#navbarNav" data-toggle="collapse">
-            <span class="navbar-toggler-icon"></span>
-          </button>
+          <button 
+              class="navbar-toggler" 
+              type="button" 
+              aria-label="Toggle navigation" 
+              data-toggle="collapse" 
+              data-target="#navbarNav" 
+              aria-controls="navbarNav" 
+              aria-expanded="false" 
+              aria-haspopup="true">
+              <span class="navbar-toggler-icon"></span>
+            </button>
           <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
             <ul class="navbar-nav ml-auto" id="navbarItems">
-              <li>
+              <li class="nav-item" id="nav-home">
                 <a href="{% url 'download_folder' fbpp_id=query %}" class="download-button">
                 <button>
                    <img src="{% static 'browser/images/download_icon.png' %}" alt="Download Icon">
@@ -103,6 +111,11 @@
           </div>
         </nav>
       </header>
+
+
+
+
+
       <div class="content">
         <div class="container-fluid" style="width:95%;">
 
@@ -389,7 +402,7 @@
        
     </div> 
 
-      <footer id="footer" class="bg-light text-center py-3">
+    <footer class="bg-light text-center py-3">
             <p class="mb-0">ProteoCast - This website is free and open to all users and there is no login requirement.</p>
     </footer>
     <script>
@@ -407,20 +420,7 @@
         });
         </script>
 
-        <script>
-            document.addEventListener('fullscreenchange', function () {
-              const footer = document.getElementById('footer');
-              const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement;
-              
-              if (fullscreenElement && fullscreenElement.id === 'myViewer') {
-                // If Molstar is in full screen, hide the footer
-                footer.style.display = 'none';
-              } else {
-                // Show the footer when exiting full screen
-                footer.style.display = 'block';
-              }
-            });
-          </script>
+    
 
           
 

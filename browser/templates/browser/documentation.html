@@ -190,7 +190,21 @@
 
 
       <footer class="bg-light text-center py-3">
-            <p class="mb-0">ProteoCast - This website is free and open to all users and there is no login requirement.</p>
-    </footer>
+        <p class="mb-0">ProteoCast - This website is free and open to all users and there is no login requirement.</p>
+</footer>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const footer = document.querySelector('footer');
+      footer.style.display = 'none'; // Initially hide the footer
+
+      window.addEventListener('scroll', function () {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+          footer.style.display = 'block'; // Show the footer when scrolled to the bottom
+        } else {
+          footer.style.display = 'none'; // Hide the footer otherwise
+        }
+      });
+    });
+    </script>
     </div>
   </body></html>
