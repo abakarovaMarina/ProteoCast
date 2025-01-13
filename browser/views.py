@@ -20,15 +20,6 @@ import subprocess
 # import uuid
 from django.http import JsonResponse
 
-import logging
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-console_handler.setFormatter(formatter)
-logger.addHandler(console_handler)
-
 
 def contact_us(request):
     return render(request, 'browser/contact_us.html')
@@ -174,9 +165,9 @@ def serve_file(request, folder, filename):
     
 
 def segmentation_dico(path_segF,path_bfactors):
-    logger.info(path_segF, path_bfactors)
+    if True: 
+        return HttpResponse(f'Segmentation file does not exist {path_bfactors, path_segF}', status=404)
     if not os.path.exists(path_segF):
-        logger.info('Segmentation file does not exist')
         return HttpResponse("Segmentation file does not exist", status=404)
     if not os.path.exists(path_bfactors):
         return HttpResponse("B-factors file does not exist", status=404)
