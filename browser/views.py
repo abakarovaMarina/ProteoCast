@@ -162,6 +162,33 @@ def serve_file(request, folder, filename):
         return response
     else:
         return HttpResponse(f"File not found: {filename}", status=404)
+    
+
+def segmentation_dico(path_segF,path_bfactors):
+
+    if not os.path.exists(path_segF):
+        return None
+    if not os.path.exists(path_bfactors):
+        return None
+    
+    dico_colors = {1:{'r': 182, 'g': 132, 'b': 187 },2:{'r': 243, 'g': 119, 'b': 140 }}
+    print('We got both segmentation files')
+    df_segmentation = pd.read_csv(path_segF)
+    df_bfactors = pd.read_csv(path_bfactors)
+    resi_70 = np.array(df_bfactors[df_bfactors['bfactor'] <= 70].index)+1
+    seg_dico=[]
+    for index, row in df_segmentation.loc[df_segmentation['type']=='GEMME'].iterrows():
+        if row['start'] in resi_70:
+            state = row['state']
+            dico={'start_residue_number':int(row['start']), 
+                  'end_residue_number':int(row['end']), 
+                  'color': dico_colors[state],
+                  'representation': 'putty',
+                'representationColor': dico_colors[state]}
+            
+
+        seg_dico.append(dico)
+    return seg_dico
 
 
 def results_view(request):
@@ -492,6 +519,9 @@ def results_view(request):
         pdb_check = pdb_url_3.replace(alias_dir, data_path)
         if not os.path.exists(pdb_check):
             pdb_url_3 = None
+
+    ## segmentation data for 3D
+    seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv')
     
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
@@ -505,6 +535,7 @@ def results_view(request):
         'pdb_url_3': pdb_url_3,
         'fig_msarep': fig_msarep,
         'fig_segmentation': fig_segmentation,
+        'select_segments': seg_dico,
     })
 
 def download_folder(request, fbpp_id):

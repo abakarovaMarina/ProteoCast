@@ -241,8 +241,152 @@
             </div>
             {% endif %}
         </div>
-        
         <div class="form-row">
+            <h2>3D Structure</h2>
+            <p> If a UniProt code or a structure is provided, it will be visualized with its B-factors. If the sequence matches the one in the MSA, it can be visualized with GEMME Sensitivity (per-residue GEMME average score) or Residue Class. </p>
+        </div>
+        <div class="form-row" style="min-height: 600px;">
+            <div class="form-group col-10">
+                <div id="myViewer" class="viewer-container"></div>
+            </div>
+            <div class="form-group col-2 pl-5 py-4">
+                <div class="buttons">
+                    <label>
+                        <input type="radio" name="colorToggle" value="bfactor" checked>
+                        Color by B-Factors
+                    </label>
+                    <label>
+                        <input type="radio" name="colorToggle" value="gemme">
+                        GEMME Sensitivity
+                    </label>
+                    <label>
+                        <input type="radio" name="colorToggle" value="residue_class">
+                        Residue Class
+                    </label>
+                </div>
+                <div class="custom-control custom-switch mt-2 py-1">
+                    <input type="checkbox" id="segments" name="segments" class="custom-control-input" >
+                     <label for="segments" class="custom-control-label text-dark">Highlight Segments</label>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            // Initialize the viewer
+            const viewerInstance = new PDBeMolstarPlugin();
+        
+            const viewerContainer = document.getElementById('myViewer');
+        
+            // Define the PDB URLs for each condition
+            const pdbUrls = {
+                bfactor: "{{ pdb_url_1 }}",
+                gemme: "{{ pdb_url_2 }}",
+                residue_class: "{{ pdb_url_3 }}"
+            };
+
+            // Define the segments that are 1 (red) or 2 (purple)
+            // in regions of low pLDDT -- we do not load a new structure, 
+            // we directly encode the selections in the page
+            var selectSections = {{ seg_dico | default:"[]"|safe}};
+        
+            // Options for the Mol* Viewer
+            var options = {
+                customData: { url: '', format: 'pdb' }, // URL will be dynamically updated
+                alphafoldView: true,
+                bgColor: { r: 255, g: 255, b: 255 },
+                hideCanvasControls: [
+                    'selection', 'animation', 'controlToggle', 'controlInfo', 
+                    'controlZoom', 'controlRotate', 'controlTranslate', 
+                    'controlReset', 'controlFullscreen'
+                ],
+                layoutIsExpanded: false,
+                hideControls: true, // Hide the toolbar
+                visualStyle: {
+                    polymer: {type: 'cartoon', size:'uniform'},
+                },
+            };
+
+        // Function to load the structure and apply coloring
+        async function initialiseView(condition='bfactor') {
+
+            console.log("Loading structure for condition:", condition);
+            console.log("PDB URL:", pdbUrls[condition]);
+            options.customData.url = pdbUrls[condition]; // Set the PDB URL
+            console.log("Applying B-Factor coloring");
+            options.visualStyle.polymer.color = 'plddt-confidence';
+            // Wait for the render process to complete
+            await viewerInstance.render(viewerContainer, options);
+            // Now it's safe to access properties
+            console.log("Viewer instance initialized");
+            console.log(viewerInstance.plugin.canvas3d); // Should now exist
+            viewerInstance.plugin.canvas3d?.setProps({ camera: { manualReset: true } });
+        }
+
+        async function addStructure(condition){
+
+            viewerInstance.plugin.clear();
+            const _data = await viewerInstance.plugin.builders.data.download({ url: pdbUrls[condition] }, { state: { isGhost: true } });
+            const trajectory = await viewerInstance.plugin.builders.structure.parseTrajectory(_data, 'pdb');
+            const model = await viewerInstance.plugin.builders.structure.createModel(trajectory);
+            const structure = await viewerInstance.plugin.builders.structure.createStructure(model);
+            const all = await viewerInstance.plugin.builders.structure.tryCreateComponentStatic(structure, 'all');
+            if (all) {
+                if (condition === 'bfactor') {
+                    await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'plddt-confidence'});
+                }
+                else{
+                    await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'uncertainty'});
+                }
+            }
+        }
+
+        // Function to load the structure and apply coloring
+        async function loadStructureAndColor(condition) {
+            console.log("Loading structure for condition:", condition);
+            console.log("PDB URL:", pdbUrls[condition]);
+            addStructure(condition);
+
+            // Restore the camera state -- not needed anymore
+/*            if (cameraState) {
+                console.log("about to update...",cameraState);
+                viewerInstance.plugin.canvas3d?.camera.setState(cameraState);
+                console.log("updated...",viewerInstance.plugin.canvas3d?.camera.getSnapshot());
+            }*/
+
+        }
+        
+        var checkbox = document.querySelector('input[name="segments"]');
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                console.log("Checkbox is checked..");
+                viewerInstance.visual.select({data: selectSections});
+
+                } else {
+                    console.log("Checkbox is not checked..");
+                    viewerInstance.visual.clearSelection();
+                     }
+                 });
+
+            // Add event listeners to the radio buttons
+           document.querySelectorAll('input[name="colorToggle"]').forEach(button => {
+                button.addEventListener('change', function () {
+                    // Get the camera state -- not needed anymore
+/*                  const cameraState = viewerInstance.plugin.canvas3d?.camera.getSnapshot()
+                    console.log("camera state before");
+                    console.log(cameraState);*/
+                    checkbox.checked = false;
+                    loadStructureAndColor(this.value);
+                });
+            });
+
+        
+            // Initial load (default to B-Factors)
+           initialiseView();
+
+        </script>
+       
+    </div> 
+        {% comment %} <div class="form-row">
             <h2>3D Structure</h2>
             <p> If a UniProt code or a structure is provided, it will be visualized with its B-factors. If the sequence matches the one in the MSA, it can be visualized with GEMME Sensitivity (per-residue GEMME average score) or Residue Class. </p>
         </div>
@@ -328,7 +472,7 @@
             loadStructureAndColor('bfactor');
         </script>
        
-    </div>
+    </div> {% endcomment %}
 
        {% comment %} <div class="form-row">
             <h2>3D Structure</h2>
