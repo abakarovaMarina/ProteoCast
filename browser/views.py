@@ -163,8 +163,7 @@ def serve_file(request, folder, filename):
     else:
         return HttpResponse(f"File not found: {filename}", status=404)
     
-
-"""def segmentation_dico(path_segF,path_bfactors):
+def segmentation_dico(path_segF,path_bfactors):
 
     if not os.path.exists(path_segF):
         return HttpResponse("Segmentation file does not exist", status=404)
@@ -172,12 +171,10 @@ def serve_file(request, folder, filename):
         return HttpResponse("B-factors file does not exist", status=404)
     
     dico_colors = {1:{'r': 182, 'g': 132, 'b': 187 },2:{'r': 243, 'g': 119, 'b': 140 }}
-    print('We got both segmentation files')
     df_segmentation = pd.read_csv(path_segF)
     df_bfactors = pd.read_csv(path_bfactors)
 
     resi_70 = np.array(df_bfactors[df_bfactors['pLDDT'] <= 0.7].index)+1
-
     seg_dico=[]
     for _, row in df_segmentation.loc[df_segmentation['type']=='GEMME'].iterrows():
         if row['start'] in resi_70:
@@ -188,10 +185,8 @@ def serve_file(request, folder, filename):
                     'color': dico_colors[state],
                     'representation': 'putty',
                     'representationColor': dico_colors[state]}
-            
-
-        seg_dico.append(dico)
-    return seg_dico"""
+                seg_dico.append(dico)
+    return seg_dico
 
 
 def results_view(request):
@@ -524,27 +519,8 @@ def results_view(request):
             pdb_url_3 = None
     
     ## segmentation data for 3D
-    #seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv')
-    path_segF = f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv'
-    path_bfactors = f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'
-    dico_colors = {1:{'r': 182, 'g': 132, 'b': 187 },2:{'r': 243, 'g': 119, 'b': 140 }}
-    print('We got both segmentation files')
-    df_segmentation = pd.read_csv(path_segF)
-    df_bfactors = pd.read_csv(path_bfactors)
+    seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv') 
 
-    resi_70 = np.array(df_bfactors[df_bfactors['pLDDT'] <= 0.7].index)+1
-    seg_dico=[]
-    for _, row in df_segmentation.loc[df_segmentation['type']=='GEMME'].iterrows():
-        if row['start'] in resi_70:
-            state = row['state']
-            if state == 1 or state == 2:
-                dico={'start_residue_number':int(row['start']), 
-                    'end_residue_number':int(row['end']), 
-                    'color': dico_colors[state],
-                    'representation': 'putty',
-                    'representationColor': dico_colors[state]}
-                seg_dico.append(dico)
-    print(seg_dico)
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
         'heatmapClasses_html': heatmapClasses_html,
