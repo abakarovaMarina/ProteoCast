@@ -522,7 +522,8 @@ def results_view(request):
         pdb_check = pdb_url_3.replace(alias_dir, data_path)
         if not os.path.exists(pdb_check):
             pdb_url_3 = None
-
+    if prot_name:
+        return HttpResponse(f"Protein name: {prot_name}")
     ## segmentation data for 3D
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv')
     
