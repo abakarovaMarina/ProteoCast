@@ -409,7 +409,7 @@ def results_view(request):
             x=list(range(1, df.shape[1] + 1)),
             y=alph,
             customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1], df_snps_STR.values]),
-            colorscale=px.colors.sequential.Greys[::-1][3:],
+            colorscale=px.colors.sequential.Greys[::-1][4:],
             showscale=False,
             hovertemplate=("Mutation: %{customdata[0]}<br>"
                         "Score: %{z:.2f}<br>"
@@ -425,7 +425,7 @@ def results_view(request):
             colorscale=[
                 [0, "rgba(0,0,0,0)"],  # Transparent for no highlight
                 [ 1 / 3, "rgba(255,0,0,1)"],  # Red for 'Lethal'
-                [2 / 3, "rgba(0,0,255,0.7)"],  # Blue for 'DEST2' or 'DGRP'
+                [2 / 3, "rgba(0,0,255,0.8)"],  # Blue for 'DEST2' or 'DGRP'
                 [1, "rgba(0,0,255,0.7)"],  # Blue continued
             ],
             showscale=False,
