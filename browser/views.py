@@ -19,6 +19,9 @@ import subprocess
 # from django.http import QueryDict
 # import uuid
 from django.http import JsonResponse
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def contact_us(request):
@@ -167,8 +170,10 @@ def serve_file(request, folder, filename):
 def segmentation_dico(path_segF,path_bfactors):
 
     if not os.path.exists(path_segF):
+        logger.error("Protein name is missing")
         return None
     if not os.path.exists(path_bfactors):
+        logger.error("pLDDT file does not exist")
         return None
     
     dico_colors = {1:{'r': 182, 'g': 132, 'b': 187 },2:{'r': 243, 'g': 119, 'b': 140 }}
@@ -180,11 +185,12 @@ def segmentation_dico(path_segF,path_bfactors):
     for index, row in df_segmentation.loc[df_segmentation['type']=='GEMME'].iterrows():
         if row['start'] in resi_70:
             state = row['state']
-            dico={'start_residue_number':int(row['start']), 
-                  'end_residue_number':int(row['end']), 
-                  'color': dico_colors[state],
-                  'representation': 'putty',
-                'representationColor': dico_colors[state]}
+            if state == 1 or state == 2:
+                dico={'start_residue_number':int(row['start']), 
+                    'end_residue_number':int(row['end']), 
+                    'color': dico_colors[state],
+                    'representation': 'putty',
+                    'representationColor': dico_colors[state]}
             
 
         seg_dico.append(dico)
