@@ -176,21 +176,38 @@ def segmentation_dico(path_segF,path_bfactors):
 
     resi_70 = np.array(df_bfactors[df_bfactors['pLDDT'] <= 0.7].index)+1
     seg_dico=[]
-    #for _, row in df_segmentation.loc[df_segmentation['type']=='GEMME'].iterrows():
-    #    if row['start'] in resi_70:
-    #        state = row['state']
-    #        if state == 1 or state == 2:
-    
-    """dico={'start_residue_number':int(row['start']), 
-        'end_residue_number':int(row['end']), 
-        'color': dico_colors[state],
-        'representation': 'putty',
-        'representationColor': dico_colors[state]}"""
-    dico = {'residues': [102, 103, 104, 105, 106, 107],
-            'color': dico_colors[1],
-            'representation': 'putty',
-            'representationColor': dico_colors[1]}
-    seg_dico.append(dico)
+    for _, row in df_segmentation.loc[df_segmentation['type']=='GEMME'].iterrows():
+
+        start = int(row['start'])
+        end = int(row['end'])
+        state = row['state']
+        
+        if state == 1 or state == 2:
+            segment = list(range(start, end + 1))
+            sub_segments = []
+            sub_segment = []
+            
+            for res in segment:
+                if res in resi_70:
+                    sub_segment.append(res)
+                else:
+                    if sub_segment:
+                        sub_segments.append(sub_segment)
+                        sub_segment = []
+            
+            if sub_segment:
+                sub_segments.append(sub_segment)
+            
+            for sub_segment in sub_segments:
+                dico = {
+                    'start_residue_number': sub_segment[0],
+                    'end_residue_number': sub_segment[-1],
+                    'color': dico_colors[state],
+                    'representation': 'putty',
+                    'representationColor': dico_colors[state]
+                }
+
+                seg_dico.append(dico)
     return seg_dico
 
 
