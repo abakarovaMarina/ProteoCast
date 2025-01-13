@@ -596,7 +596,7 @@ def results_view(request):
                 rows=2, cols=1,
                 shared_xaxes=True,
                 row_heights=[0.1, 0.9],
-                vertical_spacing=0.02,
+                vertical_spacing=0.05,
             )
                 # Add the one-row heatmap
         heatmapSeg = go.Heatmap(
@@ -641,6 +641,19 @@ def results_view(request):
                 line=dict(color="red", width=2),
                 row=2, col=1
             )
+                # Define the frame for the second plot
+        scatter_frame = go.Scatter(
+            x=[0.5, df.shape[1] + 0.5, df.shape[1] + 0.5, 0.5, 0.5],
+            y=[0, 0, 1, 1, 0],  # The y-range matches the axis limits (0 to 1)
+            mode="lines",
+            line=dict(color="black", width=2),  # Adjust the color and width of the frame
+            hoverinfo="skip",  # No hover effect for the frame
+            showlegend=False  # No legend for the frame
+        )
+
+        # Add the frame to the second subplot
+        fig_Seg.add_trace(scatter_frame, row=2, col=1)
+
 
         # Update layout
         fig_Seg.update_layout(
