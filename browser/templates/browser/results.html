@@ -393,7 +393,7 @@
         document.addEventListener('DOMContentLoaded', function () {
           const footer = document.querySelector('footer');
           footer.style.display = 'none'; // Initially hide the footer
-
+    
           window.addEventListener('scroll', function () {
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
               footer.style.display = 'block'; // Show the footer when scrolled to the bottom
@@ -401,20 +401,8 @@
               footer.style.display = 'none'; // Hide the footer otherwise
             }
           });
-
-          const viewerContainer = document.getElementById('myViewer');
-          const observer = new MutationObserver(function (mutations) {
-            mutations.forEach(function (mutation) {
-              if (mutation.attributeName === 'class') {
-                const isFullScreen = viewerContainer.classList.contains('fullscreen');
-                footer.style.display = isFullScreen ? 'none' : 'block';
-              }
-            });
-          });
-
-          observer.observe(viewerContainer, { attributes: true });
         });
-    </script>
+        </script>
 
     </div>
   </body></html>
