@@ -638,7 +638,7 @@ def results_view(request):
                 type="line",
                 x0=row['x'], x1=row['x'],
                 y0=0, y1=max(GEMME_mean),
-                line=dict(color="red", width=2, dash="dash"),
+                line=dict(color="red", width=2),
                 row=2, col=1
             )
 
