@@ -666,7 +666,6 @@ def results_view(request):
             #title_text="Interactive Plot with Heatmap and GEMME Trace",
             #xaxis=dict(title="Residue Index"),
             xaxis2=dict(title="Residue Index"),
-            yaxis=dict(title="pLDDT Bin", visible=False),
             #yaxis2=dict(title="Average GEMME Score"),
             yaxis2=dict(title="Average GEMME Score", range=[0, 1],),
             hovermode="x unified"
