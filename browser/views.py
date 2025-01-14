@@ -598,14 +598,16 @@ def results_view(request):
                 row_heights=[0.1, 0.9],
                 vertical_spacing=0.05,
             )
-                # Add the one-row heatmap
+        # Add the one-row heatmap
         heatmapSeg = go.Heatmap(
             z=data_matrix,
             colorscale=heatmap_colorscale,
             showscale=False,
+            customdata=bfactors,
             x=list(range(1, n_res + 1)),
             y=[''],
-            hovertemplate="Residue %{x}<br>pLDDT Bin: %{z}<extra></extra>"
+            hovertemplate="Residue %{x}<br>pLDDT Bin: %{customdata}<extra></extra>",
+            xgap=0.15
         )
         fig_Seg.add_trace(heatmapSeg, row=1, col=1)
         # Add the GEMME trace plot
@@ -615,7 +617,6 @@ def results_view(request):
             y=signal['y'],
             mode='lines',
             line=dict(color='blue'),
-            name='GEMME',
             hovertemplate="Residue %{x}<br>GEMME Score: %{y}<extra></extra>"
         )
         fig_Seg.add_trace(trace, row=2, col=1)
