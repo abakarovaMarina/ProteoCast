@@ -603,7 +603,7 @@ def results_view(request):
             z=data_matrix,
             colorscale=heatmap_colorscale,
             showscale=False,
-            customdata=df_sefPrep['pLDDT'].values.reshape(1, -1),
+            customdata=(df_sefPrep['pLDDT'].values * 100).reshape(1, -1),
             x=list(range(1, n_res + 1)),
             y=[''],
             hovertemplate="Residue %{x}<br>pLDDT: %{customdata:.2f}<extra></extra>",
