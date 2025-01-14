@@ -660,7 +660,7 @@ def results_view(request):
         # Update layout
         fig_Seg.update_layout(
             width=1500,
-            height=600,
+            height=500,
             plot_bgcolor="white", # Set the background color to white
             paper_bgcolor="white",
             #title_text="Interactive Plot with Heatmap and GEMME Trace",
