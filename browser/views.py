@@ -617,7 +617,8 @@ def results_view(request):
             y=signal['y'],
             mode='lines',
             line=dict(color='blue'),
-            hovertemplate="Residue %{x}<br>GEMME Score: %{y}<extra></extra>"
+            showlegend=False,
+            hovertemplate="Residue %{x}<br>GEMME Score: %{y:.2f}<extra></extra>"
         )
         fig_Seg.add_trace(trace, row=2, col=1)
 
