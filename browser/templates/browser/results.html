@@ -248,7 +248,7 @@
                     The pLDDT of the AlphaFold-predicted protein 3D model is shown on top and the mutational sensitivity profile (per-residue GEMME average score) at the bottom.
                 {% endif %}  Each delineated segment can be considered as displaying a homogeneous mean sensitivity. The color of each segment indicates whether its mean is higher than its two neighbors (purple), lower than its two neighbors (yellow), or higher than one and lower than the other (red).
             </p>
-            <div style="max-height: 600px; overflow-y: hidden; overflow-x: auto; border: 1px solid #ddd; padding: 10px;">
+            <div style="max-height: 600px; overflow-y: hidden; overflow-x: auto; border: 1px solid #ddd; padding: 5px;">
             {% if fig_segmentation %}
             <div class="image-container">
                 {{ fig_segmentation|safe }}
