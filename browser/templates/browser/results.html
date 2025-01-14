@@ -217,7 +217,7 @@
                 <p> Each horizontal line in the plot represents a sequence and its color indicates its percentage of identity to the query (on top). The black curve indicates coverage. </p>
             </div>
             <div class="form-group col px-4">
-                <p> The dark purple and light pink vertical lines mark the impactful-uncertain and uncertain-neutral thresholds. {% if query|slice:":4" != "2025" %}Known missense mutations are depicted as red dots (lethal) or blue triangles (DGRP or DEST2).{% endif %}</p>
+                <p> The dark purple and light pink vertical lines mark the impactful-uncertain and uncertain-neutral thresholds. {% if query|slice:":4" != "2025" %}Known missense mutations are depicted as red dots (lethal) or blue squares or triangles (DGRP or DEST2).{% endif %}</p>
             </div>
         </div>
 
@@ -239,7 +239,7 @@
         </div>
 
 
-        <div class="form-row"> 
+        <div class="form-row" style="flex: 1; autosize: true;"> 
             <h2>Sensitivity profile</h2>
             <p> 
                 {% if query|slice:":4" == "2025" %} 
@@ -248,13 +248,14 @@
                     The pLDDT of the AlphaFold-predicted protein 3D model is shown on top and the mutational sensitivity profile (per-residue GEMME average score) at the bottom.
                 {% endif %}  Each delineated segment can be considered as displaying a homogeneous mean sensitivity. The color of each segment indicates whether its mean is higher than its two neighbors (purple), lower than its two neighbors (yellow), or higher than one and lower than the other (red).
             </p>
-
+            <div style="max-height: 600px; overflow-y: hidden; overflow-x: auto; border: 1px solid #ddd; padding: 10px;">
             {% if fig_segmentation %}
             <div class="image-container">
                 {{ fig_segmentation|safe }}
                 <!--<img src="{{ fig_segmentation }}" alt="Segmentation" class="img-fluid" style="width: 80%; display: block; margin: 0 auto;">-->
             </div>
             {% endif %}
+            </div>
         </div>
 
         <!-- 3D structure -->
