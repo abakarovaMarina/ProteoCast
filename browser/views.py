@@ -605,6 +605,7 @@ def results_view(request):
             showscale=False,
             customdata=(df_sefPrep['pLDDT'].values * 100).astype(int).reshape(1, -1),
             x=list(range(1, n_res + 1)),
+            y=[''],
             hovertemplate="Residue %{x}<br>pLDDT: %{customdata}<extra></extra>",
             xgap=0.15
         )
