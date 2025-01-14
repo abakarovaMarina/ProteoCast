@@ -603,10 +603,10 @@ def results_view(request):
             z=data_matrix,
             colorscale=heatmap_colorscale,
             showscale=False,
-            customdata= df_sefPrep['pLDDT'].values,
+            customdata=df_sefPrep['pLDDT'].values,
             x=list(range(1, n_res + 1)),
             y=[''],
-            hovertemplate="Residue %{x}<br>pLDDT Bin: %{customdata}<extra></extra>",
+            hovertemplate="Residue %{x}<br>pLDDT: %{customdata:.2f}<extra></extra>",
             xgap=0.15
         )
         fig_Seg.add_trace(heatmapSeg, row=1, col=1)
