@@ -342,7 +342,7 @@
         async function addStructure(condition){
 
             viewerInstance.plugin.clear();
-            const _data = await viewerInstance.plugin.builders.data.download({ url: pdbUrls[condition] }, { state: { isGhost: true } });
+            const _data = await viewerInstance.plugin.builders.data.download({ url: pdbUrls[condition] }, { state: { isGhost: false } });
             const trajectory = await viewerInstance.plugin.builders.structure.parseTrajectory(_data, 'pdb');
             const model = await viewerInstance.plugin.builders.structure.createModel(trajectory);
             const structure = await viewerInstance.plugin.builders.structure.createStructure(model);
