@@ -606,7 +606,7 @@ def results_view(request):
             customdata=(df_sefPrep['pLDDT'].values * 100).astype(int).reshape(1, -1),
             x=list(range(1, n_res + 1)),
             y=[''],
-            hovertemplate="Residue %{x}<br>pLDDT: %{customdata:.2f}<extra></extra>",
+            hovertemplate="Residue %{x}<br>pLDDT: %{customdata}<extra></extra>",
             xgap=0.15
         )
         fig_Seg.add_trace(heatmapSeg, row=1, col=1)
