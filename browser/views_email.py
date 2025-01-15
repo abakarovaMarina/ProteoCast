@@ -97,16 +97,21 @@ def upload_file(request):
 #            return handle_upload(request, uploaded_file)
     if request.method == 'POST':
         files = request.FILES
-        if 'file' in files and 'pdbFile' in files:
+        if 'file' in files and 'pdbFile' in files and 'mailaddres' in files:
             uploaded_file = files['file']
             pdb_file = files['pdbFile']
-            return handle_upload(request, uploaded_file, pdb_file)
+            mail = files['mailaddres']
+            return handle_upload(request, uploaded_file, pdb_file, mail)
+        elif 'file' in files and 'mailaddres' in files:
+            main_file = files['file']
+            mail = files['mailaddres']
+            return handle_upload(request, main_file, None, mail)
         elif 'file' in files:
             main_file = files['file']
-            return handle_upload(request, main_file, None)
+            return handle_upload(request, main_file, None, None)
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
-def handle_upload(request, uploaded_file, pdb_file):
+def handle_upload(request, uploaded_file, pdb_file, mail):
     uniprot_id = request.POST.get('uniprotId')
     #if not uniprot_id:
     #    return JsonResponse({'status': 'error', 'message': 'No UniProt ID provided.'}, status=400)
@@ -118,6 +123,18 @@ def handle_upload(request, uploaded_file, pdb_file):
 
     file_path = os.path.join(folder_path, uploaded_file.name)
 
+    if mail != None:
+          try:
+                send_mail(
+                    subject='Your Job ID from ProteoCast',
+                    message=f'Thank you for your submission! Your Job ID is: {job_id}',
+                    from_email='proteocast@gmail.com',  
+                    recipient_list=[mail],
+                    fail_silently=False,
+                  )
+
+          except Exception as e:
+                print(f"Failed to send email")
     try:
         with open(file_path, 'wb+') as destination:
             for chunk in uploaded_file.chunks():
@@ -278,7 +295,7 @@ def results_view(request):
     # Basic checks
     if not data_path or not id_folder or not prot_id:
         message = 'ProteoCast file not found: Protein ID.'
-        return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
+        return render(request, 'browser/error.html', {'message': prot_id}, status=500)
         #return HttpResponse("Missing required path or protein ID.", status=500)
 
     alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y"][::-1]
