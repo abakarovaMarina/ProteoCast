@@ -1,3 +1,6 @@
-# Drosophila Melanogaster Mutational Landscape Web Server 
+# ProteoCast
 
-This project is a web server for displaying the mutational landscape of Drosophila melanogaster.
+
+### You can find our web server at https://proteocast.ijm.fr/
+
+### And the database for *Drosophila melanogaster* at  https://proteocast.ijm.fr/drosophiladb/ 
