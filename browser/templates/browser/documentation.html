@@ -122,7 +122,7 @@
             </li>
             <li> The query sequence do not match a Uniprot entry. You may generate a 3D model along with the alignment using <a href = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"  target="_blank">ColabFold</a> and upload it directly. </li>
           </ul> 
-          <p>Alternatively, you may provide an experimental structure from the <a href="https://www.ebi.ac.uk/pdbe/">Protein Data Bank</a>, or a custom 3D model. In that case, please make sure that the sequence is exactly the same as the query. Any user-defined 3D structure or model should be in PDB format and contain only one protein chain.</p>
+          <p>Alternatively, you may provide an experimental structure from the <a href="https://www.ebi.ac.uk/pdbe/" target='_blank'>Protein Data Bank</a>, or a custom 3D model. In that case, please make sure that the sequence is exactly the same as the query. Any user-defined 3D structure or model should be in PDB format and contain only one protein chain.</p>
         
         <h3> Output </h3>
         <p>Please check our example 
@@ -131,7 +131,7 @@
         <h4>Mutational landscape</h4>
         <p> The predicted mutational landscape is displayed as two interactive heatmaps, where each <b>square</b> corresponds to a given amino acid substitution at a given position. The heatmap dimension is thus 20 by the length of the query protein sequence. The heatmap <b>RAW SCORES</b> contains the numerical estimates predicted by GEMME. The darker the color, the more negative the score, and thus the stronger the predicted effect. The heatmap <b>VARIANT CLASSES</b> indicates whether each mutation is considered as neutral (blue), uncertain (pink) or impactful (red) by ProteoCast. For pre-computed results on the <i>Drosophila melanogaster</i>, we optionally provide a third heatmap <b>SNPs</b> with the raw scores in grey tones and known SNPs highlighted in colors, purple for population polymorphisms and red for lethal mutations.  </p>
         <div class="text-center">
-         <img src="snapshot1_mutland.png" id='panels' class="my-4" alt="mutLand" style="width: 80%; height: auto;">
+         <img src="/static/browser/images/snapshot1_mutland.png" id='panels' class="my-4" alt="mutLand" style="width: 80%; height: auto;">
         </div>
           <p>By hovering the mouse cursor on the representation, a contextual window will specify the mutation and give some information about it(predicted raw score, class...). You may zoom in a particular region of interest.</p>
           <p> The horizontal bar at the bottom of the heatmap reflects the <b>confidence</b> in the predictions. Dark blue indicates reliable predictions, and white unreliable ones. We consider predictions as unreliable when evolutionary information derived from the input alignment is too scarce.
@@ -144,7 +144,7 @@
         <h4>Predicted score distributions for variant classification</h4>
         <p> This plot gives an overview of the predicted score distribution, fitted with a mixture of three Gaussians. To minimize biases, low-confidence predictions are excluded. At one end of the spectrum, mutations close to zero extending down to the median of the middle Gaussian are classified as <b>neutral</b>. At the other end, mutations with very negative scores are classified as <b>impactful</b>, until they are more likely to belong to the middle Gaussian than the leftmost one. Mutations falling in between are categorised as <b>uncertain</b>. The two vertical lines indicate the boundaries of the three classes. </p>
         <div class="text-center">
-          <img src="snapshot2_GMM.png" id='panels' class="my-4" alt="GMM_distrib" style="width: 80%; height: auto;">
+          <img src="/static/browser/images/snapshot2_GMM.png" id='panels' class="my-4" alt="GMM_distrib" style="width: 80%; height: auto;">
         </div>
         
         <h4> Segmented mutational sensitivity profile</h4>
@@ -152,12 +152,12 @@
 
          </p>
   <div class="text-center">
-    <img src="snapshot3_segments.png" id='panels' class="my-4" alt="segmentation profile" style="width: 80%; height: auto;">
+    <img src="/static/browser/images/snapshot3_segments.png" id='panels' class="my-4" alt="segmentation profile" style="width: 80%; height: auto;">
   </div>
         <h4> Mapping of predictions on the 3D structure</h4>
-        <p> This interactive <a href="https://github.com/molstar/pdbe-molstar">Molstar plugin</a> allows you to explore the localisation of any mutation of interest, whether it is on the surface of the protein or within the core, whether it is part of a well-define secondary structure or an unstructured  loop...etc. You can choose between different colour regimes that reflect the original <b>B-factor values (pLDDT for AlphaFold models)</b> or the <b>per-residue mutational sensitivity</b>. For improved clarity, we also provide a binary classification of residues into <b>tolerant</b> or <b>sensitive</b> to mutations. Sensitive residues have more than half of the 19 possible substitutions being impactful. On each representation, you may visualise the segments located in unstructured regions (very low or low pLDDT) and whose sensitivity stands out against their surroundings. They are colored in purple or red, following the color scheme used for the segmented profile above. They are displayed using a cartoon-like representation in which the protein backbone is shown like a clay or <b>putty</b> structure. The size of the tube is proportional to the property being examined (pLDDT, mutational sensitivity or residue class). On the figure below, we can clearly see that the segment containing S146 has higher mutational sensitivity than its surroundings. </p>
+        <p> This interactive <a href="https://github.com/molstar/pdbe-molstar" target='_blank'>Molstar plugin</a> allows you to explore the localisation of any mutation of interest, whether it is on the surface of the protein or within the core, whether it is part of a well-define secondary structure or an unstructured  loop...etc. You can choose between different colour regimes that reflect the original <b>B-factor values (pLDDT for AlphaFold models)</b> or the <b>per-residue mutational sensitivity</b>. For improved clarity, we also provide a binary classification of residues into <b>tolerant</b> or <b>sensitive</b> to mutations. Sensitive residues have more than half of the 19 possible substitutions being impactful. On each representation, you may visualise the segments located in unstructured regions (very low or low pLDDT) and whose sensitivity stands out against their surroundings. They are colored in purple or red, following the color scheme used for the segmented profile above. They are displayed using a cartoon-like representation in which the protein backbone is shown like a clay or <b>putty</b> structure. The size of the tube is proportional to the property being examined (pLDDT, mutational sensitivity or residue class). On the figure below, we can clearly see that the segment containing S146 has higher mutational sensitivity than its surroundings. </p>
   <div class="text-center">
-    <img src="snapshot4_structure.png" id='panels' class="my-4" alt="3D structure" style="width: 80%; height: auto;">
+    <img src="/static/browser/images/snapshot4_structure.png" id='panels' class="my-4" alt="3D structure" style="width: 80%; height: auto;">
   </div>
         <h3> Browser compatibility </h3>
         <p> The server's JavaScript code uses 
