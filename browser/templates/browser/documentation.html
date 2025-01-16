@@ -37,9 +37,6 @@
         .example-button:hover {
             background-color: #0056b3;
         }
-        .text-center {
-          text-align: justify;
-        }
         p a, p a:hover{
           color: #BA839B;
           text-decoration: underline;
@@ -58,6 +55,9 @@
         ul a, ul a{
           color: #BA839B;
           text-decoration: none;
+        }
+        .justify-text {
+          text-align: justify;
         }
 
     </style> 
@@ -105,7 +105,7 @@
       <div class="content">
         <div class="container">
          <br>
-        <p>The <b>ProteoCast Server</b> allows you to rapidly and easily explore how and to what extent missense mutations affect protein function. ProteoCast relies on GEMME, a highly efficient, unsupervised, and fully interpretable variant effect predictor (<a href="https://academic.oup.com/mbe/article/36/11/2604/5548199" target="_blank">Laine et al., 2019</a>). By focusing on how protein residues segregate along the topology of evolutionary trees, GEMME has proven instrumental for studying protein stability, function, and disease mechanisms in several studies -- see, for instance, <a href="https://www.nature.com/articles/s41586-023-06328-6" target="_blank">Tsuboyama et al., 2023</a>. It was extensively tested against over 2.5M experimental measurements (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676" target="_blank">Abakarova et al., 2023</a>, <a href="https://academic.oup.com/mbe/article/36/11/2604/5548199" target="_blank">Laine et al., 2019</a>). It is among the top-performing methods on the widely adopted <a href="https://proteingym.org/" target="_blank">ProteinGym benchmark</a>. </p>
+        <p class="justify-text">The <b>ProteoCast Server</b> allows you to rapidly and easily explore how and to what extent missense mutations affect protein function. ProteoCast relies on GEMME, a highly efficient, unsupervised, and fully interpretable variant effect predictor (<a href="https://academic.oup.com/mbe/article/36/11/2604/5548199" target="_blank">Laine et al., 2019</a>). By focusing on how protein residues segregate along the topology of evolutionary trees, GEMME has proven instrumental for studying protein stability, function, and disease mechanisms in several studies -- see, for instance, <a href="https://www.nature.com/articles/s41586-023-06328-6" target="_blank">Tsuboyama et al., 2023</a>. It was extensively tested against over 2.5M experimental measurements (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676" target="_blank">Abakarova et al., 2023</a>, <a href="https://academic.oup.com/mbe/article/36/11/2604/5548199" target="_blank">Laine et al., 2019</a>). It is among the top-performing methods on the widely adopted <a href="https://proteingym.org/" target="_blank">ProteinGym benchmark</a>. </p>
           
      <!--   <p>For a quick start, you can see our 
           <a href="https://youtu.be/k44U0WNwzC4">YouTube tutorial</a>:</p>
@@ -117,26 +117,26 @@
               <a href="mailto: elodie.laine@sorbonne-universite.fr" class="text-danger">contact us</b></a>!</h5>  
 
               <h3 class="py-2"> Input </h3>
-        <p> Please provide a multiple sequence alignement in FASTA or A3M format. The protein of interest should be the first one in the alignment and should not contain any gap. We recommend generating the alignment with the highly efficient MMseqs2-based protocol implemented in <a href = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"  target="_blank">ColabFold</a> for an optimal balance between speed and accuracy</a>. Using this protocol, the input alignment should contain at least a couple hundred sequences to obtain reliable predictions (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676" target="_blank">Abakarova et al., 2023</a>).</p>
-        <p> Optionally, you can opt for mapping the results onto a 3D structure. The most straightforward way to use this functionality is detailed below:
+        <p class="justify-text"> Please provide a multiple sequence alignement in FASTA or A3M format. The protein of interest should be the first one in the alignment and should not contain any gap. We recommend generating the alignment with the highly efficient MMseqs2-based protocol implemented in <a href = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"  target="_blank">ColabFold</a> for an optimal balance between speed and accuracy</a>. Using this protocol, the input alignment should contain at least a couple hundred sequences to obtain reliable predictions (<a href="https://academic.oup.com/gbe/article/15/11/evad201/7344676" target="_blank">Abakarova et al., 2023</a>).</p>
+        <p class="justify-text" > Optionally, you can opt for mapping the results onto a 3D structure. The most straightforward way to use this functionality is detailed below:
           <ul>
             <li> The query sequence corresponds exactly to a Uniprot entry. You can indicate the Uniprot identifier and ProteoCast will automatically retrieve the corresponding 3D model from the <a href = "https://alphafold.com/" target="_blank">AlphaFold Database</a>.
             </li>
             <li> The query sequence do not match a Uniprot entry. You may generate a 3D model along with the alignment using <a href = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"  target="_blank">ColabFold</a> and upload it directly. </li>
           </ul> 
-          <p>Alternatively, you may provide an experimental structure from the <a href="https://www.ebi.ac.uk/pdbe/" target='_blank'>Protein Data Bank</a>, or a custom 3D model. In that case, please make sure that the sequence is exactly the same as the query. Any user-defined 3D structure or model should be in PDB format and contain only one protein chain.</p>
+          <p class="justify-text">>Alternatively, you may provide an experimental structure from the <a href="https://www.ebi.ac.uk/pdbe/" target='_blank'>Protein Data Bank</a>, or a custom 3D model. In that case, please make sure that the sequence is exactly the same as the query. Any user-defined 3D structure or model should be in PDB format and contain only one protein chain.</p>
         
         <h3> Output </h3>
         <p>Please check our example 
           <a href="https://proteocast.ijm.fr/results/results/?q=job20250108135938" target="_blank">result page</a>. </p>
 
         <h4>Mutational landscape</h4>
-        <p> The predicted mutational landscape is displayed as two interactive heatmaps, where each <b>square</b> corresponds to a given amino acid substitution at a given position. The heatmap dimension is thus 20 by the length of the query protein sequence. The heatmap <b>RAW SCORES</b> contains the numerical estimates predicted by GEMME. The darker the color, the more negative the score, and thus the stronger the predicted effect. The heatmap <b>VARIANT CLASSES</b> indicates whether each mutation is considered as neutral (blue), uncertain (pink) or impactful (red) by ProteoCast. For pre-computed results on the <i>Drosophila melanogaster</i>, we optionally provide a third heatmap <b>SNPs</b> with the raw scores in grey tones and known SNPs highlighted in colors, purple for population polymorphisms and red for lethal mutations.  </p>
+        <p class="justify-text"> The predicted mutational landscape is displayed as two interactive heatmaps, where each <b>square</b> corresponds to a given amino acid substitution at a given position. The heatmap dimension is thus 20 by the length of the query protein sequence. The heatmap <b>RAW SCORES</b> contains the numerical estimates predicted by GEMME. The darker the color, the more negative the score, and thus the stronger the predicted effect. The heatmap <b>VARIANT CLASSES</b> indicates whether each mutation is considered as neutral (blue), uncertain (pink) or impactful (red) by ProteoCast. For pre-computed results on the <i>Drosophila melanogaster</i>, we optionally provide a third heatmap <b>SNPs</b> with the raw scores in grey tones and known SNPs highlighted in colors, purple for population polymorphisms and red for lethal mutations.  </p>
         <div class="text-center">
          <img src="/static/browser/images/snapshot1_mutland.png" id='panels' class="my-4" alt="mutLand" style="width: 80%; height: auto;">
         </div>
-          <p>By hovering the mouse cursor on the representation, a contextual window will specify the mutation and give some information about it (predicted raw score, class...). You may zoom in a particular region of interest.</p>
-          <p> The horizontal bar at the bottom of the heatmap reflects the <b>confidence</b> in the predictions. Dark blue indicates reliable predictions, and white unreliable ones. We consider predictions as unreliable when evolutionary information derived from the input alignment is too scarce.
+          <p class="justify-text">By hovering the mouse cursor on the representation, a contextual window will specify the mutation and give some information about it (predicted raw score, class...). You may zoom in a particular region of interest.</p>
+          <p class="justify-text" > The horizontal bar at the bottom of the heatmap reflects the <b>confidence</b> in the predictions. Dark blue indicates reliable predictions, and white unreliable ones. We consider predictions as unreliable when evolutionary information derived from the input alignment is too scarce.
           </p>
         <h4>Input alignement quality assessment</h4>
         <p>This plot gives an overview of the input alignment, where each horizontal line depicts a sequence and its color indicates its similarity with the query. Gaps correspond to white interruptions. The black curve reports the percentage of sequences that have an amino acid (as opposed to a gap) at each position of the query sequence. This representation is identical to the one used in <a href = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"  target="_blank">ColabFold</a> and we adapted the code from there.</p>
