@@ -286,23 +286,16 @@ def results_view(request):
 
     proteocast_path = f'{data_path}{id_folder}/4.{prot_id}_ProteoCast.csv'
     if not os.path.exists(proteocast_path):
-        message = 'ProteoCast file not found: ProteoCast.csv'
+        message = 'ProteoCast file not found'
         return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
 #        return HttpResponse(f"ProteoCast file not found: {proteocast_path}", status=404)
 
     try:
         df_proteocast = pd.read_csv(proteocast_path)
     except Exception as e:
-        message = 'ProteoCast file not found: ProteoCast.csv'
+        message = 'ProteoCast could not read ProteoCast.csv file'
         return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
 #        return HttpResponse(f"Error reading ProteoCast CSV: {e}", status=500)
-
-    #if 'Variant_class' not in df_proteocast.columns:
-
-    '''required_cols = ["GEMME_LocalConfidence", "Residue", "GEMME_score", "Variant_class", "Mutation"]
-    for col in required_cols:
-        if col not in df_proteocast.columns:
-            return HttpResponse(f"Column '{col}' not found in CSV.", status=500)'''
 
     try:
         df_proteocast['GEMME_LocalConfidence'] = df_proteocast['GEMME_LocalConfidence'].replace({True: 1, False: 0})
@@ -310,29 +303,25 @@ def results_view(request):
                                      .apply(lambda x: x.iloc[0]).tolist()).reshape(1, -1)
     except Exception as e:
         confidence_values = None
-        message = 'ProteoCast file not found: confidence_values'
+        message = 'ProteoCast encountered a problem processing the confidence metric'
         return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
-
-#        return HttpResponse(f"Error while preparing confidence values : {e}", status=500)
-    
+        
     try:
         df = pd.DataFrame(np.array(df_proteocast['GEMME_score']).reshape(20, -1, order='F'))
         df_mut = pd.DataFrame(np.array(df_proteocast['Mutation']).reshape(20, -1, order='F'))
         
     except Exception as e:
         df = None
-        message = 'ProteoCast file not found: GEMME_score'
+        message = 'ProteoCast has not found GEMME_score or Mutation values in the ProteoCast.csv file'
         return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
-#        return HttpResponse(f"Error while preparing GEMME heatmap: {e}", status=500)
     
     try:
         df_classes = pd.DataFrame(np.array(df_proteocast['Variant_class'].replace({'neutral': 1, 'uncertain': 2, 'impactful': 3})).reshape(20, -1, order='F'))
         df_classesStr = pd.DataFrame(np.array(df_proteocast['Variant_class']).reshape(20, -1, order='F'))
     except Exception as e:
         df_classes = None
-        message = 'ProteoCast file not found: Variant_class'
+        message = 'Variant classes are not found in the ProteoCast.csv file'
         return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
-#        return HttpResponse(f"Error while preparing VARAINT class heatmap: {e}", status=500)
 
     variantClasses_colorscale = [
 
