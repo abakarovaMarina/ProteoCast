@@ -132,7 +132,11 @@
 
         <div class="form-row py-4">
             <h5>Here are ProteoCast results for {{ prot_name }}. {% if query|slice:":4" == "2025" %}Your job ID is {{ query }}.{% endif %} If you need help in exploring and interpreting them, please go to our <a href="/documentation" target="_blank" rel="noopener noreferrer">documentation</a>.</h5>
-            <p> {{ warning_message }} </p>
+            {% if warning_message %}
+                <p style="color: orange;">
+                    <span style="color: yellow; font-weight: bold;">&#x26A0;</span> {{ warning_message }}
+                </p>
+            {% endif %}
         </div>
 
         <div class="form-row" style="display: flex; align-items: flex-start;">
