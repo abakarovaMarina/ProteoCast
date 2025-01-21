@@ -318,98 +318,93 @@
                 gemme: "{{ pdb_url_2 }}",
                 residue_class: "{{ pdb_url_3 }}"
             };
-
-            // Define the segments that are 1 (red) or 2 (purple)
-            // in regions of low pLDDT -- we do not load a new structure, 
-            // we directly encode the selections in the page
-            var selectSections = {{ select_segments | default:"[]"|safe}};
-            console.log("Segments to highlight:", selectSections);
-            // Options for the Mol* Viewer
-            var options = {
-                customData: { url: '', format: 'pdb' }, // URL will be dynamically updated
-                alphafoldView: true,
-                bgColor: { r: 255, g: 255, b: 255 },
-                hideCanvasControls: [
-                    'selection', 'animation', 'controlToggle', 'controlInfo', 
-                    'controlZoom', 'controlRotate', 'controlTranslate', 
-                    'controlReset', 'controlFullscreen'
-                ],
-                layoutIsExpanded: false,
-                hideControls: true, // Hide the toolbar
-                visualStyle: {
-                    polymer: {type: 'cartoon', size:'uniform'},
-                },
-            };
-
-        // Function to load the structure and apply coloring
-        async function initialiseView(condition='bfactor') {
-
-            console.log("Loading structure for condition:", condition);
-            console.log("PDB URL:", pdbUrls[condition]);
-            options.customData.url = pdbUrls[condition]; // Set the PDB URL
-            console.log("Applying B-Factor coloring");
-            options.visualStyle.polymer.color = 'plddt-confidence';
-            // Wait for the render process to complete
-            await viewerInstance.render(viewerContainer, options);
-            // Now it's safe to access properties
-            console.log("Viewer instance initialized");
-            console.log(viewerInstance.plugin.canvas3d); // Should now exist
-            viewerInstance.plugin.canvas3d?.setProps({ camera: { manualReset: true } });
-        }
-
-        async function addStructure(condition){
-
-            viewerInstance.plugin.clear();
-            const _data = await viewerInstance.plugin.builders.data.download({ url: pdbUrls[condition] }, { state: { isGhost: false } });
-            const trajectory = await viewerInstance.plugin.builders.structure.parseTrajectory(_data, 'pdb');
-            const model = await viewerInstance.plugin.builders.structure.createModel(trajectory);
-            const structure = await viewerInstance.plugin.builders.structure.createStructure(model);
-            const all = await viewerInstance.plugin.builders.structure.tryCreateComponentStatic(structure, 'all');
-            if (all) {
-                if (condition === 'bfactor') {
-                    await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'plddt-confidence'});
-                }
-                else{
-                    await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'uncertainty'});
-                }
-            }
-        }
-
-        // Function to load the structure and apply coloring
-        async function loadStructureAndColor(condition) {
-            console.log("Loading structure for condition:", condition);
-            console.log("PDB URL:", pdbUrls[condition]);
-            addStructure(condition);
-        }
         
-        var checkbox = document.querySelector('input[name="segments"]');
-        checkbox.addEventListener('change', function() {
-            if (this.checked) {
-                console.log("Checkbox is checked..");
-                viewerInstance.visual.select({data: selectSections});
-
-                } else {
-                    console.log("Checkbox is not checked..");
-                    viewerInstance.visual.clearSelection();
-                     }
-                 });
-
-            // Add event listeners to the radio buttons
-           document.querySelectorAll('input[name="colorToggle"]').forEach(button => {
-                button.addEventListener('change', function () {
-                    // Get the camera state -- not needed anymore
-                    /* const cameraState = viewerInstance.plugin.canvas3d?.camera.getSnapshot()
-                    console.log("camera state before");
-                    console.log(cameraState);*/
-                    checkbox.checked = false;
-                    loadStructureAndColor(this.value);
+            // Check if the primary PDB URL is empty
+            if (pdbUrls.bfactor === '') {
+                console.log("No PDB URL provided for bfactor. Rendering an empty Mol* viewer.");
+                viewerInstance.render(viewerContainer, { 
+                    bgColor: { r: 255, g: 255, b: 255 },
+                    hideCanvasControls: true,
+                    layoutIsExpanded: false,
+                    hideControls: true
                 });
-            });
-
+            } else {
+                // Define the segments that are 1 (red) or 2 (purple)
+                var selectSections = {{ select_segments | default:"[]"|safe }};
+                console.log("Segments to highlight:", selectSections);
         
-            // Initial load (default to B-Factors)
-           initialiseView();
-
+                // Options for the Mol* Viewer
+                var options = {
+                    customData: { url: '', format: 'pdb' }, // URL will be dynamically updated
+                    alphafoldView: true,
+                    bgColor: { r: 255, g: 255, b: 255 },
+                    hideCanvasControls: [
+                        'selection', 'animation', 'controlToggle', 'controlInfo', 
+                        'controlZoom', 'controlRotate', 'controlTranslate', 
+                        'controlReset', 'controlFullscreen'
+                    ],
+                    layoutIsExpanded: false,
+                    hideControls: true, // Hide the toolbar
+                    visualStyle: {
+                        polymer: {type: 'cartoon', size: 'uniform'},
+                    },
+                };
+        
+                // Function to load the structure and apply coloring
+                async function initialiseView(condition = 'bfactor') {
+                    console.log("Loading structure for condition:", condition);
+                    console.log("PDB URL:", pdbUrls[condition]);
+                    options.customData.url = pdbUrls[condition]; // Set the PDB URL
+                    options.visualStyle.polymer.color = 'plddt-confidence';
+                    await viewerInstance.render(viewerContainer, options);
+                    console.log("Viewer instance initialized");
+                    viewerInstance.plugin.canvas3d?.setProps({ camera: { manualReset: true } });
+                }
+        
+                async function addStructure(condition) {
+                    viewerInstance.plugin.clear();
+                    const _data = await viewerInstance.plugin.builders.data.download({ url: pdbUrls[condition] }, { state: { isGhost: false } });
+                    const trajectory = await viewerInstance.plugin.builders.structure.parseTrajectory(_data, 'pdb');
+                    const model = await viewerInstance.plugin.builders.structure.createModel(trajectory);
+                    const structure = await viewerInstance.plugin.builders.structure.createStructure(model);
+                    const all = await viewerInstance.plugin.builders.structure.tryCreateComponentStatic(structure, 'all');
+                    if (all) {
+                        if (condition === 'bfactor') {
+                            await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'plddt-confidence'});
+                        } else {
+                            await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'uncertainty'});
+                        }
+                    }
+                }
+        
+                async function loadStructureAndColor(condition) {
+                    console.log("Loading structure for condition:", condition);
+                    console.log("PDB URL:", pdbUrls[condition]);
+                    addStructure(condition);
+                }
+        
+                var checkbox = document.querySelector('input[name="segments"]');
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        console.log("Checkbox is checked..");
+                        viewerInstance.visual.select({data: selectSections});
+                    } else {
+                        console.log("Checkbox is not checked..");
+                        viewerInstance.visual.clearSelection();
+                    }
+                });
+        
+                // Add event listeners to the radio buttons
+                document.querySelectorAll('input[name="colorToggle"]').forEach(button => {
+                    button.addEventListener('change', function () {
+                        checkbox.checked = false;
+                        loadStructureAndColor(this.value);
+                    });
+                });
+        
+                // Initial load (default to B-Factors)
+                initialiseView();
+            }
         </script>
        
     </div> 
@@ -430,11 +425,10 @@
             }
           });
         });
-        </script>
-
-    
-
-          
+    </script>
 
     </div>
   </body></html>
+
+
+  
