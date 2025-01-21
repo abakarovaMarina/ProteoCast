@@ -332,7 +332,7 @@
                 // Define the segments that are 1 (red) or 2 (purple)
                 var selectSections = {{ select_segments | default:"[]"|safe }};
                 console.log("Segments to highlight:", selectSections);
-        
+                console.log("PDB URLs:", pdbUrls.bfactors);
                 // Options for the Mol* Viewer
                 var options = {
                     customData: { url: '', format: 'pdb' }, // URL will be dynamically updated
