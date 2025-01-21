@@ -318,8 +318,8 @@
                 gemme: "{{ pdb_url_2 }}",
                 residue_class: "{{ pdb_url_3 }}"
             };
-            console.log('BEG', pdbUrls);
-            console.log('ONE', pdbUrls['bfactor'] == null); 
+            console.log('BEG', pdbUrls, type(pdbUrls['bfactors']));
+            console.log('ONE', pdbUrls['bfactor'] == 'None'); 
             // Check if the primary PDB URL is empty
             if (!pdbUrls['bfactor']) {
                 console.log("No PDB URL provided for bfactor. Rendering an empty Mol* viewer.");
