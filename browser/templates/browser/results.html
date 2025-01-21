@@ -318,7 +318,7 @@
                 gemme: "{{ pdb_url_2 }}",
                 residue_class: "{{ pdb_url_3 }}"
             };
-            console.log('BEG', pdbUrls, type(pdbUrls['bfactors']));
+            console.log('BEG', pdbUrls, typeof pdbUrls['bfactor']);
             console.log('ONE', pdbUrls['bfactor'] == 'None'); 
             // Check if the primary PDB URL is empty
             if (!pdbUrls['bfactor']) {
