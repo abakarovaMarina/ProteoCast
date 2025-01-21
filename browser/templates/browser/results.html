@@ -321,7 +321,7 @@
             console.log('BEG', pdbUrls, typeof pdbUrls['bfactor']);
             console.log('ONE', pdbUrls['bfactor'] == 'None'); 
             // Check if the primary PDB URL is empty
-            if (!pdbUrls['bfactor']) {
+            if (pdbUrls['bfactor']=='None') {
                 console.log("No PDB URL provided for bfactor. Rendering an empty Mol* viewer.");
                 viewerInstance.render(viewerContainer, { 
                     bgColor: { r: 255, g: 255, b: 255 },
