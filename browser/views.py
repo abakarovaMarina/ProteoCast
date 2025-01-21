@@ -569,10 +569,10 @@ def results_view(request):
             row_heights=[0.1, 0.9],
             vertical_spacing=0.05,
         )
-
+        if os.path.exists(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'):
+                        return HttpResponse(f'Segmentation file does not exist {df_sefPrep.columns}', status=404)
         if 'pLDDT' in df_sefPrep.columns:
-            if os.path.exists(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'):
-                return HttpResponse(f'Segmentation file does not exist {bfactors}', status=404)
+            
             # Prepare the one-row heatmap data
             bfactors = df_sefPrep['pLDDT'].tolist()
             # Define palette and bin ranges
