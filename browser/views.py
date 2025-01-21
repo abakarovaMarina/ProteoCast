@@ -456,7 +456,8 @@ def results_view(request):
             colorscale=confidence_colorscale,
             showscale=False,
             hovertemplate="%{z}<extra></extra>",
-            xgap=0.2
+            xgap=0.2, 
+            zmin=0, zmax=1
         )
         scatter_border = go.Scatter(
             x=[0.5, df.shape[1]+0.5, df.shape[1]+0.5, 0.5, 0.5],
@@ -555,7 +556,7 @@ def results_view(request):
 
 
 
-    ###### SEGMENTATINO TRY ######
+    ###### SEGMENTATION ######
 
     if os.path.exists(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'):
         df_segmentation = pd.read_csv(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv')
@@ -619,7 +620,7 @@ def results_view(request):
             x=list(range(1, n_res + 1)),
             y=[''],
             hovertemplate="Residue %{x}<br>pLDDT: %{customdata}<extra></extra>",
-            xgap=0.15
+            xgap=0.15,zmin=0, zmax=1
         )
         fig_Seg.add_trace(heatmapSeg, row=1, col=1)
         # Add the GEMME trace plot
