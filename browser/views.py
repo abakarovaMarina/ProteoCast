@@ -452,7 +452,7 @@ def results_view(request):
     if confidence_values is not None:
         heatmap_confidence = go.Heatmap(
             z=confidence_values,
-            x=list(range(1, df_classes.shape[1])),
+            x=list(range(1, df.shape[1])),
             colorscale=confidence_colorscale,
             showscale=False,
             hovertemplate="%{z}<extra></extra>",
@@ -686,11 +686,11 @@ def results_view(request):
         # Generate HTML for Django
         fig_segmentation = fig_Seg.to_html(full_html=False)
 
-
+    
     warning_message = ''
-    if set(confidence_values) == {0}:
+    if set(confidence_values[0]) == {0}:
         warning_message = 'Warning Unreliable Predictions: Evolutionary infomration in the provided MSA is scarse (<200 sequences) and insufficient to provide reliable predictions.'
-        
+
     ## segmentation data for 3D
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv') 
 
