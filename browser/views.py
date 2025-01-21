@@ -620,7 +620,7 @@ def results_view(request):
             x=list(range(1, n_res + 1)),
             y=[''],
             hovertemplate="Residue %{x}<br>pLDDT: %{customdata}<extra></extra>",
-            xgap=0.15,zmin=0.3, zmax=1
+            xgap=0.15, zmin=0, zmax=3
         )
         fig_Seg.add_trace(heatmapSeg, row=1, col=1)
         # Add the GEMME trace plot
