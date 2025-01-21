@@ -562,27 +562,50 @@ def results_view(request):
         df_segmentation = pd.read_csv(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv')
         df_sefPrep = pd.read_csv(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv')
 
-        # Prepare the one-row heatmap data
-        bfactors = df_sefPrep['pLDDT'].tolist()
-        # Define palette and bin ranges
-        palette_bis = {0: '#FF7D45', 1: '#FFDB13', 2: '#65CBF3', 3: '#0053D6'}
-        bins = [0, 0.5, 0.7, 0.9, 1]
-        df_plddt = pd.DataFrame(bfactors, columns=['value'])
+        # Initialize plot
+        fig_Seg = make_subplots(
+            rows=2, cols=1,
+            shared_xaxes=True,
+            row_heights=[0.1, 0.9],
+            vertical_spacing=0.05,
+        )
 
-        # Bin the values into groups
-        df_plddt['group'] = pd.cut(df_plddt['value'], bins=bins, labels=[0, 1, 2, 3], right=False)
-        grouped_values_numeric = np.array(df_plddt['group'])
+        if 'pLDDT' in df_sefPrep.columns:
+            # Prepare the one-row heatmap data
+            bfactors = df_sefPrep['pLDDT'].tolist()
+            # Define palette and bin ranges
+            palette_bis = {0: '#FF7D45', 1: '#FFDB13', 2: '#65CBF3', 3: '#0053D6'}
+            bins = [0, 0.5, 0.7, 0.9, 1]
+            df_plddt = pd.DataFrame(bfactors, columns=['value'])
 
-        # Reshape to a one-row matrix
-        data_matrix = grouped_values_numeric.reshape(1, -1)
+            # Bin the values into groups
+            df_plddt['group'] = pd.cut(df_plddt['value'], bins=bins, labels=[0, 1, 2, 3], right=False)
+            grouped_values_numeric = np.array(df_plddt['group'])
 
-        # Map colors
-        heatmap_colorscale = [
-            [0, '#FF7D45'],  # Bin 0
-            [0.33, '#FFDB13'],  # Bin 1
-            [0.66, '#65CBF3'],  # Bin 2
-            [1, '#0053D6']  # Bin 3
-        ]
+            # Reshape to a one-row matrix
+            data_matrix = grouped_values_numeric.reshape(1, -1)
+
+            # Map colors
+            heatmap_colorscale = [
+                [0, '#FF7D45'],  # Bin 0
+                [0.33, '#FFDB13'],  # Bin 1
+                [0.66, '#65CBF3'],  # Bin 2
+                [1, '#0053D6']  # Bin 3
+            ]
+
+            # Add the one-row heatmap
+            heatmapSeg = go.Heatmap(
+                z=data_matrix,
+                colorscale=heatmap_colorscale,
+                showscale=False,
+                customdata=(df_sefPrep['pLDDT'].values * 100).astype(int).reshape(1, -1),
+                x=list(range(1, len(bfactors) + 1)),
+                y=[''],
+                hovertemplate="Residue %{x}<br>pLDDT: %{customdata}<extra></extra>",
+                xgap=0.15, zmin=0, zmax=3
+            )
+            fig_Seg.add_trace(heatmapSeg, row=1, col=1)
+
         # Prepare the trace plot data
         GEMME_mean = df_sefPrep['GEMME_mean'].tolist()
         n_res = len(GEMME_mean)
@@ -605,26 +628,7 @@ def results_view(request):
             'state': list(gemme['state'])
         })
 
-        fig_Seg = make_subplots(
-                rows=2, cols=1,
-                shared_xaxes=True,
-                row_heights=[0.1, 0.9],
-                vertical_spacing=0.05,
-            )
-        # Add the one-row heatmap
-        heatmapSeg = go.Heatmap(
-            z=data_matrix,
-            colorscale=heatmap_colorscale,
-            showscale=False,
-            customdata=(df_sefPrep['pLDDT'].values * 100).astype(int).reshape(1, -1),
-            x=list(range(1, n_res + 1)),
-            y=[''],
-            hovertemplate="Residue %{x}<br>pLDDT: %{customdata}<extra></extra>",
-            xgap=0.15, zmin=0, zmax=3
-        )
-        fig_Seg.add_trace(heatmapSeg, row=1, col=1)
         # Add the GEMME trace plot
-
         trace = go.Scatter(
             x=signal['x'],
             y=signal['y'],
@@ -656,9 +660,10 @@ def results_view(request):
                 line=dict(color="red", width=2),
                 row=2, col=1
             )
-                # Define the frame for the second plot
+
+        # Define the frame for the second plot
         scatter_frame = go.Scatter(
-            x=[0.5, df.shape[1] + 0.5, df.shape[1] + 0.5, 0.5, 0.5],
+            x=[0.5, len(GEMME_mean) + 0.5, len(GEMME_mean) + 0.5, 0.5, 0.5],
             y=[0, 0, 1, 1, 0],  # The y-range matches the axis limits (0 to 1)
             mode="lines",
             line=dict(color="black", width=2),  # Adjust the color and width of the frame
@@ -669,23 +674,20 @@ def results_view(request):
         # Add the frame to the second subplot
         fig_Seg.add_trace(scatter_frame, row=2, col=1)
 
-
         # Update layout
         fig_Seg.update_layout(
             width=1500,
             height=600,
-            plot_bgcolor="white", # Set the background color to white
+            plot_bgcolor="white",  # Set the background color to white
             paper_bgcolor="white",
-            #title_text="Interactive Plot with Heatmap and GEMME Trace",
-            #xaxis=dict(title="Residue Index"),
             xaxis2=dict(title="Residue Index"),
-            #yaxis2=dict(title="Average GEMME Score"),
-            yaxis2=dict(title="Average GEMME Score", range=[0, 1],),
+            yaxis2=dict(title="Average GEMME Score", range=[0, 1]),
             hovermode="x unified"
         )
 
         # Generate HTML for Django
         fig_segmentation = fig_Seg.to_html(full_html=False)
+
 
     
     warning_message = ''
