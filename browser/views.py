@@ -148,7 +148,7 @@ def handle_upload(request, uploaded_file, pdb_file):
 #SBATCH --output=slurm_%j.out
 #SBATCH --error=slurm_%j.err
                          
-docker run --rm -v "/data/jobs/{job_id}:/opt/job" elodielaine/gemme:gemme /bin/bash -c "cd / && bash run.sh {uploaded_file.name} {uniprot_id}"
+docker run --rm -v "/data/jobs/{job_id}:/opt/job" marinaabakarova/proteocast /bin/bash -c "cd / && bash run.sh {uploaded_file.name} {uniprot_id}"
 """)
         os.chmod(run_docker_script, 0o755)
         os.chdir(folder_path)
