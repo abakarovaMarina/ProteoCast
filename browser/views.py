@@ -571,6 +571,8 @@ def results_view(request):
         )
 
         if 'pLDDT' in df_sefPrep.columns:
+            if os.path.exists(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'):
+                return HttpResponse(f'Segmentation file does not exist {bfactors}', status=404)
             # Prepare the one-row heatmap data
             bfactors = df_sefPrep['pLDDT'].tolist()
             # Define palette and bin ranges
@@ -605,8 +607,7 @@ def results_view(request):
             )
             fig_Seg.add_trace(heatmapSeg, row=1, col=1)
 
-        if os.path.exists(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'):
-            return HttpResponse(f'Segmentation file does not exist {bfactors}', status=404)
+        
         
         # Prepare the trace plot data
         GEMME_mean = df_sefPrep['GEMME_mean'].tolist()
