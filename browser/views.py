@@ -688,6 +688,8 @@ def results_view(request):
             yaxis2=dict(title="Average GEMME Score", range=[0, 1]),
             hovermode="x unified"
         )
+        if os.path.exists(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'):
+            return HttpResponse(f'Segmentation file does not exist {df_sefPrep.loc[2]}', status=404) 
 
         # Generate HTML for Django
         fig_segmentation = fig_Seg.to_html(full_html=False)
