@@ -183,6 +183,8 @@ def segmentation_dico(path_segF,path_bfactors):
     dico_colors = {2:{'r': 182, 'g': 132, 'b': 187 },1:{'r': 243, 'g': 119, 'b': 140 }}
     df_segmentation = pd.read_csv(path_segF)
     df_bfactors = pd.read_csv(path_bfactors)
+    if 'pLDDT' not in df_bfactors.columns:
+        return None
 
     resi_70 = np.array(df_bfactors[df_bfactors['pLDDT'] <= 0.7].index)+1
     seg_dico=[]
@@ -676,8 +678,6 @@ def results_view(request):
 
         # Add the frame to the second subplot
         fig_Seg.add_trace(scatter_frame, row=2, col=1)
-        if os.path.exists(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'):
-            return HttpResponse(f'Segmentation file does not exist {df_sefPrep.loc[2]}', status=404) 
         # Update layout
         fig_Seg.update_layout(
             width=1500,
@@ -688,9 +688,6 @@ def results_view(request):
             yaxis2=dict(title="Average GEMME Score", range=[0, 1]),
             hovermode="x unified"
         )
-        if os.path.exists(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'):
-            return HttpResponse(f'Segmentation file does not exist {df_sefPrep.loc[2]}', status=404) 
-
         # Generate HTML for Django
         fig_segmentation = fig_Seg.to_html(full_html=False)
 
