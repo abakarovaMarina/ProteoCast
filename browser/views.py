@@ -690,7 +690,7 @@ def results_view(request):
     
     warning_message = ''
     if set(confidence_values[0]) == {0}:
-        warning_message = 'Warning Unreliable Predictions: Evolutionary infomration in the provided MSA is scarse (<200 sequences) and insufficient to provide reliable predictions.'
+        warning_message = 'Unreliable Predictions Warning: Evolutionary infomration in the provided MSA is scarse (<200 sequences) and insufficient to provide reliable predictions.'
 
     ## segmentation data for 3D
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv') 
