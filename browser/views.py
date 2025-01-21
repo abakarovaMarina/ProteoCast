@@ -622,8 +622,7 @@ def results_view(request):
             'x': list(gemme['end'][:-1]),
             'type': ['GEMME'] * (len(gemme) - 1)
         })
-        if os.path.exists(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'):
-            return HttpResponse(f'Segmentation file does not exist {df_sefPrep.loc[2]}', status=404) 
+        
         mean = pd.DataFrame({
             'x': list(gemme['start'] - 1),
             'xend': list(gemme['end']),
@@ -677,7 +676,8 @@ def results_view(request):
 
         # Add the frame to the second subplot
         fig_Seg.add_trace(scatter_frame, row=2, col=1)
-
+        if os.path.exists(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'):
+            return HttpResponse(f'Segmentation file does not exist {df_sefPrep.loc[2]}', status=404) 
         # Update layout
         fig_Seg.update_layout(
             width=1500,
