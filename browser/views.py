@@ -687,7 +687,10 @@ def results_view(request):
         fig_segmentation = fig_Seg.to_html(full_html=False)
 
 
-
+    warning_message = ''
+    if set(confidence_values) == {0}:
+        warning_message = 'Warning Unreliable Predictions: Evolutionary infomration in the provided MSA is scarse (<200 sequences) and insufficient to provide reliable predictions.'
+        
     ## segmentation data for 3D
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv') 
 
@@ -704,6 +707,7 @@ def results_view(request):
         'fig_msarep': fig_msarep,
         'fig_segmentation': fig_segmentation,
         'select_segments': seg_dico,
+        'warning_message':warning_message,
     })
 
 def download_folder(request, fbpp_id):
