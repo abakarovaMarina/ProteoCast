@@ -571,8 +571,7 @@ def results_view(request):
         )
         
         if 'pLDDT' in df_sefPrep.columns:
-            if not os.path.exists(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'):
-                return HttpResponse(f'Segmentation file does not exist {df_sefPrep.loc[2]}', status=404)
+            
             # Prepare the one-row heatmap data
             bfactors = df_sefPrep['pLDDT'].tolist()
             # Define palette and bin ranges
@@ -623,6 +622,8 @@ def results_view(request):
             'x': list(gemme['end'][:-1]),
             'type': ['GEMME'] * (len(gemme) - 1)
         })
+        if os.path.exists(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'):
+            return HttpResponse(f'Segmentation file does not exist {df_sefPrep.loc[2]}', status=404) 
         mean = pd.DataFrame({
             'x': list(gemme['start'] - 1),
             'xend': list(gemme['end']),
