@@ -561,7 +561,8 @@ def results_view(request):
     if os.path.exists(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'):
         df_segmentation = pd.read_csv(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv')
         df_sefPrep = pd.read_csv(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv')
-
+        if os.path.exists(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'):
+            return HttpResponse("Segmentation file does not exist", status=404)
         # Initialize plot
         fig_Seg = make_subplots(
             rows=2, cols=1,
