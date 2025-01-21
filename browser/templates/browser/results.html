@@ -322,7 +322,7 @@
             // Check if the primary PDB URL is empty
             if (pdbUrls['bfactor']=='None') {
                 console.log("No PDB URL provided for bfactor. Rendering an empty Mol* viewer.");
-                viewerInstance.render(viewerContainer, { hideControls: true });
+
             } else {
                 // Define the segments that are 1 (red) or 2 (purple)
                 var selectSections = {{ select_segments | default:"[]"|safe }};
