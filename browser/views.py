@@ -443,7 +443,8 @@ def results_view(request):
                 [1, "rgba(0,0,255,0.7)"],  # Blue continued
             ],
             showscale=False,
-            hoverinfo="skip"  # Skip hover info for the highlight layer
+            hoverinfo="skip",  # Skip hover info for the highlight layer
+            zmin=0, zmax=2
         )
 
         # Add traces to the figure
