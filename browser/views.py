@@ -144,7 +144,7 @@ def handle_upload(request, uploaded_file, pdb_file):
 #SBATCH --time=01:00:00
 #SBATCH --job-name=test
 #SBATCH --mail-type=END
-#SBATCH --mail-user=abakamarina@gmail.com
+#SBATCH --mail-user=marina.abakarova@sorbonne-universite.fr
 #SBATCH --output=slurm_%j.out
 #SBATCH --error=slurm_%j.err
                          
