@@ -438,8 +438,7 @@ def results_view(request):
             y=alph,
             colorscale=[
                 [0, "rgba(0,0,0,0)"],  # Transparent for no highlight
-                [ 1 / 3, "rgba(255,50,50,1)"],  # Red for 'Lethal'
-                [2 / 3, "rgba(0,0,255,0.8)"],  # Blue for 'DEST2' or 'DGRP'
+                [ 1 / 2, "rgba(255,50,50,1)"],  # Red for 'Lethal'[2 / 3, "rgba(0,0,255,0.8)"],  # Blue for 'DEST2' or 'DGRP'
                 [1, "rgba(0,0,255,0.7)"],  # Blue continued
             ],
             showscale=False,
