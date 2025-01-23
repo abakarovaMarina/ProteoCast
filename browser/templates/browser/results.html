@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -88,48 +89,44 @@
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NT9G797M"
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NT9G797M"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-  <div class="page">
-    <div class="header">
-      <nav class="navbar navbar-expand-lg navbar-light text-white">
-        <a class="navbar-brand" href="/results/search/">
-          <h1 class="text-white text-decoration-none">ProteoCast</h1>
-        </a>
-        <button 
-          class="navbar-toggler" 
-          type="button" 
-          aria-label="Toggle navigation" 
-          data-toggle="collapse" 
-          data-target="#navbarNav" 
-          aria-controls="navbarNav" 
-          aria-expanded="false" 
-          aria-haspopup="true">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-          <ul class="navbar-nav ml-auto" id="navbarItems">
-            <li class="nav-item" id="nav-home">
-              <a class="nav-link text-white" href="/results/search/">Home</a>
-            </li>
-            <li class="nav-item" id="nav-documentation">
-              <a class="nav-link text-white" href="/documentation">Documentation</a>
-            </li>
-            <li class="nav-item" id="nav-download">
-              <a class="nav-link text-white" href="/download">Download</a>
-            </li>
-            <li class="nav-item" id="nav-past-jobs">
-              <a class="nav-link text-white" href="/past_jobs">Past Jobs</a>
-            </li>
-            <li class="nav-item" id="nav-publications">
-              <a class="nav-link text-white" href="/publications">Publications</a>
-            </li>
-          </ul>
-        </div>
-      </nav>
-    </div>
-        </header>
+<div class="page">
+      <div class="header">
+        <nav class="navbar navbar-expand-lg navbar-light text-white">
+          <a class="navbar-brand" href="{% url 'search' %}">
+            <h1 class="text-white text-decoration-none">ProteoCast 
+              <span style="font-size: 0.6em; color: white;"> for {{ prot_name }}</span></h1>
+          </a>
+          <button 
+              class="navbar-toggler" 
+              type="button" 
+              aria-label="Toggle navigation" 
+              data-toggle="collapse" 
+              data-target="#navbarNav" 
+              aria-controls="navbarNav" 
+              aria-expanded="false" 
+              aria-haspopup="true">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav ml-auto" id="navbarItems">
+              <li class="nav-item" id="nav-home">
+                <a href="{% url 'download_folder' fbpp_id=query %}" class="download-button">
+                <button>
+                   <img src="{% static 'browser/images/download_icon.png' %}" alt="Download Icon">
+                    Download Results
+                </button>
+               </a>  
+             </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      </header>
+
+
       <div class="content">
         <div class="container-fluid" style="width:95%;">
 
