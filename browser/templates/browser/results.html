@@ -25,6 +25,16 @@
     <!-- Molstar CSS & JS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pdbe-molstar@latest/build/pdbe-molstar-light.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pdbe-molstar@latest/build/pdbe-molstar-plugin.js"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+
+
     <style>
         .navbar {
             background-color: #4F80C0;
@@ -99,17 +109,9 @@
             <h1 class="text-white text-decoration-none">ProteoCast 
               <span style="font-size: 0.6em; color: white;"> for {{ prot_name }}</span></h1>
           </a>
-          <button 
-              class="navbar-toggler" 
-              type="button" 
-              aria-label="Toggle navigation" 
-              data-toggle="collapse" 
-              data-target="#navbarNav" 
-              aria-controls="navbarNav" 
-              aria-expanded="false" 
-              aria-haspopup="true">
-              <span class="navbar-toggler-icon"></span>
-            </button>
+          <button class="navbar-toggler" type="button" aria-label="Toggle navigation" aria-controls="navbarNav"  data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-haspopup="true">
+            <span class="navbar-toggler-icon"></span>
+          </button>
           <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
             <ul class="navbar-nav ml-auto" id="navbarItems">
               <li class="nav-item" id="nav-home">
