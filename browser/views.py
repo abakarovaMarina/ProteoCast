@@ -660,7 +660,7 @@ def results_view(request):
                 type="line",
                 x0=row['x']+0.5, x1=row['xend']+0.5,
                 y0=row['y'], y1=row['y'],
-                line=dict(color="teal", width=2),
+                line=dict(color="skyblue", width=2),
                 row=2, col=1
             )
 
