@@ -392,6 +392,7 @@ def results_view(request):
 
         # --- SNPs heatmap
     if df_snps is not None:
+        df_snps = df_snps.loc[df_snps['Set_name']!='Hypomorphic'].copy()
         fig_SNPs = make_subplots(
             rows=2, cols=1,
             shared_xaxes=True,
