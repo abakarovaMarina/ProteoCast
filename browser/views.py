@@ -638,7 +638,7 @@ def results_view(request):
             x=signal['x'],
             y=signal['y'],
             mode='lines',
-            line=dict(color='blue'),
+            line=dict(color='#2777B4'),  # Changed color to green in hexadecimal
             showlegend=False,
             hovertemplate="Residue %{x}<br>GEMME Score: %{y:.2f}<extra></extra>"
         )
@@ -648,11 +648,19 @@ def results_view(request):
         for _, row in mean.iterrows():
             fig_Seg.add_shape(
                 type="rect",
-                x0=row['x'], x1=row['xend'],
+                x0=row['x']+0.5, x1=row['xend']+0.5,
                 y0=0, y1=max(GEMME_mean),
                 line=dict(width=0),
                 fillcolor='white' if row['state'] == 0 else 'red' if row['state'] == 1 else 'purple',
                 opacity=0.1,
+                row=2, col=1
+            )
+            
+            fig_Seg.add_shape(
+                type="line",
+                x0=row['x']+0.5, x1=row['xend']+0.5,
+                y0=row['y'], y1=row['y'],
+                line=dict(color="teal", width=2),
                 row=2, col=1
             )
 
@@ -660,12 +668,13 @@ def results_view(request):
         for _, row in cp.iterrows():
             fig_Seg.add_shape(
                 type="line",
-                x0=row['x'], x1=row['x'],
+                x0=row['x']+0.5, x1=row['x']+0.5,
                 y0=0, y1=max(GEMME_mean),
                 line=dict(color="red", width=2),
                 row=2, col=1
             )
-
+            # Add horizontal lines for each segment
+        
         # Define the frame for the second plot
         scatter_frame = go.Scatter(
             x=[0.5, len(GEMME_mean) + 0.5, len(GEMME_mean) + 0.5, 0.5, 0.5],
@@ -695,7 +704,7 @@ def results_view(request):
     
     warning_message = ''
     if set(confidence_values[0]) == {0}:
-        warning_message = 'Unreliable Predictions Warning: Evolutionary infomration in the provided MSA is scarse (<200 sequences) and insufficient to provide reliable predictions.'
+        warning_message = 'Unreliable Predictions Warning: Evolutionary information in the provided MSA is scarse (<200 sequences) and insufficient to provide reliable predictions.'
 
     ## segmentation data for 3D
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv') 
