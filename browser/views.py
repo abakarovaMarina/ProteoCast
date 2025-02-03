@@ -229,7 +229,8 @@ def results_view(request):
     if not prot_name:
         return HttpResponse(f'Please provide a protein name.')
     
-    pdb_id = '' 
+    pdb_id = ''
+    msa_file_job = ''
     ## job
     if (prot_name[:3] == 'job'):
         data_path = '/data/jobs/'
@@ -244,6 +245,10 @@ def results_view(request):
                 prot_id = '_'.join(file_name.split('.')[1].split('_')[:-1])  # Extract protein ID 
             if ('pdb' in file_name) and ('GEMME' not in file_name):
                 pdb_id = file_name.split('.')[0]
+            if ('a3m' in file_name):
+                msa_file_job = file_name
+            elif ('2.ali' in file_name):
+                msa_file_job = file_name[5:] 
     ## drosophila db
     else:
         # Only for the fly
@@ -709,15 +714,7 @@ def results_view(request):
 
     ## segmentation data for 3D
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv') 
-    
-    ## add msa name and pdb used for the job
-    if request.method == 'POST':
-        files = request.FILES
-        uploaded_file = files['file']
-        if 'pdbFile' in files:
-            pdb_file = files['pdbFile']
-        else:
-            uniprot_id = request.POST.get('uniprotId')
+
 
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
@@ -733,8 +730,8 @@ def results_view(request):
         'fig_segmentation': fig_segmentation,
         'select_segments': seg_dico,
         'warning_message':warning_message,
-        'uniprot': uniprot_id,
-        'msa':uploaded_file
+        'pdb_file': pdb_id+'.pdb',
+        'msa_file_job':msa_file_job
     })
 
 def download_folder(request, fbpp_id):
