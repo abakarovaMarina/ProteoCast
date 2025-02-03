@@ -241,7 +241,7 @@ def results_view(request):
         prot_id = None
         for file_name in files:
             if "ProteoCast" in file_name:
-                prot_id = file_name.split('.')[1].split('_')[0]  # Extract protein ID 
+                prot_id = '_'.join(file_name.split('.')[1].split('_')[:-1])  # Extract protein ID 
             if ('pdb' in file_name) and ('GEMME' not in file_name):
                 pdb_id = file_name.split('.')[0]
     ## drosophila db
