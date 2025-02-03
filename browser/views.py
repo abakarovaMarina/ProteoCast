@@ -709,6 +709,15 @@ def results_view(request):
 
     ## segmentation data for 3D
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv') 
+    
+    ## add msa name and pdb used for the job
+    if request.method == 'POST':
+        files = request.FILES
+        uploaded_file = files['file']
+        if 'pdbFile' in files:
+            pdb_file = files['pdbFile']
+        else:
+            uniprot_id = request.POST.get('uniprotId')
 
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
@@ -724,6 +733,8 @@ def results_view(request):
         'fig_segmentation': fig_segmentation,
         'select_segments': seg_dico,
         'warning_message':warning_message,
+        'uniprot': uniprot_id,
+        'msa':uploaded_file
     })
 
 def download_folder(request, fbpp_id):

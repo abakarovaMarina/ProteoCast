@@ -133,7 +133,7 @@
         <div class="container-fluid" style="width:95%;">
 
         <div class="form-row py-4">
-            <h5>Here are ProteoCast results for {{ prot_name }}. {% if query|slice:":4" == "2025" %}Your job ID is {{ query }}.{% endif %} If you need help in exploring and interpreting them, please go to our <a href="/documentation" target="_blank" rel="noopener noreferrer">documentation</a>.</h5>
+            <h5>Here are ProteoCast results for {{ prot_name }}. {% if query|slice:":4" == "2025" %}Your job ID is {{ query }} for {{ msa }} .{% endif %} If you need help in exploring and interpreting them, please go to our <a href="/documentation" target="_blank" rel="noopener noreferrer">documentation</a>.</h5>
             {% if warning_message %}
                 <p style="color: orange;">
                     <span style="color: black; font-weight: bold;">&#x26A0;</span> {{ warning_message }}
