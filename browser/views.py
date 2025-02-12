@@ -243,8 +243,8 @@ def results_view(request):
         for file_name in files:
             if "ProteoCast" in file_name:
                 prot_id = '_'.join(file_name.split('.')[1].split('_')[:-1])  # Extract protein ID 
-            if ('pdb' in file_name) and ('GEMME' not in file_name):
-                pdb_id = file_name.split('.')[0]
+            if ('pdb' in file_name) and ('ResClass' not in file_name or 'Sensitivity' not in file_name): #10. in filname
+                pdb_id = file_name.split('.')[1]
             if ('a3m' in file_name):
                 msa_file_job = file_name
             elif ('2.ali' in file_name):
@@ -544,8 +544,8 @@ def results_view(request):
             return HttpResponse(f"File not found: {check_path}", status=404)
 
     pdb_url_1 = f'/{alias_dir}/{id_folder}/10.{pdb_id}.pdb'
-    pdb_url_2 = f'/{alias_dir}/{id_folder}/{pdb_id}_GEMMESensitivity.pdb'
-    pdb_url_3 = f'/{alias_dir}/{id_folder}/{pdb_id}_GEMMEResClass.pdb'
+    pdb_url_2 = f'/{alias_dir}/{id_folder}/12.{pdb_id}_Sensitivity.pdb'
+    pdb_url_3 = f'/{alias_dir}/{id_folder}/11.{pdb_id}_ResClass.pdb'
     pdb_check = None
     if pdb_url_1:
         pdb_check = pdb_url_1.replace(alias_dir, data_path)
