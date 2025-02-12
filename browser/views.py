@@ -543,7 +543,7 @@ def results_view(request):
         if not os.path.exists(check_path):
             return HttpResponse(f"File not found: {check_path}", status=404)
 
-    pdb_url_1 = f'/{alias_dir}/{id_folder}/{pdb_id}.pdb'
+    pdb_url_1 = f'/{alias_dir}/{id_folder}/10.{pdb_id}.pdb'
     pdb_url_2 = f'/{alias_dir}/{id_folder}/{pdb_id}_GEMMESensitivity.pdb'
     pdb_url_3 = f'/{alias_dir}/{id_folder}/{pdb_id}_GEMMEResClass.pdb'
     pdb_check = None
