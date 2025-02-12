@@ -305,8 +305,8 @@ def results_view(request):
 #        return HttpResponse(f"Error reading ProteoCast CSV: {e}", status=500)
 
     try:
-        df_proteocast['GEMME_LocalConfidence'] = df_proteocast['GEMME_LocalConfidence'].replace({True: 1, False: 0})
-        confidence_values = np.array(df_proteocast.groupby('Residue')['GEMME_LocalConfidence']
+        df_proteocast['LocalConfidence'] = df_proteocast['LocalConfidence'].replace({True: 1, False: 0})
+        confidence_values = np.array(df_proteocast.groupby('Residue')['LocalConfidence']
                                      .apply(lambda x: x.iloc[0]).tolist()).reshape(1, -1)
     except Exception as e:
         confidence_values = None
@@ -314,12 +314,12 @@ def results_view(request):
         return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
         
     try:
-        df = pd.DataFrame(np.array(df_proteocast['GEMME_score']).reshape(20, -1, order='F'))
+        df = pd.DataFrame(np.array(df_proteocast['Variant_score']).reshape(20, -1, order='F'))
         df_mut = pd.DataFrame(np.array(df_proteocast['Mutation']).reshape(20, -1, order='F'))
         
     except Exception as e:
         df = None
-        message = 'ProteoCast has not found GEMME_score or Mutation values in the ProteoCast.csv file'
+        message = 'ProteoCast has not found Variant_score or Mutation values in the ProteoCast.csv file'
         return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
     
     try:
