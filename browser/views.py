@@ -566,9 +566,9 @@ def results_view(request):
 
     ###### SEGMENTATION ######
 
-    if os.path.exists(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv'):
+    if os.path.exists(f'{data_path}{id_folder}/13.{prot_id}_GEMME_pLDDT.csv'):
         df_segmentation = pd.read_csv(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv')
-        df_sefPrep = pd.read_csv(f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv')
+        df_sefPrep = pd.read_csv(f'{data_path}{id_folder}/13.{prot_id}_GEMME_pLDDT.csv')
         
         
         # Initialize plot
@@ -714,7 +714,7 @@ def results_view(request):
         warning_message = 'Unreliable Predictions Warning: Evolutionary information in the provided MSA is scarse (<200 sequences) and insufficient to provide reliable predictions.'
 
     ## segmentation data for 3D
-    seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/{prot_id}_GEMME_pLDDT.csv') 
+    seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/13.{prot_id}_GEMME_pLDDT.csv') 
 
 
     return render(request, 'browser/results.html', {
