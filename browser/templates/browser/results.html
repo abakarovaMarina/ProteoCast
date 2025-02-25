@@ -294,6 +294,7 @@
             <h2 style="margin-top: 20px;">3D Structure</h2>
             <p> If a UniProt code or a structure is provided, it will be visualized with its B-factors. If the sequence matches the one in the MSA, it can be visualized with GEMME Sensitivity (per-residue GEMME average score) or Residue Class. </p>
         </div>
+        {% if pdb_file and pdb_file != ".pdb" %}
         <div class="form-row" style="min-height: 600px;">
             <div class="form-group col-10">
                 <div id="myViewer" class="viewer-container"></div>
@@ -320,7 +321,7 @@
                 </div>
             </div>
         </div>
-        
+        {% endif %}
         <script>
             // Initialize the viewer
             const viewerInstance = new PDBeMolstarPlugin();
