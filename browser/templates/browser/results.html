@@ -141,8 +141,8 @@
         <div class="form-row py-4">
             <h5>Here are ProteoCast results for {{ prot_name }}.If you need help in exploring and interpreting them, please go to our <a href="/documentation" target="_blank" rel="noopener noreferrer">documentation</a>.<br>
             {% if query|slice:":4" == "2025" %}
-            Your job (ID: <code> {{ query }}</code>) has used the MSA file <code>{{ msa_file_job }}</code>
-            {% if pdb_file and pdb_file != ".pdb" %} and the PDB file <code>{{pdb_file}}</code>{% endif %}.
+            Your job (ID: <code class="code"> {{ query }}</code>) has used the MSA file <code class="code">{{ msa_file_job }}</code>
+            {% if pdb_file and pdb_file != ".pdb" %} and the PDB file <code class="code">{{pdb_file}}</code>{% endif %}.
             {% endif %}
         </h5>
             {% if warning_message %}
