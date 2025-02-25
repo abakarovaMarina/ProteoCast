@@ -139,7 +139,7 @@
         <div class="container-fluid" style="width:95%;">
 
         <div class="form-row py-4">
-            <h5>Here are ProteoCast results for {{ prot_name }}.If you need help in exploring and interpreting them, please go to our <a href="/documentation" target="_blank" rel="noopener noreferrer">documentation</a>.<br>
+            <h5>Here are ProteoCast results for {{ prot_name }}. If you need help in exploring and interpreting them, please go to our <a href="/documentation" target="_blank" rel="noopener noreferrer">documentation</a>.<br>
             {% if query|slice:":4" == "2025" %}
             Your job (ID: <code class="code"> {{ query }}</code>) has used the MSA file <code class="code">{{ msa_file_job }}</code>
             {% if pdb_file and pdb_file != ".pdb" %} and the PDB file <code class="code">{{pdb_file}}</code>{% endif %}.
@@ -290,7 +290,7 @@
         </div>
 
         <!-- 3D structure -->
-        <div class="form-row">
+        <div class="form-row py-4">
             <h2>3D Structure</h2>
             <p> If a UniProt code or a structure is provided, it will be visualized with its B-factors. If the sequence matches the one in the MSA, it can be visualized with GEMME Sensitivity (per-residue GEMME average score) or Residue Class. </p>
         </div>
