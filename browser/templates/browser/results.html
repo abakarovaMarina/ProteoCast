@@ -290,7 +290,7 @@
         </div>
 
         <!-- 3D structure -->
-        <div class="form-row" style="flex: 1; autosize: true;">
+        <div class="form-row"  style="display: flex; align-items: flex-start;">
             <h2>3D Structure</h2>
             <p> If a UniProt code or a structure is provided, it will be visualized with its B-factors. If the sequence matches the one in the MSA, it can be visualized with GEMME Sensitivity (per-residue GEMME average score) or Residue Class. </p>
         </div>
@@ -299,16 +299,17 @@
                 <div id="myViewer" class="viewer-container"></div>
             </div>
             <div class="form-group col-2 pl-5 py-4">
+                Color by 
                 <div class="buttons">
-                    <label>
+                    <label style="display: inline-block;">
                         <input type="radio" name="colorToggle" value="bfactor" checked>
-                        Color by B-Factors
+                        B-Factors
                     </label>
-                    <label>
+                    <label style="display: inline-block;">
                         <input type="radio" name="colorToggle" value="gemme">
                         GEMME Sensitivity
                     </label>
-                    <label>
+                    <label  style="display: inline-block;">
                         <input type="radio" name="colorToggle" value="residue_class">
                         Residue Class
                     </label>
