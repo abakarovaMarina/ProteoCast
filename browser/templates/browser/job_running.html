@@ -51,7 +51,7 @@
         fetch(`/results/check_job_status/?job_id=${jobId}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    return { status: "waiting", message: "Waiting for the creation of the necessary files." };
                 }
                 return response.json();
             })
