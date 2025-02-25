@@ -570,13 +570,13 @@ def results_view(request):
         df_segmentation = pd.read_csv(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv')
         df_sefPrep = pd.read_csv(f'{data_path}{id_folder}/13.{prot_id}_GEMME_pLDDT.csv')
         
-        
+         
         # Initialize plot
         fig_Seg = make_subplots(
             rows=2, cols=1,
             shared_xaxes=True,
             row_heights=[0.1, 0.9],
-            vertical_spacing=0.05,
+            vertical_spacing=0.03,
         )
         
         if 'pLDDT' in df_sefPrep.columns:
