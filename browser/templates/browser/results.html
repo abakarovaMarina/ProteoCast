@@ -206,9 +206,9 @@
                     </label>
                 </div>
                 {% endif %}
-                <div style="max-height: 600px; overflow-y: hidden; overflow-x: auto; border: 1px solid #ddd; padding: 10px;">
+                <div style="max-height: 600px; overflow: hidden; border: 1px solid #ddd; padding: 10px;">
                     {% if heatmap_html %}
-                    <div id="heatmap_html" style="display: block;">
+                    <div id="heatmap_html" style="display: block;max-width: 100%;">
                         {{ heatmap_html|safe }}
                     </div>
                     {% endif %}
@@ -314,7 +314,7 @@
 
         <!-- 3D structure -->
         <div class="form-row">
-            <h2 style="margin-top: 20px;">3D Structure</h2>
+            <h2 style="margin-top: 30px;">3D Structure</h2>
             <p> If a UniProt code or a structure is provided, it will be visualized with its B-factors. If the sequence matches the one in the MSA, it can be visualized with GEMME Sensitivity (per-residue GEMME average score) or Residue Class. </p>
         </div>
         {% if pdb_file and pdb_file != ".pdb" %}
