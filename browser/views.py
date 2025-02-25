@@ -700,7 +700,7 @@ def results_view(request):
             height=600,
             plot_bgcolor="white",  # Set the background color to white
             paper_bgcolor="white",
-            xaxis2=dict(title="Residue Index"),
+            xaxis2=dict(title="Residue"),
             yaxis2=dict(title="Average GEMME Score", range=[0, 1]),
             hovermode="x unified"
         )
