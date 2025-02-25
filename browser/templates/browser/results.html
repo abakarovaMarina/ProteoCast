@@ -133,11 +133,10 @@
         <div class="container-fluid" style="width:95%;">
 
         <div class="form-row py-4">
-            <h5>Here are ProteoCast results for {{ prot_name }}.<br>
-                If you need help in exploring and interpreting them, please go to our <a href="/documentation" target="_blank" rel="noopener noreferrer">documentation</a>.
+            <h5>Here are ProteoCast results for {{ prot_name }}.If you need help in exploring and interpreting them, please go to our <a href="/documentation" target="_blank" rel="noopener noreferrer">documentation</a>.
             {% if query|slice:":4" == "2025" %}
-            Your job (ID: {{ query }}) has used the MSA file {{ msa_file_job }}
-            {% if pdb_file == ".pdb" %} and the PDB file {{pdb_file}}{% endif %}.
+            Your job (ID: <code> {{ query }}</code>) has used the MSA file <code>{{ msa_file_job }}</code>
+            {% if pdb_file and pdb_file != ".pdb" %} and the PDB file <code>{{pdb_file}}</code>{% endif %}.
             {% endif %}
         </h5>
             {% if warning_message %}
