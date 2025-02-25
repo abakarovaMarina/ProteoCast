@@ -133,7 +133,14 @@
         <div class="container-fluid" style="width:95%;">
 
         <div class="form-row py-4">
-            <h5>Here are ProteoCast results for {{ prot_name }}. {% if query|slice:":4" == "2025" %}Your job ID is {{ query }} run with  {{ msa_file_job }} msa and {{pdb_file}} pdb files.{% endif %} If you need help in exploring and interpreting them, please go to our <a href="/documentation" target="_blank" rel="noopener noreferrer">documentation</a>.</h5>
+            <h5>Here are ProteoCast results for {{ prot_name }}.<br>
+                If you need help in exploring and interpreting them, please go to our <a href="/documentation" target="_blank" rel="noopener noreferrer">documentation</a>.</h5>
+            <p style="font-size: 0.8em;">
+            {% if query|slice:":4" == "2025" %}
+            Your job (ID: {{ query }}) has used the MSA file {{ msa_file_job }}
+            {% if pdb_file == ".pdb" %} and the PDB file {{pdb_file}}{% endif %}.
+            {% endif %} <br>
+            </p>
             {% if warning_message %}
                 <p style="color: orange;">
                     <span style="color: black; font-weight: bold;">&#x26A0;</span> {{ warning_message }}
