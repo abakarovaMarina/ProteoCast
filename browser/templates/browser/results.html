@@ -64,7 +64,13 @@
           color: #BA839B;
           text-decoration: none;
         }
-
+        .heatmap-container {
+            display: flex;
+            max-width: 100%;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
         .heatmap { 
             width: 100%;
             margin: 10px 0; 
@@ -206,7 +212,9 @@
                     </label>
                 </div>
                 {% endif %}
-                <div style="max-height: 600px; overflow: hidden; border: 1px solid #ddd; padding: 10px;">
+                <div class="heatmap-container">  
+                    <!-- style="max-height: 600px; overflow: hidden; border: 1px solid #ddd; padding: 10px;">-->\
+                     
                     {% if heatmap_html %}
                     <div id="heatmap_html" style="display: block;max-width: 100%;">
                         {{ heatmap_html|safe }}
