@@ -216,17 +216,17 @@
                     <!-- style="max-height: 600px; overflow: hidden; border: 1px solid #ddd; padding: 10px;">-->
 
                     {% if heatmap_html %}
-                    <div id="heatmap_html" style="display: block;max-width: 100%;">
+                    <div id="heatmap_html" style="display: block; max-width: 100%;">
                         {{ heatmap_html|safe }}
                     </div>
                     {% endif %}
                     {% if heatmapClasses_html %}
-                    <div id="heatmapClasses_html" style="display: none;">
+                    <div id="heatmapClasses_html" style="display: none; max-width: 100%;">
                         {{ heatmapClasses_html|safe }}
                     </div>
                     {% endif %}
                     {% if heatmapSNPs_html %}
-                    <div id="heatmapSNPs_html" style="display: none;">
+                    <div id="heatmapSNPs_html" style="display: none; max-width: 100%;">
                         {{ heatmapSNPs_html|safe }}
                     </div>
                     {% endif %}
