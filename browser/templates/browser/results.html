@@ -138,8 +138,8 @@
       <div class="content">
         <div class="container-fluid" style="width:95%;">
 
-        <div class="form-row py-4">
-            <div class="form-group col-md-10 px-4">
+        <div class="form-row">
+            <div class="form-group col-md-10">
             <h5>Here are ProteoCast results for {{ prot_name }}. If you need help in exploring and interpreting them, please go to our <a href="/documentation" target="_blank" rel="noopener noreferrer">documentation</a>.<br>
             {% if query|slice:":4" == "2025" %}
             Your job (ID: <code class="code"> {{ query }}</code>) has used the MSA file <code class="code">{{ msa_file_job }}</code>
@@ -152,7 +152,7 @@
                 </p>
             {% endif %}
             </div>
-            <div class="form-group col-md-2 px-4">
+            <div class="form-group col-md-2">
                 <a href="{% url 'download_folder' fbpp_id=query %}" class="download-button">
                     <button>
                         <img src="{% static 'browser/images/download_icon.png' %}" alt="Download Icon">
@@ -246,7 +246,7 @@
         </script>
 
         <div class="form-row">
-            <div class="form-group col px-4">
+            <div class="form-group col">
                 <h2 style="margin-top: 20px;">Input Alignment</h2>
             </div>
             <div class="form-group col px-4">
@@ -254,7 +254,7 @@
             </div>
         </div>
         <div class="form-row">
-            <div class="form-group col px-4">
+            <div class="form-group col">
                 <p> Each horizontal line in the plot represents a sequence and its color indicates its percentage of identity to the query (on top). The black curve indicates coverage. </p>
             </div>
             <div class="form-group col px-4">
