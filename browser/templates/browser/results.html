@@ -304,11 +304,10 @@
         <div class="form-row"> 
             <h2>Sensitivity profile</h2>
             <p> 
-                {% if query|slice:":4" == "2025" %} 
-                    The mutational sensitivity profile (per-residue GEMME average score) is shown here.
-                {% else %}
-                    The pLDDT of the AlphaFold-predicted protein 3D model is shown on top and the mutational sensitivity profile (per-residue GEMME average score) at the bottom.
-                {% endif %}  Each delineated segment can be considered as displaying a homogeneous mean sensitivity. The color of each segment indicates whether its mean is higher than its two neighbors (purple), lower than its two neighbors (yellow), or higher than one and lower than the other (red).
+                Mutational sensitivity as estimated by GEMME average score per residue. Each delineated segment can be considered as displaying a homogeneous mean sensitivity. The identified segments are colored red if their mean value (horizontal line) is higher than one neighboring segment, and purple if it is higher than both neighboring segments.
+                {% if pdb_file and pdb_file != ".pdb" %}
+                The pLDDT confidence score from the AlphaFold2-predicted 3D structure is shown as a color bar on top. Orange and yellow indicate very low to low confidence, while light and dark blue represent high to very high confidence regions.
+                {% endif %} 
             </p>
             <div class="heatmap-container">
             {% if fig_segmentation %}
