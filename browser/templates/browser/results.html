@@ -301,7 +301,7 @@
         </div>
 
 
-        <div class="form-row"> 
+        <div class="form-row" style="display: flex; align-items: flex-start;"> 
             <h2>Sensitivity profile</h2>
             <p> 
                 Mutational sensitivity as estimated by GEMME average score per residue. Each delineated segment can be considered as displaying a homogeneous mean sensitivity. The identified segments are colored red if their mean value (horizontal line) is higher than one neighboring segment, and purple if it is higher than both neighboring segments.
@@ -313,7 +313,6 @@
             {% if fig_segmentation %}
             <div id="fig_segmentation" style="display: block; max-width: 100%;">
                 {{ fig_segmentation|safe }}
-                <!--<img src="{{ fig_segmentation }}" alt="Segmentation" class="img-fluid" style="width: 80%; display: block; margin: 0 auto;">-->
             </div>
             {% endif %}
             </div>
