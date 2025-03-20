@@ -278,7 +278,7 @@ def results_view(request):
                 ## the provided proteoform symbol does not exist in our proteome version
                 if '-' in prot_name:
                     prot_nametmp = prot_name.split('-')[0]
-                    if prot_name in mapping_df['Gene_symbol'].tolist():
+                    if prot_nametmp in mapping_df['Gene_symbol'].tolist():
                         prot_list = ', '.join(mapping_df.loc[mapping_df['Gene_symbol'] == prot_nametmp, 'Protein_symbol'].tolist())
                         message = mark_safe(
                             'The provided proteoform does not exist in our proteome version (6.44). '
