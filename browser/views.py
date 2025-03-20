@@ -262,7 +262,7 @@ def results_view(request):
         mapping_df = pd.read_csv(mapping_file_path, index_col=0)
         mapping_df['fbpp_low'] = mapping_df.index.str.lower()
         mapping_df['pr_sym'] = mapping_df['Protein_symbol'].str.lower()
-        mapping_df['Gene_symbol'] = mapping_df['Protein_symbol'].apply(lambda x: x.split('-')[0] if pd.notna(x) else None)
+        mapping_df['Gene_symbol'] = mapping_df['Protein_symbol'].apply(lambda x: x.str.lower().split('-')[0]if pd.notna(x) else None)
 
         if prot_name[:4] == 'fbpp':
             if  prot_name not in mapping_df['fbpp_low'].tolist():
