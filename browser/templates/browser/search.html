@@ -184,14 +184,11 @@
       </div>
 
       <div class="row py-3">
-        <div class="col-md-8">
+        <div class="col-12 d-flex justify-content-between">
             <button type="submit" class="btn btn-primary example-button">Submit</button>
-          </div>
-        </form>
-        <div class="col-md-4">
-        <a href="{% url 'results' %}?q=job20250212235655" class="btn btn-primary example-button">Load an Example Protein</a>
-      </div>
-      </div>
+            <a href="{% url 'results' %}?q=job20250212235655" class="btn btn-primary example-button">Load an Example Protein</a>
+        </div>
+    </div>
 
        <div class="text-center">
           <img src="/static/browser/images/fig_search_server.png" id='panels' alt="mutLand" style="width: 100%; height: auto;">
