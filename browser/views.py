@@ -274,12 +274,6 @@ def results_view(request):
             id_folder = mapping_df.loc[mapping_df['fbpp_low'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
         else:
-            if  prot_name not in mapping_df['pr_sym'].tolist():
-                message = mark_safe(
-                    'Please check that you used a valid ID (i.e. gene symbol-PA or FBpp). '
-                    'You can find them in the following file <a href="https://zenodo.org/records/14871341" target="_blank">Dmel6.44PredictionsRecap.csv</a>.'
-                )
-                return render(request, 'browser/error.html', {'message': message}, status=500)
             if prot_name in mapping_df['Gene_symbol'].tolist():
                 prot_list = ' '.join(mapping_df.loc[mapping_df['Gene_symbol'] == prot_name, 'pr_sym'].tolist())
                 message = mark_safe(
@@ -287,6 +281,14 @@ def results_view(request):
                     f'<b>{prot_list}</b>.'
                 )
                 return render(request, 'browser/error.html', {'message': message}, status=500) 
+            
+            if  prot_name not in mapping_df['pr_sym'].tolist():
+                message = mark_safe(
+                    'Please check that you used a valid ID (i.e. gene symbol-PA or FBpp). '
+                    'You can find them in the following file <a href="https://zenodo.org/records/14871341" target="_blank">Dmel6.44PredictionsRecap.csv</a>.'
+                )
+                return render(request, 'browser/error.html', {'message': message}, status=500)
+            
             id_folder = mapping_df.loc[mapping_df['pr_sym'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
         ## getting pdb_id for the fly
