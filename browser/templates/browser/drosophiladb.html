@@ -76,6 +76,45 @@
             <h1 class="text-white text-decoration-none">ProteoCast
               <span style="font-size: 0.6em; color: white;"> for <em>Drosophila melanogaster</em></span></h1>
           </a>
+            <button 
+              class="navbar-toggler" 
+              type="button" 
+              aria-label="Toggle navigation" 
+              data-toggle="collapse" 
+              data-target="#navbarNav" 
+              aria-controls="navbarNav" 
+              aria-expanded="false" 
+              aria-haspopup="true">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+              <ul class="navbar-nav ml-auto" id="navbarItems">
+                <li class="nav-item" id="nav-home">
+                  <a class="nav-link text-white" href="{% url 'search' %}">Home</a>
+                </li>
+                <li class="nav-item" id="nav-documentation">
+                  <a class="nav-link text-white" href="/documentation">Documentation</a>
+                </li>
+                <li class="nav-item" id="nav-download">
+                  <a class="nav-link text-white" href="/download">Download</a>
+                </li>
+                <li class="nav-item" id="nav-past-jobs">
+                  <a class="nav-link text-white" href="/drosophiladb">DrosophilaDB</a>
+              </li>
+                <li class="nav-item" id="nav-past-jobs">
+                  <a class="nav-link text-white" href="/past_jobs">Past Jobs</a>
+                </li>
+                <li class="nav-item" id="nav-publications">
+                  <a class="nav-link text-white" href="/publications">Publications</a>
+                </li>
+              </ul>
+            </div>
+            </nav>
+          </div>
+
+
+
+      <!-- 
           <button class="navbar-toggler" type="button" aria-label="Toggle navigation" aria-controls="navbarNav"  data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-haspopup="true">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -91,7 +130,7 @@
           </div>
         </nav>
       </header>
-
+     -->
 
       <div class="content">
         <div class="container">
@@ -101,7 +140,7 @@
         <!-- Centered Search Form -->
         <div class="d-flex justify-content-center my-4">
           <form action="/results/results/" method="get" class="search-form d-flex">
-              <input type="text" name="q" placeholder="e.g., yki-PG or FBpp0288697" value="" class="form-control w-95 mr-2">
+              <input type="text" name="q" placeholder="e.g., yki-PG or FBpp0288697" value="" class="form-control w-120 mr-2">
               <button type="submit" class="btn btn-primary">Search</button>
           </form>
       </div>
