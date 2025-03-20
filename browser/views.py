@@ -285,6 +285,12 @@ def results_view(request):
                             f'You could check the following ones for the corresponding gene: <b>{prot_list}</b>.'
                         )
                         return render(request, 'browser/error.html', {'message': message}, status=500)
+                    else:
+                        message = mark_safe(
+                            'Please check that you used a valid ID (i.e. gene symbol-PA or FBpp). '
+                            'You can find them in the following file <a href="https://zenodo.org/records/14871341" target="_blank">Dmel6.44PredictionsRecap.csv</a>.'
+                        )
+                        return render(request, 'browser/error.html', {'message': message}, status=500)
                 ## the provided symbol is a gene symbol  
                 elif prot_name in mapping_df['Gene_symbol'].tolist():
                     prot_list = ', '.join(mapping_df.loc[mapping_df['Gene_symbol'] == prot_name, 'Protein_symbol'].tolist())
