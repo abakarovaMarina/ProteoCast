@@ -270,7 +270,7 @@ def results_view(request):
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
         else:
             if  prot_name not in mapping_df['pr_sym'].tolist():
-                message = 'The provided proteoform ID is not in the database. Please check the ID.'
+                message = 'The provided proteoform ID is not in the database. Please check the ID. You can reference to <a href="https://zenodo.org/records/14871341" target="_blank">Dmel6.44PredictionsRecap.csv file</a>.'
                 return render(request, 'browser/error.html', {'message': message}, status=500)
             id_folder = mapping_df.loc[mapping_df['pr_sym'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
@@ -300,14 +300,14 @@ def results_view(request):
 
     proteocast_path = f'{data_path}{id_folder}/4.{prot_id}_ProteoCast.csv'
     if not os.path.exists(proteocast_path):
-        message = 'ProteoCast file not found for the provided protein ID'
+        message = 'ProteoCast file not found for the provided protein ID.'
         return render(request, 'browser/error.html', {'message': message}, status=500)
 #        return HttpResponse(f"ProteoCast file not found: {proteocast_path}", status=404)
 
     try:
         df_proteocast = pd.read_csv(proteocast_path)
     except Exception as e:
-        message = 'ProteoCast could not read ProteoCast.csv file'
+        message = 'ProteoCast could not read ProteoCast.csv file.'
         return render(request, 'browser/error.html', {'message': message}, status=500)
     try:
         df_proteocast['LocalConfidence'] = df_proteocast['LocalConfidence'].replace({True: 1, False: 0})
@@ -315,7 +315,7 @@ def results_view(request):
                                      .apply(lambda x: x.iloc[0]).tolist()).reshape(1, -1)
     except Exception as e:
         confidence_values = None
-        message = 'ProteoCast encountered a problem processing the confidence metric'
+        message = 'ProteoCast encountered a problem processing the confidence metric.'
         return render(request, 'browser/error.html', {'message': message}, status=500)
         
     try:
@@ -324,7 +324,7 @@ def results_view(request):
         
     except Exception as e:
         df = None
-        message = 'ProteoCast has not found Variant_score or Mutation values in the ProteoCast.csv file'
+        message = 'ProteoCast has not found Variant_score or Mutation values in the ProteoCast.csv file.'
         return render(request, 'browser/error.html', {'message': message}, status=500)
     
     try:
@@ -332,7 +332,7 @@ def results_view(request):
         df_classesStr = pd.DataFrame(np.array(df_proteocast['Variant_class']).reshape(20, -1, order='F'))
     except Exception as e:
         df_classes = None
-        message = 'Variant classes are not found in the ProteoCast.csv file'
+        message = 'Variant classes are not found in the ProteoCast.csv file.'
         return render(request, 'browser/error.html', {'message': message}, status=500)
 
     variantClasses_colorscale = [
