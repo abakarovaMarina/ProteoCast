@@ -173,33 +173,24 @@
 
       </div>
 
-
-      <footer class="bg-light text-center py-3">
-      <p class="mb-0">ProteoCast - This website is free and open to all users and there is no login requirement.</p>
+    <footer class="bg-light text-center py-3">
+      <div class="container">
+          <p class="mb-0"> © ProteoCast - This website is free and open to all users and there is no login requirement.</p>
+      </div>
   </footer>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const footer = document.querySelector('footer');
+  document.addEventListener('DOMContentLoaded', function () {
+    const footer = document.querySelector('footer');
+    footer.style.display = 'none'; // Initially hide the footer
 
-        // Function to toggle footer visibility
-        function toggleFooter() {
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight || document.body.offsetHeight <= window.innerHeight) {
-                footer.style.display = 'block'; // Show the footer
-            } else {
-                footer.style.display = 'none'; // Hide the footer
-            }
-        }
-
-        // Initial check on page load
-        toggleFooter();
-
-        // Check on scroll
-        window.addEventListener('scroll', toggleFooter);
-
-        // Check on window resize (in case content height changes)
-        window.addEventListener('resize', toggleFooter);
+    window.addEventListener('scroll', function () {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+        footer.style.display = 'block'; // Show the footer when scrolled to the bottom
+      } else {
+        footer.style.display = 'none'; // Hide the footer otherwise
+      }
     });
-</script>
-
+  });
+  </script>
     </div>
   </body></html>
