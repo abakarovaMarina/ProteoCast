@@ -179,18 +179,27 @@
   </footer>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const footer = document.querySelector('footer');
-      footer.style.display = 'none'; // Initially hide the footer
+        const footer = document.querySelector('footer');
 
-      window.addEventListener('scroll', function () {
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-          footer.style.display = 'block'; // Show the footer when scrolled to the bottom
-        } else {
-          footer.style.display = 'none'; // Hide the footer otherwise
+        // Function to toggle footer visibility
+        function toggleFooter() {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight || document.body.offsetHeight <= window.innerHeight) {
+                footer.style.display = 'block'; // Show the footer
+            } else {
+                footer.style.display = 'none'; // Hide the footer
+            }
         }
-      });
+
+        // Initial check on page load
+        toggleFooter();
+
+        // Check on scroll
+        window.addEventListener('scroll', toggleFooter);
+
+        // Check on window resize (in case content height changes)
+        window.addEventListener('resize', toggleFooter);
     });
-    </script>
+</script>
 
     </div>
   </body></html>
