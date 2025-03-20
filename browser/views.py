@@ -275,10 +275,10 @@ def results_view(request):
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
         else:
             if prot_name in mapping_df['Gene_symbol'].tolist():
-                prot_list = ' '.join(mapping_df.loc[mapping_df['Gene_symbol'] == prot_name, 'pr_sym'].tolist())
+                prot_list = ', '.join(mapping_df.loc[mapping_df['Gene_symbol'] == prot_name, 'Protein_symbol'].tolist())
                 message = mark_safe(
                     'For the provided gene symbol you could check the following proteoforms: '
-                    f'<b>{prot_list}</b>.'
+                    f'{prot_list}.'
                 )
                 return render(request, 'browser/error.html', {'message': message}, status=500) 
             
