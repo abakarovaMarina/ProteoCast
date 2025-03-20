@@ -98,13 +98,13 @@
          <br>
          <p> Through this portal, you can explore and interactively visualise <b>ProteoCast</b> predictions for <em>Drosophila melanogaster</em> proteome, including all protein isoforms (proteoforms) resulting from alternative splicing.</p>
         <p> Try it out with your favorite protein! Please provide <a href="https://flybase.org/" target="_blank">FlyBase</a> protein ID (FBpp) or proteoform symbol (i.e. yki-PF) in the top-right search dialog.</p>
-        <!-- Search Form -->
-        <div class="text-center my-4">
-          <form action="/results/results/" method="get" class="search-form">
-              <input type="text" name="q" placeholder="e.g., yki-PG or FBpp0288697" value="" class="form-control d-inline-block w-50">
-              <button type="submit" class="btn btn-primary mt-2">Search</button>
+        <!-- Centered Search Form -->
+        <div class="d-flex justify-content-center my-4">
+          <form action="/results/results/" method="get" class="search-form d-flex">
+              <input type="text" name="q" placeholder="e.g., yki-PG or FBpp0288697" value="" class="form-control w-75 mr-2">
+              <button type="submit" class="btn btn-primary">Search</button>
           </form>
-        </div>
+      </div>
 
         <p> For more information and resources, please refer to the <a href="/documentation">documentation</a>.</p>
         <h4>How it works: </h4> 
