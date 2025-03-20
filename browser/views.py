@@ -274,20 +274,31 @@ def results_view(request):
             id_folder = mapping_df.loc[mapping_df['fbpp_low'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
         else:
-            if prot_name in mapping_df['Gene_symbol'].tolist():
-                prot_list = ', '.join(mapping_df.loc[mapping_df['Gene_symbol'] == prot_name, 'Protein_symbol'].tolist())
-                message = mark_safe(
-                    'For the provided gene symbol you could check the following proteoforms: '
-                    f'{prot_list}.'
-                )
-                return render(request, 'browser/error.html', {'message': message}, status=500) 
-            
             if  prot_name not in mapping_df['pr_sym'].tolist():
-                message = mark_safe(
-                    'Please check that you used a valid ID (i.e. gene symbol-PA or FBpp). '
-                    'You can find them in the following file <a href="https://zenodo.org/records/14871341" target="_blank">Dmel6.44PredictionsRecap.csv</a>.'
-                )
-                return render(request, 'browser/error.html', {'message': message}, status=500)
+                ## the provided proteoform symbol does not exist in our proteome version
+                if '-' in prot_name:
+                    prot_nametmp = prot_name.split('-')[0]
+                    if prot_name in mapping_df['Gene_symbol'].tolist():
+                        prot_list = ', '.join(mapping_df.loc[mapping_df['Gene_symbol'] == prot_nametmp, 'Protein_symbol'].tolist())
+                        message = mark_safe(
+                            'The provided proteoform does not exist in our proteome version (6.44). '
+                            f'You could check the following ones in the corresponding gene: {prot_list}.'
+                        )
+                        return render(request, 'browser/error.html', {'message': message}, status=500)
+                ## the provided symbol is a gene symbol  
+                elif prot_name in mapping_df['Gene_symbol'].tolist():
+                    prot_list = ', '.join(mapping_df.loc[mapping_df['Gene_symbol'] == prot_name, 'Protein_symbol'].tolist())
+                    message = mark_safe(
+                        'For the provided gene symbol you could check the following proteoforms: '
+                        f'{prot_list}.'
+                    )
+                    return render(request, 'browser/error.html', {'message': message}, status=500) 
+                else:
+                    message = mark_safe(
+                        'Please check that you used a valid ID (i.e. gene symbol-PA or FBpp). '
+                        'You can find them in the following file <a href="https://zenodo.org/records/14871341" target="_blank">Dmel6.44PredictionsRecap.csv</a>.'
+                    )
+                    return render(request, 'browser/error.html', {'message': message}, status=500)
             
             id_folder = mapping_df.loc[mapping_df['pr_sym'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
