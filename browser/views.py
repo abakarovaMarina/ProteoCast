@@ -261,10 +261,17 @@ def results_view(request):
         mapping_df = pd.read_csv(mapping_file_path, index_col=0)
         mapping_df['fbpp_low'] = mapping_df.index.str.lower()
         mapping_df['pr_sym'] = mapping_df['Protein_symbol'].str.lower()
+    
         if prot_name[:4] == 'fbpp':
+            if  prot_name not in mapping_df['fbpp_low'].tolist():
+                message = 'This proteoform ID is not in the database. Please check the ID.'
+                return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
             id_folder = mapping_df.loc[mapping_df['fbpp_low'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
         else:
+            if  prot_name not in mapping_df['pr_sym'].tolist():
+                message = 'This proteoform ID is not in the database. Please check the ID.'
+                return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
             id_folder = mapping_df.loc[mapping_df['pr_sym'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
         ## getting pdb_id for the fly
