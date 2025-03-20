@@ -262,11 +262,12 @@ def results_view(request):
         mapping_df = pd.read_csv(mapping_file_path, index_col=0)
         mapping_df['fbpp_low'] = mapping_df.index.str.lower()
         mapping_df['pr_sym'] = mapping_df['Protein_symbol'].str.lower()
-    
+        mapping_df['Gene_symbol'] = mapping_df['Protein_symbol'].apply(lambda x: x.split('-')[0] if pd.notna(x) else None)
+
         if prot_name[:4] == 'fbpp':
             if  prot_name not in mapping_df['fbpp_low'].tolist():
                 message = mark_safe(
-                    'Please check that you used a valid ID (i.e. gene symbol-PA or FBpp).'
+                    'Please check that you used a valid ID (i.e. gene symbol-PA or FBpp). '
                     'You can find them in the following file <a href="https://zenodo.org/records/14871341" target="_blank">Dmel6.44PredictionsRecap.csv</a>.'
                 )
                 return render(request, 'browser/error.html', {'message': message}, status=500)
@@ -275,11 +276,17 @@ def results_view(request):
         else:
             if  prot_name not in mapping_df['pr_sym'].tolist():
                 message = mark_safe(
-                    'Please check that you used a valid ID (i.e. gene symbol-PA or FBpp).'
+                    'Please check that you used a valid ID (i.e. gene symbol-PA or FBpp). '
                     'You can find them in the following file <a href="https://zenodo.org/records/14871341" target="_blank">Dmel6.44PredictionsRecap.csv</a>.'
                 )
                 return render(request, 'browser/error.html', {'message': message}, status=500)
-            
+            if prot_name in mapping_df['Gene_symbol'].tolist():
+                prot_list = ' '.join(mapping_df.loc[mapping_df['Gene_symbol'] == prot_name, 'pr_sym'].tolist())
+                message = mark_safe(
+                    'For the provided gene symbol you could check the following proteoforms: '
+                    f'<b>{prot_list}</b>.'
+                )
+                return render(request, 'browser/error.html', {'message': message}, status=500) 
             id_folder = mapping_df.loc[mapping_df['pr_sym'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
         ## getting pdb_id for the fly
