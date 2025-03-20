@@ -264,14 +264,14 @@ def results_view(request):
     
         if prot_name[:4] == 'fbpp':
             if  prot_name not in mapping_df['fbpp_low'].tolist():
-                message = 'This proteoform ID is not in the database. Please check the ID.'
-                return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
+                message = 'The provided proteoform ID is not in the database. Please check the ID.'
+                return render(request, 'browser/error.html', {'message': message}, status=500)
             id_folder = mapping_df.loc[mapping_df['fbpp_low'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
         else:
             if  prot_name not in mapping_df['pr_sym'].tolist():
-                message = 'This proteoform ID is not in the database. Please check the ID.'
-                return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
+                message = 'The provided proteoform ID is not in the database. Please check the ID.'
+                return render(request, 'browser/error.html', {'message': message}, status=500)
             id_folder = mapping_df.loc[mapping_df['pr_sym'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
         ## getting pdb_id for the fly
@@ -292,7 +292,7 @@ def results_view(request):
     # Basic checks
     if not data_path or not id_folder or not prot_id:
         message = 'ProteoCast file not found: Protein ID.'
-        return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
+        return render(request, 'browser/error.html', {'message': message}, status=500)
         #return HttpResponse("Missing required path or protein ID.", status=500)
 
     alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y"][::-1]
@@ -300,17 +300,15 @@ def results_view(request):
 
     proteocast_path = f'{data_path}{id_folder}/4.{prot_id}_ProteoCast.csv'
     if not os.path.exists(proteocast_path):
-        message = 'ProteoCast file not found'
-        return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
+        message = 'ProteoCast file not found for the provided protein ID'
+        return render(request, 'browser/error.html', {'message': message}, status=500)
 #        return HttpResponse(f"ProteoCast file not found: {proteocast_path}", status=404)
 
     try:
         df_proteocast = pd.read_csv(proteocast_path)
     except Exception as e:
         message = 'ProteoCast could not read ProteoCast.csv file'
-        return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
-#        return HttpResponse(f"Error reading ProteoCast CSV: {e}", status=500)
-
+        return render(request, 'browser/error.html', {'message': message}, status=500)
     try:
         df_proteocast['LocalConfidence'] = df_proteocast['LocalConfidence'].replace({True: 1, False: 0})
         confidence_values = np.array(df_proteocast.groupby('Residue')['LocalConfidence']
@@ -318,7 +316,7 @@ def results_view(request):
     except Exception as e:
         confidence_values = None
         message = 'ProteoCast encountered a problem processing the confidence metric'
-        return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
+        return render(request, 'browser/error.html', {'message': message}, status=500)
         
     try:
         df = pd.DataFrame(np.array(df_proteocast['Variant_score']).reshape(20, -1, order='F'))
@@ -327,7 +325,7 @@ def results_view(request):
     except Exception as e:
         df = None
         message = 'ProteoCast has not found Variant_score or Mutation values in the ProteoCast.csv file'
-        return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
+        return render(request, 'browser/error.html', {'message': message}, status=500)
     
     try:
         df_classes = pd.DataFrame(np.array(df_proteocast['Variant_class'].replace({'neutral': 1, 'uncertain': 2, 'impactful': 3})).reshape(20, -1, order='F'))
@@ -335,7 +333,7 @@ def results_view(request):
     except Exception as e:
         df_classes = None
         message = 'Variant classes are not found in the ProteoCast.csv file'
-        return render(request, 'browser/error.html', {'prot_id': prot_id,'message': message}, status=500)
+        return render(request, 'browser/error.html', {'message': message}, status=500)
 
     variantClasses_colorscale = [
 
