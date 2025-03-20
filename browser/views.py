@@ -265,17 +265,21 @@ def results_view(request):
     
         if prot_name[:4] == 'fbpp':
             if  prot_name not in mapping_df['fbpp_low'].tolist():
-                message = 'The provided proteoform ID is not in the database. Please check the ID.'
+                message = mark_safe(
+                    'Please check that you used a valid ID (i.e. gene symbol-PA or FBpp).'
+                    'You can find them in the following file <a href="https://zenodo.org/records/14871341" target="_blank">Dmel6.44PredictionsRecap.csv</a>.'
+                )
                 return render(request, 'browser/error.html', {'message': message}, status=500)
             id_folder = mapping_df.loc[mapping_df['fbpp_low'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
         else:
             if  prot_name not in mapping_df['pr_sym'].tolist():
                 message = mark_safe(
-                    'The provided proteoform ID is not in the database. Please check the ID.'
-                    'You can reference to <a href="https://zenodo.org/records/14871341" target="_blank">Dmel6.44PredictionsRecap.csv file</a>.'
+                    'Please check that you used a valid ID (i.e. gene symbol-PA or FBpp).'
+                    'You can find them in the following file <a href="https://zenodo.org/records/14871341" target="_blank">Dmel6.44PredictionsRecap.csv</a>.'
                 )
                 return render(request, 'browser/error.html', {'message': message}, status=500)
+            
             id_folder = mapping_df.loc[mapping_df['pr_sym'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
         ## getting pdb_id for the fly
@@ -297,7 +301,6 @@ def results_view(request):
     if not data_path or not id_folder or not prot_id:
         message = 'ProteoCast file not found: Protein ID.'
         return render(request, 'browser/error.html', {'message': message}, status=500)
-        #return HttpResponse("Missing required path or protein ID.", status=500)
 
     alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y"][::-1]
     alph = [i.upper() for i in alph]
