@@ -69,6 +69,7 @@
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NT9G797M"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
+
 <div class="page">
       <div class="header">
         <nav class="navbar navbar-expand-lg navbar-light text-white">
@@ -111,26 +112,6 @@
             </div>
             </nav>
           </div>
-
-
-
-      <!-- 
-          <button class="navbar-toggler" type="button" aria-label="Toggle navigation" aria-controls="navbarNav"  data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-haspopup="true">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-            <ul class="navbar-nav ml-auto" id="navbarItems">
-            <li>
-            <form action="/results/results/" method="get" class="search-form">
-            <input type="text" name="q" placeholder="e.g., yki-PG or FBpp0288697" value="">
-            <button type="submit">Search</button>
-          </form>
-        </li>
-      </ul>
-          </div>
-        </nav>
-      </header>
-     -->
 
       <div class="content">
         <div class="container">
@@ -178,19 +159,19 @@
           <p class="mb-0"> © ProteoCast - This website is free and open to all users and there is no login requirement.</p>
       </div>
   </footer>
-  <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const footer = document.querySelector('footer');
-    footer.style.display = 'none'; // Initially hide the footer
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const footer = document.querySelector('footer');
+      footer.style.display = 'none'; // Initially hide the footer
 
-    window.addEventListener('scroll', function () {
-      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-        footer.style.display = 'block'; // Show the footer when scrolled to the bottom
-      } else {
-        footer.style.display = 'none'; // Hide the footer otherwise
-      }
+      window.addEventListener('scroll', function () {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+          footer.style.display = 'block'; // Show the footer when scrolled to the bottom
+        } else {
+          footer.style.display = 'none'; // Hide the footer otherwise
+        }
+      });
     });
-  });
-  </script>
+    </script>
     </div>
   </body></html>
