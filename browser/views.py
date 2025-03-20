@@ -282,7 +282,7 @@ def results_view(request):
                         prot_list = ', '.join(mapping_df.loc[mapping_df['Gene_symbol'] == prot_nametmp, 'Protein_symbol'].tolist())
                         message = mark_safe(
                             'The provided proteoform does not exist in our proteome version (6.44). '
-                            f'You could check the following ones in the corresponding gene: {prot_list}.'
+                            f'You could check the following ones in the corresponding gene: <b>{prot_list}</b>.'
                         )
                         return render(request, 'browser/error.html', {'message': message}, status=500)
                 ## the provided symbol is a gene symbol  
@@ -290,7 +290,7 @@ def results_view(request):
                     prot_list = ', '.join(mapping_df.loc[mapping_df['Gene_symbol'] == prot_name, 'Protein_symbol'].tolist())
                     message = mark_safe(
                         'For the provided gene symbol you could check the following proteoforms: '
-                        f'{prot_list}.'
+                        f'<b>{prot_list}</b>.'
                     )
                     return render(request, 'browser/error.html', {'message': message}, status=500) 
                 else:
