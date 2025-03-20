@@ -281,8 +281,8 @@ def results_view(request):
                     if prot_nametmp in mapping_df['Gene_symbol'].tolist():
                         prot_list = ', '.join(mapping_df.loc[mapping_df['Gene_symbol'] == prot_nametmp, 'Protein_symbol'].tolist())
                         message = mark_safe(
-                            'The provided proteoform does not exist in our proteome version (6.44). '
-                            f'You could check the following ones in the corresponding gene: <b>{prot_list}</b>.'
+                            'The provided proteoform does not exist in our proteome version (6.44). <br>'
+                            f'You could check the following ones for the corresponding gene: <b>{prot_list}</b>.'
                         )
                         return render(request, 'browser/error.html', {'message': message}, status=500)
                 ## the provided symbol is a gene symbol  
