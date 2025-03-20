@@ -21,6 +21,7 @@ import subprocess
 from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.shortcuts import render
+from django.utils.safestring import mark_safe
 
 def contact_us(request):
     return render(request, 'browser/contact_us.html')
@@ -270,7 +271,10 @@ def results_view(request):
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
         else:
             if  prot_name not in mapping_df['pr_sym'].tolist():
-                message = 'The provided proteoform ID is not in the database. Please check the ID. You can reference to <a href="https://zenodo.org/records/14871341" target="_blank">Dmel6.44PredictionsRecap.csv file</a>.'
+                message = mark_safe(
+                    'The provided proteoform ID is not in the database. Please check the ID.'
+                    'You can reference to <a href="https://zenodo.org/records/14871341" target="_blank">Dmel6.44PredictionsRecap.csv file</a>.'
+                )
                 return render(request, 'browser/error.html', {'message': message}, status=500)
             id_folder = mapping_df.loc[mapping_df['pr_sym'] == prot_name, 'id'].item()
             prot_id = mapping_df.loc[mapping_df['id'] == id_folder].index[0]
