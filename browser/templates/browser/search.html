@@ -185,7 +185,11 @@
         <div class="form-row py-2">
           <div class="form-group col">
             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-            <input type="file" name="pdbFile" id="pdbFileInput" accept=".pdb">
+            <input type="file" name="pdbFile" id="pdbFileInput" accept=".pdb"
+                  style="font-family: 'Montserrat', sans-serif;
+                    color:#343a40; 
+                    padding: 10px 20px;
+                    ">
           </div>
         </div>
         <div id="pdbLoading" style="display: none;">Uploading... Please wait.</div>
