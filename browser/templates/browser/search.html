@@ -177,13 +177,14 @@
           <h4 class="form-text text-dark">You may provide a custom PDB file </h4>
         </div>
         <div class="form-row py-2">
-          <div class="form-group col-md-6">
-              <!-- Hide the default PDB file input -->
-              <input type="file" name="pdbFile" id="pdbFileInput" accept=".pdb" style="display: none;">
-              <!-- Custom label styled as a button -->
-              <label for="pdbFileInput" class="btn btn-primary">Choose PDB File</label>
-              <span id="pdbFileInputName" class="ml-2 text-muted">No file chosen</span>
+          <div class="form-group col">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <input type="file" name="pdbFile" id="pdbFileInput" accept=".pdb">
           </div>
+        </div>
+        <div id="pdbLoading" style="display: none;">Uploading... Please wait.</div>
+        <div id="pdbUploadStatus"></div>
+      </div>
 
       <div class="row py-3">
         <div class="col-12 d-flex justify-content-between px-7">
