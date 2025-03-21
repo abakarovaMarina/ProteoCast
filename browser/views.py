@@ -109,6 +109,7 @@ def upload_file(request):
 
 def handle_upload(request, uploaded_file, pdb_file):
     uniprot_id = request.POST.get('uniprotId')
+    email = request.POST.get('email')
     #if not uniprot_id:
     #    return JsonResponse({'status': 'error', 'message': 'No UniProt ID provided.'}, status=400)
     now = datetime.now()
@@ -150,6 +151,7 @@ def handle_upload(request, uploaded_file, pdb_file):
 #SBATCH --error=slurm_%j.err
                          
 docker run --rm -v "/data/jobs/{job_id}:/opt/job" marinaabakarova/proteocast /bin/bash -c "cd / && bash run.sh {uploaded_file.name} {uniprot_id}"
+## conatct {email}
 """)
         os.chmod(run_docker_script, 0o755)
         os.chdir(folder_path)
