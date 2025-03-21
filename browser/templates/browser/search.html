@@ -122,11 +122,14 @@
           <p>You may generate it with the <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb" target="_blank">ColabFold</a> notebook. The first sequence should be the query, without any gap.</p>
          </div>
          <div class="form-row py-2">
-          <div class="form-group col">
-            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-            <input type="file" name="file" id="fileInput" accept=".a3m,.fasta" required>
+          <div class="form-group col-md-6">
+              <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+              <input type="file" name="file" id="fileInput" accept=".a3m,.fasta" required>
           </div>
-        </div>
+          <div class="form-group col-md-6">
+              <input type="email" name="email" id="emailInput" class="form-control" placeholder="Provide your email">
+          </div>
+      </div>
         <div class="form-row align-items-center">
           <div class="form-group col-md-6 px-4">
               <div class="custom-control custom-switch mt-2">

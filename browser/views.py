@@ -241,15 +241,18 @@ def results_view(request):
         files = os.listdir(f'/data/jobs/{id_folder}')
         # Loop through filenames to find the first one with 'FBpp'
         prot_id = None
+        a3mtag=False
         for file_name in files:
             if "ProteoCast" in file_name:
                 prot_id = '_'.join(file_name.split('.')[1].split('_')[:-1])  # Extract protein ID 
             if ('10.' in file_name): #and ('ResClass' not in file_name or 'Sensitivity' not in file_name): #10. in filname
                 pdb_id = file_name.split('.')[1]
             if ('a3m' in file_name):
-                msa_file_job = file_name
-            elif ('2.ali' in file_name):
-                msa_file_job = file_name[5:] 
+                a3mtag=True
+            if ('2.ali' in file_name):
+                msa_file_job = file_name[5:]
+        if a3mtag:
+            msa_file_job = msa_file_job[:-5]+'a3m' 
     ## drosophila db
     else:
         # Only for the fly
