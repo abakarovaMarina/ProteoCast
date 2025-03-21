@@ -160,18 +160,25 @@
         </div>
     </footer>
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const footer = document.querySelector('footer');
-      footer.style.display = 'none'; // Initially hide the footer
 
-      window.addEventListener('scroll', function () {
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-          footer.style.display = 'block'; // Show the footer when scrolled to the bottom
-        } else {
-          footer.style.display = 'none'; // Hide the footer otherwise
+      document.addEventListener('DOMContentLoaded', function () {
+        const footer = document.querySelector('footer');
+      
+        function toggleFooter() {
+          if (document.body.scrollHeight > window.innerHeight) {
+            if ((window.innerHeight + window.scrollY) >= document.body.scrollHeight - 10) {
+              footer.style.display = 'block';
+            } else {
+              footer.style.display = 'none';
+            }
+          } else {
+            footer.style.display = 'block'; // Show footer if there's no scrolling
+          }
         }
+      
+        window.addEventListener('scroll', toggleFooter);
+        toggleFooter(); // Run once to check initial state
       });
-    });
     </script>
     </div>
   </body></html>
