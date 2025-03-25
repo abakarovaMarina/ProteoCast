@@ -265,6 +265,9 @@ def results_view(request):
             if sequences < 20:
                 message = 'The submitted MSA contains too few sequences. For reliable predictions, the MSA should contain at least a couple of hundred sequences.'
                 return render(request, 'browser/error.html', {'message': message}, status=500)
+        else:
+            return HttpResponse(f"MSA lecture: {proteocast_path}", status=404)
+
     ## drosophila db
     else:
         # Only for the fly
