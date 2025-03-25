@@ -259,14 +259,16 @@ def results_view(request):
         if msa_file_job:
             msa_path = os.path.join(files, msa_file_job)
             if os.path.exists(msa_path):
-                format_msa = msa_file_job.split('.')[-1]
-                sequences = list(SeqIO.parse(msa_path, format_msa))
-                if os.path.exists(msa_path):
-                    return HttpResponse(f"ProteoCast file not found: {msa_path}", status=404) 
-                if len(sequences) < 20:
+                try:
+                    # Use grep to count the number of sequences
+                    result = subprocess.run(['grep', '-c', '>', msa_path], capture_output=True, text=True, check=True)
+                    sequences = int(result.stdout.strip())
+                except subprocess.CalledProcessError as e:
+                    return render(request, 'browser/error.html', {'message': f"Error reading MSA file: {str(e)}"}, status=500)
+
+                if sequences < 20:
                     message = 'The MSA file contains less than 20 sequences, too few to run the predictions.'
                     return render(request, 'browser/error.html', {'message': message}, status=500)
-            
     ## drosophila db
     else:
         # Only for the fly
