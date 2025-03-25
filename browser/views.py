@@ -258,10 +258,12 @@ def results_view(request):
             msa_file_job = msa_file_job[:-5]+'a3m'
         
         if msa_file_job:
-            msa_path = os.path.join(data_path, id_folder, msa_file_job)
+            msa_path = os.path.join(files, msa_file_job)
             if os.path.exists(msa_path):
                 format_msa = msa_file_job.split('.')[-1]
                 sequences = list(SeqIO.parse(msa_path, format_msa))
+                if os.path.exists(msa_path):
+                    return HttpResponse(f"ProteoCast file not found: {msa_path}", status=404) 
                 if len(sequences) < 20:
                     message = 'The MSA file contains less than 20 sequences, too few to run the predictions.'
                     return render(request, 'browser/error.html', {'message': message}, status=500)
