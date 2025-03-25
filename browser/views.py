@@ -257,7 +257,7 @@ def results_view(request):
             msa_file_job = msa_file_job[:-5]+'a3m'
         
         if msa_file_job:
-            msa_path = os.path.join(files, msa_file_job)
+            msa_path = os.path.join(f'/data/jobs/{id_folder}', msa_file_job)
             if os.path.exists(msa_path):
                 try:
                     # Use grep to count the number of sequences
