@@ -22,6 +22,7 @@ from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
+from Bio import SeqIO
 
 def contact_us(request):
     return render(request, 'browser/contact_us.html')
@@ -254,7 +255,17 @@ def results_view(request):
             if ('2.ali' in file_name):
                 msa_file_job = file_name[5:]
         if a3mtag:
-            msa_file_job = msa_file_job[:-5]+'a3m' 
+            msa_file_job = msa_file_job[:-5]+'a3m'
+        
+        if msa_file_job:
+            msa_path = os.path.join(data_path, id_folder, msa_file_job)
+            if os.path.exists(msa_path):
+                format_msa = msa_file_job.split('.')[-1]
+                sequences = list(SeqIO.parse(msa_path, format_msa))
+                if len(sequences) < 20:
+                    message = 'The MSA file contains less than 20 sequences, too few to run the predictions.'
+                    return render(request, 'browser/error.html', {'message': message}, status=500)
+            
     ## drosophila db
     else:
         # Only for the fly
@@ -331,7 +342,7 @@ def results_view(request):
 
     # Basic checks
     if not data_path or not id_folder or not prot_id:
-        message = 'ProteoCast file not found: Protein ID.'
+        message = 'ProteoCast file not found. The MSA file doesn not provide enough evolutionary information.'
         return render(request, 'browser/error.html', {'message': message}, status=500)
 
     alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y"][::-1]
