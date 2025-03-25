@@ -257,7 +257,7 @@ def results_view(request):
             msa_file_job = msa_file_job[:-5]+'a3m'
         
         if msa_file_job:
-            msa_path = os.path.join(f'/data/jobs/{id_folder}', msa_file_job)
+            msa_path = os.path.join(f'{alias_dir}/{id_folder}/2.ali', msa_file_job.split('.')[0]+'.fasta')
             if os.path.exists(msa_path):
                 # Use grep to count the number of sequences
                 result = subprocess.run(['grep', '-c', '>', msa_path], capture_output=True, text=True, check=True)
