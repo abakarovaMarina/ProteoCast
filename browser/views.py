@@ -22,7 +22,6 @@ from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
-from Bio import SeqIO
 
 def contact_us(request):
     return render(request, 'browser/contact_us.html')
