@@ -259,15 +259,12 @@ def results_view(request):
         if msa_file_job:
             msa_path = os.path.join(f'/data/jobs/{id_folder}', msa_file_job)
             if os.path.exists(msa_path):
-                try:
-                    # Use grep to count the number of sequences
-                    result = subprocess.run(['grep', '-c', '>', msa_path], capture_output=True, text=True, check=True)
-                    sequences = int(result.stdout.strip())
-                except subprocess.CalledProcessError as e:
-                    return render(request, 'browser/error.html', {'message': f"Error reading MSA file: {str(e)}"}, status=500)
-
+                # Use grep to count the number of sequences
+                result = subprocess.run(['grep', '-c', '>', msa_path], capture_output=True, text=True, check=True)
+                sequences = int(result.stdout.strip())
+                print("MSA", sequences)
                 if sequences < 20:
-                    message = 'The MSA file contains less than 20 sequences, too few to run the predictions.'
+                    message = 'The submitted MSA contains too few sequences. For reliable predictions, the MSA should contain at least a couple of hundred sequences.'
                     return render(request, 'browser/error.html', {'message': message}, status=500)
     ## drosophila db
     else:
@@ -345,7 +342,7 @@ def results_view(request):
 
     # Basic checks
     if not data_path or not id_folder or not prot_id:
-        message = 'ProteoCast file not found. The MSA file doesn not provide enough evolutionary information.'
+        message = 'ProteoCast file not found. The MSA file does not provide enough evolutionary information.'
         return render(request, 'browser/error.html', {'message': message}, status=500)
 
     alph = ["a","c","d","e","f","g","h","i","k","l","m","n","p","q","r","s","t","v","w","y"][::-1]
