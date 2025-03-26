@@ -256,7 +256,7 @@ def results_view(request):
         if a3mtag:
             msa_file_job = msa_file_job[:-5]+'a3m'
         
-        msa_path =f'{data_path}{id_folder}/2.ali'+msa_file_job.split('.')[0]+'.fasta'
+        msa_path =f'{data_path}{id_folder}/2.ali'+msa_file_job
         if os.path.exists(msa_path):
             # Use grep to count the number of sequences
             result = subprocess.run(['grep', '-c', '>', msa_path], capture_output=True, text=True, check=True)
