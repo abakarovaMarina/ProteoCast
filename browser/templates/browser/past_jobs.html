@@ -177,9 +177,9 @@
             const response = await fetch(`${baseUrl}?q=job${jobId}`, { method: "GET" });
 
             // Check if the response is OK
-            // if (!response.ok) {
-              // throw new Error("Failed to retrieve the results for your job. Please check the Job ID.");
-            // }
+            if (!response.ok) {
+              throw new Error("Failed to retrieve the results for your job. Please check the Job ID.");
+            }
 
             // If successful, redirect to the results page
             const resultUrl = `${baseUrl}?q=job${jobId}`;
