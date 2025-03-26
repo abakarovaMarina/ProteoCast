@@ -241,6 +241,9 @@ def results_view(request):
         prot_name = prot_name[3:]
         id_folder = prot_name
         files = os.listdir(f'/data/jobs/{id_folder}')
+        if not os.path.exists(f'/data/jobs/{id_folder}'):
+                message = 'Failed to retrieve the results for your job. Please check the Job ID."'
+                return render(request, 'browser/error.html', {'message': message}, status=500) 
         # Loop through filenames to find the first one with 'FBpp'
         prot_id = None
         a3mtag=False
