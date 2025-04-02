@@ -256,8 +256,7 @@ def results_view(request):
                 a3mtag=True
             if ('2.ali' in file_name):
                 msa_file_job = file_name[5:]
-        if a3mtag:
-            msa_file_job = msa_file_job[:-5]+'a3m'
+
         
         msa_path =f'{data_path}{id_folder}/2.ali'+msa_file_job
         if os.path.exists(msa_path):
@@ -775,7 +774,9 @@ def results_view(request):
 
     ## segmentation data for 3D
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/13.{prot_id}_GEMME_pLDDT.csv') 
-
+    
+    if a3mtag:
+        msa_file_job = msa_file_job[:-5]+'a3m'
 
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
