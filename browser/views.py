@@ -233,7 +233,7 @@ def results_view(request):
         return HttpResponse(f'Please provide a protein name.')
     
     pdb_id = ''
-    msa_file_job = ''
+    msa_file_job = '';a3mtag=False
     ## job
     if (prot_name[:3] == 'job'):
         data_path = '/data/jobs/'
@@ -246,7 +246,6 @@ def results_view(request):
             return render(request, 'browser/error.html', {'message': message}, status=500) 
         # Loop through filenames to find the first one with 'FBpp'
         prot_id = None
-        a3mtag=False
         for file_name in files:
             if "ProteoCast" in file_name:
                 prot_id = '_'.join(file_name.split('.')[1].split('_')[:-1])  # Extract protein ID 
