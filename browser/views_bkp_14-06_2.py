@@ -360,14 +360,11 @@ def results_view(request):
         return render(request, 'browser/error.html', {'message': message}, status=500)
 #        return HttpResponse(f"ProteoCast file not found: {proteocast_path}", status=404)
 
-    rsa_path = f'{data_path}{id_folder}/4.{prot_id}_ProteoCast.csv'
+    rsa_path = f'{data_path}{id_folder}/rsa_gemme_values.csv'
     if os.path.exists(rsa_path):
         df_rsa = pd.read_csv(rsa_path)
-        if not 'RSA*GEMME' in df_rsa.columns:
-            df_rsa = None 
     else:
         df_rsa = None
-
     try:
         df_proteocast = pd.read_csv(proteocast_path)
     except Exception as e:
@@ -695,6 +692,7 @@ def results_view(request):
         pdb_check = pdb_url_4.replace(alias_dir, data_path)
         if not os.path.exists(pdb_check):
             pdb_url_4 = None
+
 
     ###### SEGMENTATION ######
 

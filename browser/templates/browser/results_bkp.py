@@ -381,21 +381,19 @@
                         <input type="radio" name="colorToggle" value="bfactor" checked>
                         B-Factors
                     </label>
-                    <br>
                     <label style="display: inline-block;">
                         <input type="radio" name="colorToggle" value="gemme">
-                        Sensitivity
+                        GEMME Sensitivity
                     </label>
-                    <br>
                     <label  style="display: inline-block;">
                         <input type="radio" name="colorToggle" value="residue_class">
                         Residue Class
                     </label>
-                    <br>
-                    {% if pdb_url_4 %}
+
+                    {% if heatmapClasses_html %}
                     <label  style="display: inline-block;">
                         <input type="radio" name="colorToggle" value="residue_rsa">
-                        Structure-aware Sensitivity 
+                        Residue RSA
                     </label>
                     {% endif %}
                 </div>
@@ -415,8 +413,7 @@
             const pdbUrls = {
                 bfactor: "{{ pdb_url_1 }}",
                 gemme: "{{ pdb_url_2 }}",
-                residue_class: "{{ pdb_url_3 }}",
-                residue_rsa: "{{ pdb_url_4 }}"
+                residue_class: "{{ pdb_url_3 }}"
             };
         
             // Check if the primary PDB URL is empty
