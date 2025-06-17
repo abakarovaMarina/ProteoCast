@@ -363,7 +363,7 @@ def results_view(request):
     rsa_path = f'{data_path}{id_folder}/4.{prot_id}_ProteoCast.csv'
     if os.path.exists(rsa_path):
         df_rsa = pd.read_csv(rsa_path)
-        if not 'RSA*GEMME' in df_rsa.columns:
+        if not 'RSA*Variant_score' in df_rsa.columns:
             df_rsa = None 
     else:
         df_rsa = None
@@ -464,12 +464,12 @@ def results_view(request):
             ygap=0.3,
         )
         fig_VariantClasses.add_trace(heatmap_classes, row=1, col=1)
+
         # --- RSA * Gemme heatmap
     if df_rsa is not None:
         num_positions = df_rsa['Residue'].nunique()
-        rsa_array = np.array(df_rsa['RSA*GEMME']).reshape(20, num_positions, order='F')
+        rsa_array = np.array(df_rsa['RSA*Variant_score']).reshape(20, num_positions, order='F')
         df_rsa_values = pd.DataFrame(rsa_array, columns=sorted(df_rsa['Residue'].unique()))
-        #df_rsa_values = pd.DataFrame(np.array(df_rsa['RSA*GEMME']).reshape(20, -1, order='F'))
         z_data = df_rsa_values.values
         zmin = np.nanmin(z_data) 
         zmax = np.nanmax(z_data)
@@ -499,12 +499,16 @@ def results_view(request):
             zmax=zmax,
             zmid=0, 
             showscale=False,
-            hovertemplate=("Mutation: %{customdata}<br>Score: %{z}<extra></extra>"),
+            hovertemplate=("Mutation: %{customdata}<br>Score: %{z:.2f}<extra></extra>"),
+
+    
+
             xgap=0.2,
         )       
         fig_rsa.add_trace(heatmap_rsa, row=1, col=1)
     else:
         heatmapRSA_html = None 
+
         # --- SNPs heatmap
     if df_snps is not None:
         df_snps = df_snps.loc[df_snps['Set_name']!='Hypomorphic'].copy()
@@ -675,7 +679,7 @@ def results_view(request):
     pdb_url_1 = f'/{alias_dir}/{id_folder}/10.{pdb_id}.pdb'
     pdb_url_2 = f'/{alias_dir}/{id_folder}/12.{pdb_id}_Sensitivity.pdb'
     pdb_url_3 = f'/{alias_dir}/{id_folder}/11.{pdb_id}_ResClass.pdb'
-    pdb_url_4 = f'/{alias_dir}/{id_folder}/{pdb_id}_ResRSA.pdb'
+    pdb_url_4 = f'/{alias_dir}/{id_folder}/13.{pdb_id}_ResRSA.pdb'
     pdb_check = None
     if pdb_url_1:
         pdb_check = pdb_url_1.replace(alias_dir, data_path)
