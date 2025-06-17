@@ -236,7 +236,7 @@ def results_view(request):
         return HttpResponse(f'Please provide a protein name.')
     
     pdb_id = ''
-    msa_file_job = '';a3mtag=False
+    msa_file_job = '';a3mtag=''
     ## job
     if (prot_name[:3] == 'job'):
         data_path = '/data/jobs/'
@@ -254,8 +254,8 @@ def results_view(request):
                 prot_id = '_'.join(file_name.split('.')[1].split('_')[:-1])  # Extract protein ID 
             if ('10.' in file_name): #and ('ResClass' not in file_name or 'Sensitivity' not in file_name): #10. in filname
                 pdb_id = file_name.split('.')[1]
-            if ('a3m' in file_name):
-                a3mtag=True
+            if ('a3m' in file_name or 'a2m' in file_name):
+                a3mtag=file_name[:-3]
             if ('2.ali' in file_name):
                 msa_file_job = file_name[5:]
 
@@ -853,7 +853,7 @@ def results_view(request):
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/13.{prot_id}_GEMME_pLDDT.csv') 
     
     if a3mtag:
-        msa_file_job = msa_file_job[:-5]+'a3m'
+        msa_file_job = msa_file_job[:-5]+a3mtag
 
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
