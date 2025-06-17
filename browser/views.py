@@ -92,10 +92,6 @@ DATA = '/data/Drosophila_ProteoCast/'
 
 @csrf_exempt
 def upload_file(request):
-#    if request.method == 'POST':
-#        if 'file' in request.FILES:
-#            uploaded_file = request.FILES['file']
-#            return handle_upload(request, uploaded_file)
     if request.method == 'POST':
         files = request.FILES
         if 'file' in files and 'pdbFile' in files:
@@ -113,8 +109,6 @@ def handle_upload(request, uploaded_file, pdb_file):
     chain = request.POST.get('customChain')
     if chain == '':
          chain = 'A'
-    #if not uniprot_id:
-    #    return JsonResponse({'status': 'error', 'message': 'No UniProt ID provided.'}, status=400)
     now = datetime.now()
     global job_id
     job_id = now.strftime('%Y%m%d%H%M%S')
@@ -236,7 +230,7 @@ def results_view(request):
         return HttpResponse(f'Please provide a protein name.')
     
     pdb_id = ''
-    msa_file_job = '';a3mtag=''
+    msa_file_job = '';a3mtag=None
     ## job
     if (prot_name[:3] == 'job'):
         data_path = '/data/jobs/'
