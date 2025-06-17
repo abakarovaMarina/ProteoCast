@@ -360,19 +360,20 @@ def results_view(request):
         return render(request, 'browser/error.html', {'message': message}, status=500)
 #        return HttpResponse(f"ProteoCast file not found: {proteocast_path}", status=404)
 
-    rsa_path = f'{data_path}{id_folder}/4.{prot_id}_ProteoCast.csv'
-    if os.path.exists(rsa_path):
-        df_rsa = pd.read_csv(rsa_path)
-        if not 'RSA*Variant_score' in df_rsa.columns:
-            df_rsa = None 
-    else:
-        df_rsa = None
+    #rsa_path = f'{data_path}{id_folder}/4.{prot_id}_ProteoCast.csv'
+    #if os.path.exists(rsa_path):
+    #    df_rsa = pd.read_csv(rsa_path)
+    #    if not 'RSA*Variant_score' in df_rsa.columns:
+    #        df_rsa = None 
+    #else:
+    #    df_rsa = None
 
     try:
         df_proteocast = pd.read_csv(proteocast_path)
     except Exception as e:
         message = 'ProteoCast could not read ProteoCast.csv file.'
         return render(request, 'browser/error.html', {'message': message}, status=500)
+    ### creating confidence vector 
     try:
         df_proteocast['LocalConfidence'] = df_proteocast['LocalConfidence'].replace({True: 1, False: 0})
         confidence_values = np.array(df_proteocast.groupby('Residue')['LocalConfidence']
@@ -381,7 +382,8 @@ def results_view(request):
         confidence_values = None
         message = 'ProteoCast encountered a problem processing the confidence metric.'
         return render(request, 'browser/error.html', {'message': message}, status=500)
-        
+
+    ### creating mutation and variant score dataframes
     try:
         df = pd.DataFrame(np.array(df_proteocast['Variant_score']).reshape(20, -1, order='F'))
         df_mut = pd.DataFrame(np.array(df_proteocast['Mutation']).reshape(20, -1, order='F'))
@@ -390,6 +392,16 @@ def results_view(request):
         message = 'ProteoCast has not found Variant_score or Mutation values in the ProteoCast.csv file.'
         return render(request, 'browser/error.html', {'message': message}, status=500)
     
+    ### creating mutation and variant score dataframes
+    try:
+        df_rsa = pd.DataFrame(np.array(df_proteocast['RSA*Variant_score']).reshape(20, -1, order='F'))
+    except Exception as e:
+        df_rsa = None
+        ## rsa is not mandatory, so we do not return an error
+        #message = 'ProteoCast has not found Variant_score or Mutation values in the ProteoCast.csv file.'
+        #return render(request, 'browser/error.html', {'message': message}, status=500)
+    
+    ### creating variant classes dataframes
     try:
         df_classes = pd.DataFrame(np.array(df_proteocast['Variant_class'].replace({'neutral': 1, 'uncertain': 2, 'impactful': 3})).reshape(20, -1, order='F'))
         df_classesStr = pd.DataFrame(np.array(df_proteocast['Variant_class']).reshape(20, -1, order='F'))
@@ -465,49 +477,26 @@ def results_view(request):
         )
         fig_VariantClasses.add_trace(heatmap_classes, row=1, col=1)
 
-        # --- RSA * Gemme heatmap
+    # --- RSA * Gemme heatmap
+
     if df_rsa is not None:
-        num_positions = df_rsa['Residue'].nunique()
-        rsa_array = np.array(df_rsa['RSA*Variant_score']).reshape(20, num_positions, order='F')
-        df_rsa_values = pd.DataFrame(rsa_array, columns=sorted(df_rsa['Residue'].unique()))
-        z_data = df_rsa_values.values
-        zmin = np.nanmin(z_data) 
-        zmax = np.nanmax(z_data)
-        abs_max = max(abs(zmin), abs(zmax))
-        zmin, zmax = -abs_max, abs_max
-
-        rsa_colorscale = [ 
-           [0.0, '#08306b'],   # Azul oscuro (valores negativos)
-           [0.5, '#ffffff'],   # Blanco (valor 0)
-           [1.0, '#d0f0ff']    # Celeste (valores positivos)
-        ]
-
         fig_rsa = make_subplots(
-           rows=2, cols=1,
-           shared_xaxes=True,
-           row_heights=[0.9, 0.1],
-           vertical_spacing=0.02,
+            rows=2, cols=1,
+            shared_xaxes=True,
+            row_heights=[0.9, 0.1],
+            vertical_spacing=0.02,
         )
-
         heatmap_rsa = go.Heatmap(
-            z=z_data[::-1],
-            x=list(df_rsa_values.columns),
+            z=df_rsa.values[::-1],
+            x=list(range(1, df_rsa.shape[1])),
             y=alph,
-            customdata=df_mut.values[::-1],
-            colorscale=rsa_colorscale,
-            zmin=zmin, 
-            zmax=zmax,
-            zmid=0, 
+            colorscale=px.colors.sequential.Oranges[::-1],
             showscale=False,
-            hovertemplate=("Mutation: %{customdata}<br>Score: %{z:.2f}<extra></extra>"),
-
-    
-
-            xgap=0.2,
-        )       
+            customdata=df_mut.values[::-1],
+            hovertemplate=("Mutation: %{customdata}<br>"
+                           "Score: %{z:.2f}<extra></extra>")
+        )
         fig_rsa.add_trace(heatmap_rsa, row=1, col=1)
-    else:
-        heatmapRSA_html = None 
 
         # --- SNPs heatmap
     if df_snps is not None:
@@ -608,6 +597,25 @@ def results_view(request):
             fig.update_yaxes(visible=False, row=2, col=1)
             heatmap_html = fig.to_html(full_html=False)
 
+        if df_rsa is not None:
+            fig_rsa.add_trace(heatmap_confidence, row=2, col=1)
+            fig_rsa.add_trace(scatter_border, row=2, col=1)
+            fig_rsa.update_layout(
+                title_x=1,
+                autosize=False,
+                width=1500,
+                height=600,
+                xaxis=dict(
+                    tickmode="array",
+                    tickvals=list(range(1, df_rsa.shape[1], 10)),
+                    ticktext=[str(i) for i in range(1, df_rsa.shape[1], 10)]
+                ),
+                yaxis=dict(title="Substituting amino acid"),
+                xaxis2=dict(title="Residue")
+            )
+            fig_rsa.update_yaxes(visible=False, row=2, col=1)
+            heatmapRSA_html = fig_rsa.to_html(full_html=False)
+
 
         if df_classes is not None:
             fig_VariantClasses.add_trace(heatmap_confidence, row=2, col=1)
@@ -628,24 +636,6 @@ def results_view(request):
             fig_VariantClasses.update_yaxes(visible=False, row=2, col=1)
             heatmapClasses_html = fig_VariantClasses.to_html(full_html=False)
         
-        if df_rsa is not None:
-            fig_rsa.add_trace(heatmap_confidence, row=2, col=1)
-            fig_rsa.add_trace(scatter_border, row=2, col=1)
-            fig_rsa.update_layout(
-                title_x=1,
-                autosize=False,
-                width=1500,
-                height=600,
-                xaxis=dict(
-                    tickmode="array",
-                    tickvals=list(range(1, df.shape[1]+1, 10)),
-                    ticktext=[str(i) for i in range(1, df.shape[1], 10)]
-                ),
-                yaxis=dict(title="Substituting amino acid"),
-                xaxis2=dict(title="Residue")
-            )
-            fig_rsa.update_yaxes(visible=False, row=2, col=1)
-            heatmapRSA_html = fig_rsa.to_html(full_html=False)
         
         if df_snps is not None:
             fig_SNPs.add_trace(heatmap_confidence, row=2, col=1)
