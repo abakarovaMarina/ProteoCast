@@ -447,7 +447,7 @@
         
 
                 // define unaligned residues 
-                var unalignedResidues = {{ unaligned_residues | default:"[]"|safe }};
+                var unalignedResidues = {{ unaligned_segments | default:"[]"|safe }};
                 console.log("Unaligned residues:", unalignedResidues);
 
             
