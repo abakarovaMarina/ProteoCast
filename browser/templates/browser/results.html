@@ -367,7 +367,7 @@
         <!-- 3D structure -->
         <div class="form-row">
             <h2 style="margin-top: 30px;">3D Structure</h2>
-            <p> If a UniProt code or a structure is provided, it will be visualized with its B-factors. If the sequence matches the one in the MSA, it can be visualized with GEMME Sensitivity (per-residue GEMME average score) or Residue Class. </p>
+            <p> If a UniProt code or structure is provided, it will be visualized along with its B-factors. The MSA sequence is aligned to the structure, and for the aligned residues, you can visualize: (i) Sensitivity (average raw mutational score per residue), (ii) Residue Class (sensitive or tolerant), and (iii) Structure-aware Sensitivity (raw scores weighted by RSA). </p>
         </div>
         {% if pdb_file and pdb_file != ".pdb" %}
         <div class="form-row" style="min-height: 600px;">
