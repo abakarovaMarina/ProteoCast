@@ -445,6 +445,12 @@
                     },
                 };
         
+
+                // define unaligned residues 
+                var unalignedResidues = {{ unaligned_residues | default:"[]"|safe }};
+                console.log("Unaligned residues:", unalignedResidues);
+
+            
                 // Function to load the structure and apply coloring
                 async function initialiseView(condition = 'bfactor') {
                     console.log("Loading structure for condition:", condition);
@@ -468,6 +474,23 @@
                             await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'plddt-confidence'});
                         } else {
                             await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'uncertainty'});
+                            // Add representation for unaligned residues
+                            if (unalignedResidues.length > 0) {
+                                for (const segment of unalignedResidues) {
+                                    await viewerInstance.plugin.builders.structure.selection.fromResidueRange(structure, {
+                                        modelIndex: 0,
+                                        chainId: segment.chain_id,
+                                        startResidueNumber: segment.start_residue_number,
+                                        endResidueNumber: segment.end_residue_number
+                                    }).then(selection => {
+                                        viewerInstance.plugin.builders.structure.representation.addRepresentation(selection, {
+                                            type: 'cartoon',
+                                            color: segment.color,
+                                            transparency: segment.transparency
+                                        });
+                                    });
+                                }
+                            }
                         }
                     }
                 }
