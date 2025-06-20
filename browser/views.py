@@ -228,7 +228,7 @@ def unaligned_residue_segments(path_aligned_file):
     df = pd.read_csv(path_aligned_file)
 
     # Define gray color
-    grey_color = {'r': 128, 'g': 128, 'b': 128}
+    grey_color = {'r': 200, 'g': 200, 'b': 200}
     transparency_value = 50  # 0 = opaque, 1 = fully transparent
 
     segments = []
