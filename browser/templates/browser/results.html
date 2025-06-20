@@ -367,7 +367,7 @@
         <!-- 3D structure -->
         <div class="form-row">
             <h2 style="margin-top: 30px;">3D Structure</h2>
-            <p> If a UniProt code or structure is provided, it will be visualized along with its B-factors. The MSA sequence is aligned to the structure, and for the aligned residues, you can visualize: (i) Sensitivity (average raw mutational score per residue), (ii) Residue Class (sensitive or tolerant), and (iii) Structure-aware Sensitivity (raw scores weighted by RSA). You have the option to highlight sensitive segments as well. See the <a href="/documentation" target="_blank" rel="noopener noreferrer">documentation</a> for more details.</p>
+            <p> If a UniProt code or structure is provided, it will be visualized along with its B-factors. The MSA sequence is aligned to the structure, and for the aligned residues, you can visualize: (i) Sensitivity (average raw mutational score per residue), (ii) Residue Class (sensitive or tolerant), and (iii) Structure-aware Sensitivity (raw scores weighted by RSA). Unaligned residues are shown in gray. You have the option to highlight sensitive segments in disordered regions. See the <a href="/documentation" target="_blank" rel="noopener noreferrer">documentation</a> for more details.</p>
         </div>
         {% if pdb_file and pdb_file != ".pdb" %}
         <div class="form-row" style="min-height: 600px;">
