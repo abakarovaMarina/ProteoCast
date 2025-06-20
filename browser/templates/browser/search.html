@@ -191,14 +191,12 @@
       
       <!-- Collapsible Section --> 
       <div id="pdbSection" style="display: none;">
-        <div class="form-row py-2">
+        <div class="form-row">
           <h4 class="form-text text-dark">You may provide a custom PDB file</h4>
       </div>
-
-
-
-      <div class="form-row py-2 align-items-center">
-        <div class="form-group col-md-8 pr-1">
+      
+      <div class="form-row py-2">
+        <div class="form-group col-md-6">
           <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
           <input type="file" name="pdbFile" id="pdbFileInput" accept=".pdb"
             style="font-family: 'Helvetica Neue', sans-serif;
@@ -206,7 +204,7 @@
                padding: 10px 20px;">
         </div>
 
-        <div class="form-group col-md-8 pr-1">
+        <div class="form-group col-md-6 px-4">
           <input type="text" id="customChain" name="customChain" class="form-control"
              placeholder="Please provide the chain: e.g., A">
         </div>        
