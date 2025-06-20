@@ -224,17 +224,21 @@ def segmentation_dico(path_segF,path_bfactors):
     return seg_dico
 
 ## Create a list of segments for unaligned residues
-def unaligned_residue_segments(path_aligned_file):
+def unaligned_residue_segments(path_aligned_file, aligned=False):
     df = pd.read_csv(path_aligned_file)
 
     # Define gray color
-    grey_color = {'r': 200, 'g': 200, 'b': 200}
-    transparency_value = 50  # 0 = opaque, 1 = fully transparent
-
+    if aligned:
+        transparency_value = 0  # 0 = opaque, 1 = fully transparent
+        grey_color = 'uncertainty'
+    else:
+        transparency_value = 70 # 0 = opaque, 100 = fully transparent
+        grey_color = {'r': 200, 'g': 200, 'b': 200}
+        
     segments = []
 
     # Group by chain to handle multi-chain structures
-    for chain_id, group in df[df['aligned'] == False].groupby('chain'):
+    for chain_id, group in df[df['aligned'] == aligned].groupby('chain'):
         # Group into contiguous residue runs
         sorted_group = group.sort_values('residue')
         current_segment = []
@@ -884,9 +888,11 @@ def results_view(request):
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/14.{prot_id}_GEMME_pLDDT.csv') 
     ## unaligned residues 
     if (prot_name[:3] == 'job'):
-        seg_unaligned = unaligned_residue_segments(f'{data_path}{id_folder}/rsa_values.csv') 
+        seg_unaligned = unaligned_residue_segments(f'{data_path}{id_folder}/rsa_values.csv')
+        seg_aligned = unaligned_residue_segments(f'{data_path}{id_folder}/rsa_values_aligned.csv', aligned=True) 
     else:
         seg_unaligned=None 
+        seg_aligned=None
 
     if a3mtag:
         msa_file_job = msa_file_job[:-5]+a3mtag
@@ -907,6 +913,7 @@ def results_view(request):
         'fig_segmentation': fig_segmentation,
         'select_segments': seg_dico,
         'unaligned_segments': seg_unaligned,
+        'aligned_segments': seg_aligned,
         'warning_message':warning_message,
         'pdb_file': pdb_id+'.pdb',
         'msa_file_job':msa_file_job
