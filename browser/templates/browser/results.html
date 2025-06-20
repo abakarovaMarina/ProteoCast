@@ -450,9 +450,11 @@
                 var unalignedResidues = {{ unaligned_segments | default:"[]"|safe }};
                 console.log("Unaligned residues:", unalignedResidues);
 
-            
+                let currentCondition = 'bfactor';
+
                 // Function to load the structure and apply coloring
                 async function initialiseView(condition = 'bfactor') {
+                    currentCondition = condition;
                     console.log("Loading structure for condition:", condition);
                     console.log("PDB URL:", pdbUrls[condition]);
                     options.customData.url = pdbUrls[condition]; // Set the PDB URL
@@ -483,6 +485,7 @@
                 }
         
                 async function loadStructureAndColor(condition) {
+                    currentCondition = condition;
                     console.log("Loading structure for condition:", condition);
                     console.log("PDB URL:", pdbUrls[condition]);
                     addStructure(condition);
@@ -493,18 +496,14 @@
                     if (this.checked) {
                         console.log("Checkbox is checked..");
                         viewerInstance.visual.select({data: selectSections});
-                        if (condition !== 'bfactor'){
-                            if (unalignedResidues.length > 0) {
-                                viewerInstance.visual.select({ data: unalignedResidues });
-                            }
+                        if (currentCondition !== 'bfactor' && unalignedResidues.length > 0) {
+                            viewerInstance.visual.select({ data: unalignedResidues });
                         }
                     } else {
                         console.log("Checkbox is not checked..");
                         viewerInstance.visual.clearSelection();
-                        if (condition !== 'bfactor'){
-                            if (unalignedResidues.length > 0) {
-                                viewerInstance.visual.select({ data: unalignedResidues });
-                            }
+                        if (currentCondition !== 'bfactor' && unalignedResidues.length > 0) {
+                            viewerInstance.visual.select({ data: unalignedResidues });
                         }
                     }
                 });
