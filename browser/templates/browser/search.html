@@ -139,6 +139,7 @@
               <input type="email" name="email" id="emailInput" class="form-control" placeholder="Provide your email (optional)">
           </div>
       </div>
+
         <div class="form-row py-2 align-items-center">
          <div class="form-group col-md-6 px-4">
            <div class="custom-control custom-switch mt-2">
@@ -156,6 +157,7 @@
              </div>
            </div>
          </div>
+
       <script>
         document.addEventListener('DOMContentLoaded', function () {
           const uniprotCodeCheckbox = document.getElementById('uniprotCode');
@@ -193,7 +195,9 @@
           <h4 class="form-text text-dark">You may provide a custom PDB file</h4>
       </div>
 
-      <div class="form-row py-2">
+
+
+      <div class="form-row py-2 align-items-center">
         <div class="form-group col-md-8 pr-1">
           <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
           <input type="file" name="pdbFile" id="pdbFileInput" accept=".pdb"
@@ -202,10 +206,10 @@
                padding: 10px 20px;">
         </div>
 
-        <div class="form-group col-md-4 pl-1">
+        <div class="form-group col-md-8 pr-1">
           <input type="text" id="customChain" name="customChain" class="form-control"
-             placeholder="Please provide the chain: e.g. A">
-        </div>
+             placeholder="Please provide the chain: e.g., A">
+        </div>        
       </div>
 
       <div id="pdbLoading" style="display: none;">Uploading... Please wait.</div>
