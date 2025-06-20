@@ -475,11 +475,12 @@
                         if (condition === 'bfactor') {
                             await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'plddt-confidence'});
                         } else {
-                            await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'uncertainty'});
+                            
                             // Add representation for unaligned residues
                             if (unalignedResidues.length > 0) {
                                 viewerInstance.visual.select({ data: unalignedResidues });
                             }
+                            await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'uncertainty'});
                         }
                     }
                 }
