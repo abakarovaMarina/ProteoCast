@@ -283,8 +283,7 @@ def results_view(request):
     if (prot_name[:3] == 'job'):
         data_path = '/data/jobs/'
         alias_dir = 'jobs'
-        prot_name = prot_name[3:]
-        id_folder = prot_name
+        id_folder = prot_name[3:]
         files = os.listdir(f'/data/jobs/{id_folder}')
         if not os.path.exists(f'/data/jobs/{id_folder}'):
             message = 'Failed to retrieve the results for your job. Please check the Job ID.'
