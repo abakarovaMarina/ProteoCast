@@ -493,6 +493,9 @@
                     if (this.checked) {
                         console.log("Checkbox is checked..");
                         viewerInstance.visual.select({data: selectSections});
+                        if (unalignedResidues.length > 0) {
+                                viewerInstance.visual.select({ data: unalignedResidues });
+                        }
                     } else {
                         console.log("Checkbox is not checked..");
                         viewerInstance.visual.clearSelection();
