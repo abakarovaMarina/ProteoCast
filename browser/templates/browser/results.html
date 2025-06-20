@@ -478,17 +478,7 @@
                             await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'uncertainty'});
                             // Add representation for unaligned residues
                             if (unalignedResidues.length > 0) {
-                                const selection = viewerInstance.plugin.managers.interactivity.lociFromIndices('element-loci', unalignedResidues);
-                                await viewerInstance.plugin.builders.structure.representation.addRepresentationFromSelection(
-                                    structure,
-                                    selection,
-                                    {
-                                        type: 'cartoon',
-                                        color: 'uniform',
-                                        colorParams: { value: { r: 128, g: 128, b: 128 } }, // light grey or adjust as needed
-                                        transparency: 80  // value from 0 (opaque) to 100 (fully transparent)
-                                    }
-                                );
+                                viewerInstance.visual.select({ data: unalignedResidues });
                             }
                         }
                     }
