@@ -450,9 +450,6 @@
                 var unalignedResidues = {{ unaligned_segments | default:"[]"|safe }};
                 console.log("Unaligned residues:", unalignedResidues);
 
-                var alignedResidues = {{ aligned_segments | default:"[]"|safe }};
-                console.log("Aligned residues:", alignedResidues);
-
                 let currentCondition = 'bfactor';
 
                 // Function to load the structure and apply coloring
@@ -478,13 +475,10 @@
                         if (condition === 'bfactor') {
                             await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'plddt-confidence'});
                         } else {
-                            
+                            await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'uncertainty'});
                             // Add representation for unaligned residues
                             if (unalignedResidues.length > 0) {
-                                await viewerInstance.plugin.builders.structure.representation.addRepresentation(aligned_segments, { type: 'cartoon', color: 'uncertainty'});
                                 viewerInstance.visual.select({ data: unalignedResidues });
-                            }else{
-                                await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'uniform'});
                             }
                         }
                     }
