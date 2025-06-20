@@ -477,25 +477,8 @@
                         } else {
                             await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'uncertainty'});
                             // Add representation for unaligned residues
-                            for (const segment of unalignedResidues) {
-                                await viewerInstance.plugin.builders.structure.representation.addRepresentation(
-                                    structure,
-                                    {
-                                        type: segment.representation,
-                                        color: 'uniform',
-                                        colorParams: { value: segment.color },
-                                        transparency: 50 // e.g., 50
-                                    },
-                                    {
-                                        selection: {
-                                            residues: [{
-                                                chainId: segment.chain_id,
-                                                start: segment.start_residue_number,
-                                                end: segment.end_residue_number
-                                            }]
-                                        }
-                                    }
-                                );
+                            if (unalignedResidues.length > 0) {
+                                viewerInstance.visual.select({ data: unalignedResidues });
                             }
                         }
                     }
