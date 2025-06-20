@@ -229,7 +229,7 @@ def unaligned_residue_segments(path_aligned_file):
 
     # Define gray color
     grey_color = {'r': 128, 'g': 128, 'b': 128}
-    transparency_value = 0.6  # 0 = opaque, 1 = fully transparent
+    transparency_value = 0.9  # 0 = opaque, 1 = fully transparent
 
     segments = []
 
