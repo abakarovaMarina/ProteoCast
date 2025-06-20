@@ -499,6 +499,9 @@
                     } else {
                         console.log("Checkbox is not checked..");
                         viewerInstance.visual.clearSelection();
+                        if (unalignedResidues.length > 0) {
+                                viewerInstance.visual.select({ data: unalignedResidues });
+                        }
                     }
                 });
         
