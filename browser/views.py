@@ -228,7 +228,7 @@ def unaligned_residue_segments(path_aligned_file):
 
     # Define gray color
     grey_color = {'r': 128, 'g': 128, 'b': 128}
-    transparency_value = 50  # 0 = opaque, 1 = fully transparent
+    transparency_value = 0.5  # 0 = opaque, 1 = fully transparent
 
     segments = []
 
@@ -250,7 +250,7 @@ def unaligned_residue_segments(path_aligned_file):
                         'chain_id': chain_id,
                         'color': grey_color,
                         'representation': 'cartoon',
-                        'transparency': transparency_value
+                        'alpha': transparency_value
                     })
                     current_segment = []
             current_segment.append(res_id)
