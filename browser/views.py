@@ -197,7 +197,7 @@ def segmentation_dico(path_segF,path_bfactors):
         
         if state == 1 or state == 2:
             segment = list(range(start, end + 1))
-            sub_segments = []; sub_segment = []
+            sub_segments = [];  sub_segment = []
             
             for res in segment:
                 if res in resi_70:
@@ -228,7 +228,7 @@ def unaligned_residue_segments(path_aligned_file):
 
     # Define gray color
     grey_color = {'r': 128, 'g': 128, 'b': 128}
-    transparency_value = 0.5  # 0 = opaque, 1 = fully transparent
+    transparency_value = 50  # 0 = opaque, 1 = fully transparent
 
     segments = []
 
@@ -250,7 +250,7 @@ def unaligned_residue_segments(path_aligned_file):
                         'chain_id': chain_id,
                         'color': grey_color,
                         'representation': 'cartoon',
-                        'alpha': transparency_value
+                        'transparency': transparency_value
                     })
                     current_segment = []
             current_segment.append(res_id)
@@ -264,30 +264,10 @@ def unaligned_residue_segments(path_aligned_file):
                 'chain_id': chain_id,
                 'color': grey_color,
                 'representation': 'cartoon',
-                'alpha': transparency_value
+                'transparency': transparency_value
             })
 
     return segments
-
-def adapt_segments_for_molstar(segments):
-    """Convert flat unaligned segments into Mol* selection format."""
-    adapted_segments = []
-    for seg in segments:
-        adapted_segments.append({
-            "start": {
-                "residue_number": seg["start_residue_number"],
-                "label_asym_id": seg["chain_id"]
-            },
-            "end": {
-                "residue_number": seg["end_residue_number"],
-                "label_asym_id": seg["chain_id"]
-            },
-            "color": seg.get("color", {"r": 128, "g": 128, "b": 128}),
-            "representation": seg.get("representation", "cartoon"),
-            "alpha": seg.get("alpha", 0.5)
-        })
-    return adapted_segments
-
 
 
 def results_view(request):
@@ -903,8 +883,7 @@ def results_view(request):
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/14.{prot_id}_GEMME_pLDDT.csv') 
     ## unaligned residues 
     if (prot_name[:3] == 'job'):
-        seg_unaligned = unaligned_residue_segments(f'{data_path}{id_folder}/rsa_values.csv')
-        seg_unaligned = adapt_segments_for_molstar(seg_unaligned) 
+        seg_unaligned = unaligned_residue_segments(f'{data_path}{id_folder}/rsa_values.csv') 
     else:
         seg_unaligned=None 
 
