@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import search_view, results_view, download_folder, upload_file, drosophiladb, job_running, serve_file, check_job_status, past_jobs
+from .views import search_view, results_view, download_folder, download_example, upload_file, drosophiladb, job_running, serve_file, check_job_status, past_jobs
 
 urlpatterns = [
     path('search/', search_view, name='search'),
@@ -8,6 +8,7 @@ urlpatterns = [
     path('past_jobs/', past_jobs , name='past_jobs'),
     path('data/<str:folder>/<str:filename>/', serve_file, name='serve_file'),
     path('download_folder/<str:fbpp_id>/', download_folder, name='download_folder'),
+    path('download/example/', download_example, name='download_example'),
     path('upload_file/', upload_file, name='upload_file'),
     path('job_running/<str:job_id>/', job_running, name='job_running'),
     path('check_job_status/', check_job_status, name='check_job_status'), 

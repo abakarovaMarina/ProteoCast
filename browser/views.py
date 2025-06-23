@@ -941,3 +941,10 @@ def download_folder(request, fbpp_id):
         if os.path.exists(temp_zip_path):
             os.remove(temp_zip_path)
 
+
+def download_example(request):
+    file_path = '/data/jobs/insulin_4459d.a3m'
+    if os.path.exists(file_path):
+        return FileResponse(open(file_path, 'rb'), as_attachment=True, filename='insulin.a3m')
+    else:
+        return HttpResponse("Example file not found.")

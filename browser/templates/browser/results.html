@@ -352,7 +352,7 @@
             <p> 
                 Mutational sensitivity as estimated by GEMME average score per residue. Each delineated segment can be considered as displaying a homogeneous mean sensitivity. The identified segments are colored red if their mean value (horizontal line) is higher than one neighboring segment, and purple if it is higher than both neighboring segments.
                 {% if pdb_file and pdb_file != ".pdb" %}
-                The pLDDT confidence score from the AlphaFold2-predicted 3D structure is shown as a color bar on top. Orange and yellow indicate very low to low confidence, while light and dark blue represent high to very high confidence regions.
+                The color bar on top displays pLDDT confidence scores when the provided structure originates from AlphaFold2, whether retrieved via UniProt ID or uploaded manually. Orange and yellow indicate very low to low confidence, while light and dark blue represent high to very high confidence regions.
                 {% endif %} 
             </p>
             <div class="heatmap-container">
