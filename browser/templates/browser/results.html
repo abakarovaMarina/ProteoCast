@@ -478,37 +478,9 @@
                         } else {
                             await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'uncertainty'});
                             // Add representation for unaligned residues
-                            for (const segment of unalignedResidues) {
-                                const loci = viewerInstance.plugin.managers.structure.selection.fromResidueRange(
-                                    structure,
-                                    segment.start.label_asym_id,
-                                    segment.start.residue_number,
-                                    segment.end.residue_number
-                                );
-
-
-                                const component = await viewerInstance.plugin.builders.structure.tryCreateComponentFromSelection(
-                                    structure, 
-                                    'unaligned_segment', 
-                                    [{ label: 'Unaligned', selection }]
-                                );
-
-                                if (component) {
-                                    const color = segment.color || { r: 128, g: 128, b: 128 };
-                                    const alpha = segment.alpha || 0.5;
-                                    const hexColor = (color.r << 16) + (color.g << 8) + color.b;
-
-                                    await viewerInstance.plugin.builders.structure.representation.addRepresentation(component, {
-                                        type: segment.representation || 'cartoon',
-                                        color: 'uniform',
-                                        colorParams: { value: hexColor },
-                                        alpha: alpha
-                                    });
-                                } else {
-                                    console.warn(`Could not create unaligned component for ${segment.start.label_asym_id} ${segment.start.residue_number}-${segment.end.residue_number}`);
-                                }
+                            if (unalignedResidues.length > 0) {
+                                viewerInstance.visual.select({ data: unalignedResidues });
                             }
-
                         }
                     }
                 }
