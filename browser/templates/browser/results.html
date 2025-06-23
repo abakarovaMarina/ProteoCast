@@ -479,8 +479,41 @@
                             await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'uncertainty'});
                             // Add representation for unaligned residues
                             if (unalignedResidues.length > 0) {
-                                viewerInstance.visual.select({ data: unalignedResidues });
+                                for (const segment of unalignedResidues) {
+                                    const selection = [{
+                                        start: {
+                                            residue_number: segment.start.residue_number,
+                                            label_asym_id: segment.start.label_asym_id
+                                        },
+                                        end: {
+                                            residue_number: segment.end.residue_number,
+                                            label_asym_id: segment.end.label_asym_id
+                                        }
+                                    }];
+
+                                    const color = segment.color || { r: 128, g: 128, b: 128 };
+                                    const alpha = segment.alpha || 0.5;
+
+                                    const component = await viewerInstance.plugin.builders.structure.tryCreateComponentFromSelection(structure, 'unaligned_segment', [
+                                        {
+                                            label: `Unaligned ${segment.start.label_asym_id} ${segment.start.residue_number}-${segment.end.residue_number}`,
+                                            selection: viewerInstance.plugin.query.selection.fromList(selection, structure)
+                                        }
+                                    ]);
+
+                                    if (component) {
+                                        await viewerInstance.plugin.builders.structure.representation.addRepresentation(component, {
+                                            type: segment.representation || 'cartoon',
+                                            color: 'uniform',
+                                            colorParams: {
+                                                value: (color.r << 16) + (color.g << 8) + color.b  // Convert RGB to hex
+                                            },
+                                            alpha: alpha
+                                        });
+                                    }
+                                }
                             }
+
                         }
                     }
                 }
