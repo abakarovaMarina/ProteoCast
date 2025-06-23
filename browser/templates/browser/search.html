@@ -116,16 +116,16 @@
 
       <div id="msaSection">
          <div class="form-row py-2">
-         <h4 class="form-text text-dark">Please provide a multiple sequence alignment as input</h4> 
+         <h4 class="form-text text-dark">Please upload a Multiple Sequence Alignment (MSA) file below</h4> 
          </div>
          <div class="form-row">
-          <p>You may generate it with the <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb" target="_blank">ColabFold</a> notebook. The first sequence should be the query, without any gap.</p>
+          <p>Accepted formats: FASTA, A3M, or A2M. Make sure the first sequence is the ungapped query. </br> You may generate your alignment using <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb" target="_blank">ColabFold notebook</a>.</p>
          </div>
          <div class="form-row py-2">
           <div class="form-group col-md-6">
               <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
               <input type="file" name="file" id="fileInput" accept=".a3m,.fasta,.a2m" required
-                    style="font-family: 'Helvetica Neue', sans-serif;
+                    style="font-family: 'Montserrat', sans-serif;
                     color: #343a40; 
                     padding: 10px 20px;
                     border-radius: 12px; 
@@ -140,79 +140,66 @@
           </div>
       </div>
 
+      <!-- Section for 3D structure -->
+        <!-- Toggle: Enable 3D visualization -->
         <div class="form-row py-2 align-items-center">
-         <div class="form-group col-md-6 px-4">
-           <div class="custom-control custom-switch mt-2">
-             <input type="checkbox" id="uniprotCode" name="uniprotCode" class="custom-control-input" checked>
-             <label for="uniprotCode" class="custom-control-label text-dark">
-               Map predictions on the AlphaFold 3D model for UniProt ID:
-             </label>
-           </div>
-         </div>
+        <div class="form-group col-md-10">
+            <div class="custom-control custom-switch mt-2">
+            <input type="checkbox" id="toggleVisualize" class="custom-control-input">
+            <label for="toggleVisualize" class="custom-control-label text-dark h5">
+                Visualize predictions on the 3D structure and compute structure-informed scores
+            </label>
+            </div>
+        </div>
+        </div>
 
-         <div class="form-group col-md-6 px-4">
-           <div class="form-row">
-             <div class="col-md-8 pr-1">
-               <input type="text" id="uniprotId" name="uniprotId" class="form-control" placeholder="e.g., P12345" required>
-             </div>
-           </div>
-         </div>
+        <!-- Structure source selection: radio buttons -->
+        <div id="structureOptions" style="display: none;">
+        <div class="form-row py-2 px-4">
+            <div class="form-group col-md-12">
+            <label class="font-weight-bold">Choose structure source:</label></br>
 
-      <script>
-        document.addEventListener('DOMContentLoaded', function () {
-          const uniprotCodeCheckbox = document.getElementById('uniprotCode');
-          const uniprotIdInput = document.getElementById('uniprotId');
-          const customChainInput = document.getElementById('customChain');
-          const pdbSection = document.getElementById('pdbSection');
+        
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="structureSource" id="radioAlphaFold" value="alphafold">
+                <label class="form-check-label" for="radioAlphaFold">Retrieve from AlphaFoldDB</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="structureSource" id="radioPDB" value="pdb">
+                <label class="form-check-label" for="radioPDB">Upload custom PDB</label>
+            </div>
+            </div>
+        </div>
 
-          function toggleInputsAndSection() {
-            if (uniprotCodeCheckbox.checked) {
-              uniprotIdInput.setAttribute('required', 'required');
-              customChainInput.removeAttribute('required');
-              pdbSection.style.display = 'none';
-            } else {
-              uniprotIdInput.removeAttribute('required');
-              customChainInput.removeAttribute('required');
-              pdbSection.style.display = 'block';
-            }
-          }
+        <!-- AlphaFold input -->
+        <div id="alphaFoldSection" class="form-row py-2 align-items-center" style="display: none;">
+            <div class="form-group col-md-6 px-4">
+            <input type="text" id="uniprotId" name="uniprotId" class="form-control"
+                placeholder="UniProt code e.g., P12345">
+            </div>
+        </div>
 
-          uniprotCodeCheckbox.addEventListener('change', toggleInputsAndSection);
-          toggleInputsAndSection(); // Inicial
-        });
-
-      </script>
-
+        <!-- Custom PDB input -->
+        <div id="pdbSection" style="display: none;">
+            <div class="form-row py-2 align-items-center">
+            <div class="form-group col-md-6">
+                <input type="file" name="pdbFile" id="pdbFileInput" accept=".pdb"
+                style="font-family: 'Montserrat', sans-serif;
+                        color: #343a40;
+                        padding: 10px 20px;">
+            </div>
+            <div class="form-group col-md-6">
+                <input type="text" id="customChain" name="customChain" class="form-control"
+                placeholder="Specify chain ID if needed (e.g., A)">
+            </div>
+            </div>
+        </div>
+    
+      <!-- Submit/Example protein buttons and submit message -->
       </div>
         <div id="loading" style="display: none;">Uploading... Please wait.</div>
         <div id="uploadStatus"></div>
       </div>
-
-      
-      <!-- Collapsible Section --> 
-      <div id="pdbSection" style="display: none;">
-        <div class="form-row">
-          <h4 class="form-text text-dark">You may provide a custom PDB file</h4>
-      </div>
-      
-      <div class="form-row py-2">
-        <div class="form-group col-md-6">
-          <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-          <input type="file" name="pdbFile" id="pdbFileInput" accept=".pdb"
-            style="font-family: 'Helvetica Neue', sans-serif;
-               color: #343a40;
-               padding: 10px 20px;">
-        </div>
-
-        <div class="form-group col-md-6 px-4">
-          <input type="text" id="customChain" name="customChain" class="form-control"
-             placeholder="Please provide the chain: e.g., A">
-        </div>        
-      </div>
-
-      <div id="pdbLoading" style="display: none;">Uploading... Please wait.</div>
-      <div id="pdbUploadStatus"></div>
-    </div>
 
       <div class="row py-3">
         <div class="col-12 d-flex justify-content-between px-7">
@@ -232,20 +219,89 @@
             <p class="mb-0"> © ProteoCast - This website is free and open to all users and there is no login requirement.<br> This website uses Google Analytics cookies for the sole purpose of monitoring usage.</p>
         </div>
     </footer>
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const footer = document.querySelector('footer');
-      footer.style.display = 'none'; // Initially hide the footer
 
-      window.addEventListener('scroll', function () {
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-          footer.style.display = 'block'; // Show the footer when scrolled to the bottom
-        } else {
-          footer.style.display = 'none'; // Hide the footer otherwise
-        }
-      });
-    });
+
+
+  <!-- scripts -->
+<!--Footer-->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        const footer = document.querySelector('footer');
+        footer.style.display = 'none'; // Initially hide the footer
+
+        window.addEventListener('scroll', function () {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+            footer.style.display = 'block'; // Show the footer when scrolled to the bottom
+            } else {
+            footer.style.display = 'none'; // Hide the footer otherwise
+            }
+        });
+        });
     </script>
+
+
+    <!--PDB-->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        const toggleVisualize = document.getElementById('toggleVisualize');
+        const structureOptions = document.getElementById('structureOptions');
+
+        const radioAlphaFold = document.getElementById('radioAlphaFold');
+        const radioPDB = document.getElementById('radioPDB');
+
+        const alphaFoldSection = document.getElementById('alphaFoldSection');
+        const pdbSection = document.getElementById('pdbSection');
+
+        const uniprotIdInput = document.getElementById('uniprotId');
+        const pdbFileInput = document.getElementById('pdbFileInput');
+
+        function resetStructureInputs() {
+            alphaFoldSection.style.display = 'none';
+            pdbSection.style.display = 'none';
+            uniprotIdInput.removeAttribute('required');
+            pdbFileInput.removeAttribute('required');
+        }
+
+        function selectAlphaFold() {
+            radioAlphaFold.checked = true;
+            alphaFoldSection.style.display = 'block';
+            pdbSection.style.display = 'none';
+            uniprotIdInput.setAttribute('required', 'required');
+            pdbFileInput.removeAttribute('required');
+        }
+
+        function selectPDB() {
+            radioPDB.checked = true;
+            alphaFoldSection.style.display = 'none';
+            pdbSection.style.display = 'block';
+            uniprotIdInput.removeAttribute('required');
+            pdbFileInput.setAttribute('required', 'required');
+        }
+
+        toggleVisualize.addEventListener('change', function () {
+            if (this.checked) {
+            structureOptions.style.display = 'block';
+            selectAlphaFold(); // Default to AlphaFold
+            } else {
+            structureOptions.style.display = 'none';
+            radioAlphaFold.checked = false;
+            radioPDB.checked = false;
+            resetStructureInputs();
+            }
+        });
+
+        radioAlphaFold.addEventListener('change', function () {
+            if (this.checked) selectAlphaFold();
+        });
+
+        radioPDB.addEventListener('change', function () {
+            if (this.checked) selectPDB();
+        });
+        });
+        </script>
+
+
+    <!--Submit-->
     <script>
     document.getElementById("uploadForm").addEventListener("submit", async function (e) {
         console.log("Submit event triggered");
@@ -273,31 +329,6 @@
         }
     });
 
-
-document.addEventListener("DOMContentLoaded", function () {
-    const uniprotCodeSwitch = document.getElementById("uniprotCode");
-    const uniprotInputContainer = document.getElementById("uniprotInputContainer");
-    const pdbSection = document.getElementById("pdbSection");
-
-    // Ensure the initial state matches the switch button (checked = UniProt ID visible, PDB section collapsed)
-    if (uniprotCodeSwitch.checked) {
-        uniprotInputContainer.style.display = "block";
-        pdbSection.style.display = "none";
-    }
-
-    // Add event listener for toggling
-    uniprotCodeSwitch.addEventListener("change", function () {
-        if (this.checked) {
-            // Show UniProt ID input and hide PDB section
-            uniprotInputContainer.style.display = "block";
-            pdbSection.style.display = "none";
-        } else {
-            // Hide UniProt ID input and show PDB section
-            uniprotInputContainer.style.display = "none";
-            pdbSection.style.display = "block";
-        }
-    });
-});
     </script>
     </div>
 
