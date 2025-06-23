@@ -472,51 +472,53 @@
                     const model = await viewerInstance.plugin.builders.structure.createModel(trajectory);
                     const structure = await viewerInstance.plugin.builders.structure.createStructure(model);
                     const all = await viewerInstance.plugin.builders.structure.tryCreateComponentStatic(structure, 'all');
+                    
                     if (all) {
-                        if (condition === 'bfactor') {
-                            await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'plddt-confidence'});
-                        } else {
-                            await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'uncertainty'});
-                            // Add representation for unaligned residues
-                            if (unalignedResidues.length > 0) {
-                                for (const segment of unalignedResidues) {
-                                    const selection = [{
-                                        start: {
-                                            residue_number: segment.start.residue_number,
-                                            label_asym_id: segment.start.label_asym_id
-                                        },
-                                        end: {
-                                            residue_number: segment.end.residue_number,
-                                            label_asym_id: segment.end.label_asym_id
-                                        }
-                                    }];
+                        await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, {
+                            type: 'cartoon',
+                            color: condition === 'bfactor' ? 'plddt-confidence' : 'uncertainty'
+                        });
 
+                        // Only add unaligned residues if NOT bfactor
+                        if (condition !== 'bfactor' && unalignedResidues.length > 0) {
+                            for (const segment of unalignedResidues) {
+                                const selection = [{
+                                    start: {
+                                        residue_number: segment.start.residue_number,
+                                        label_asym_id: segment.start.label_asym_id
+                                    },
+                                    end: {
+                                        residue_number: segment.end.residue_number,
+                                        label_asym_id: segment.end.label_asym_id
+                                    }
+                                }];
+
+                                const loci = viewerInstance.plugin.query.selection.fromList(selection, structure);
+                                const component = await viewerInstance.plugin.builders.structure.tryCreateComponentFromSelection(
+                                    structure,
+                                    `unaligned_${segment.start.label_asym_id}_${segment.start.residue_number}_${segment.end.residue_number}`,
+                                    [{ label: 'Unaligned Segment', selection: loci }]
+                                );
+
+                                if (component) {
                                     const color = segment.color || { r: 128, g: 128, b: 128 };
                                     const alpha = segment.alpha || 0.5;
+                                    const hexColor = (color.r << 16) + (color.g << 8) + color.b;
 
-                                    const component = await viewerInstance.plugin.builders.structure.tryCreateComponentFromSelection(structure, 'unaligned_segment', [
-                                        {
-                                            label: `Unaligned ${segment.start.label_asym_id} ${segment.start.residue_number}-${segment.end.residue_number}`,
-                                            selection: viewerInstance.plugin.query.selection.fromList(selection, structure)
-                                        }
-                                    ]);
-
-                                    if (component) {
-                                        await viewerInstance.plugin.builders.structure.representation.addRepresentation(component, {
-                                            type: segment.representation || 'cartoon',
-                                            color: 'uniform',
-                                            colorParams: {
-                                                value: (color.r << 16) + (color.g << 8) + color.b  // Convert RGB to hex
-                                            },
-                                            alpha: alpha
-                                        });
-                                    }
+                                    await viewerInstance.plugin.builders.structure.representation.addRepresentation(component, {
+                                        type: segment.representation || 'cartoon',
+                                        color: 'uniform',
+                                        colorParams: { value: hexColor },
+                                        alpha: alpha
+                                    });
+                                } else {
+                                    console.warn(`Unaligned component not created for chain ${segment.start.label_asym_id}`);
                                 }
                             }
-
                         }
                     }
                 }
+
         
                 async function loadStructureAndColor(condition) {
                     currentCondition = condition;
