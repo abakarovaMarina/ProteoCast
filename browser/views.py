@@ -197,8 +197,7 @@ def segmentation_dico(path_segF,path_bfactors):
         
         if state == 1 or state == 2:
             segment = list(range(start, end + 1))
-            sub_segments = []
-            sub_segment = []
+            sub_segments = []; sub_segment = []
             
             for res in segment:
                 if res in resi_70:
