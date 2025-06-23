@@ -245,12 +245,17 @@ def unaligned_residue_segments(path_aligned_file):
                 # End of a contiguous segment
                 if current_segment:
                     segments.append({
-                        'start_residue_number': current_segment[0],
-                        'end_residue_number': current_segment[-1],
-                        'chain_id': chain_id,
+                        "start": {
+                            "residue_number": current_segment[0],
+                            "label_asym_id": chain_id
+                        },
+                        "end": {
+                            "residue_number": current_segment[-1],
+                            "label_asym_id": chain_id
+                        }, 
                         'color': grey_color,
                         'representation': 'cartoon',
-                        'transparency': transparency_value
+                        'alpha': transparency_value
                     })
                     current_segment = []
             current_segment.append(res_id)
@@ -259,14 +264,18 @@ def unaligned_residue_segments(path_aligned_file):
         # Add last segment
         if current_segment:
             segments.append({
-                'start_residue_number': current_segment[0],
-                'end_residue_number': current_segment[-1],
-                'chain_id': chain_id,
+                "start": {
+                    "residue_number": current_segment[0],
+                    "label_asym_id": chain_id
+                },
+                "end": {
+                    "residue_number": current_segment[-1],
+                    "label_asym_id": chain_id
+                }, 
                 'color': grey_color,
                 'representation': 'cartoon',
-                'transparency': transparency_value
+                'alpha': transparency_value
             })
-
     return segments
 
 
