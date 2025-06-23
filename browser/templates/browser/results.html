@@ -479,10 +479,13 @@
                             await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'uncertainty'});
                             // Add representation for unaligned residues
                             for (const segment of unalignedResidues) {
-                                const selection = viewerInstance.plugin.query.selection.fromList([{
-                                    start: segment.start,
-                                    end: segment.end
-                                }], structure);
+                                const loci = viewerInstance.plugin.managers.structure.selection.fromResidueRange(
+                                    structure,
+                                    segment.start.label_asym_id,
+                                    segment.start.residue_number,
+                                    segment.end.residue_number
+                                );
+
 
                                 const component = await viewerInstance.plugin.builders.structure.tryCreateComponentFromSelection(
                                     structure, 
