@@ -197,7 +197,7 @@ def segmentation_dico(path_segF,path_bfactors):
         
         if state == 1 or state == 2:
             segment = list(range(start, end + 1))
-            sub_segments = [];  sub_segment = []
+            sub_segments = []; sub_segment = []
             
             for res in segment:
                 if res in resi_70:
@@ -245,17 +245,12 @@ def unaligned_residue_segments(path_aligned_file):
                 # End of a contiguous segment
                 if current_segment:
                     segments.append({
-                        "start": {
-                            "residue_number": current_segment[0],
-                            "label_asym_id": chain_id
-                        },
-                        "end": {
-                            "residue_number": current_segment[-1],
-                            "label_asym_id": chain_id
-                        }, 
+                        'start_residue_number': current_segment[0],
+                        'end_residue_number': current_segment[-1],
+                        'chain_id': chain_id,
                         'color': grey_color,
                         'representation': 'cartoon',
-                        'alpha': transparency_value
+                        'transparency': transparency_value
                     })
                     current_segment = []
             current_segment.append(res_id)
@@ -264,18 +259,14 @@ def unaligned_residue_segments(path_aligned_file):
         # Add last segment
         if current_segment:
             segments.append({
-                "start": {
-                    "residue_number": current_segment[0],
-                    "label_asym_id": chain_id
-                },
-                "end": {
-                    "residue_number": current_segment[-1],
-                    "label_asym_id": chain_id
-                }, 
+                'start_residue_number': current_segment[0],
+                'end_residue_number': current_segment[-1],
+                'chain_id': chain_id,
                 'color': grey_color,
                 'representation': 'cartoon',
-                'alpha': transparency_value
+                'transparency': transparency_value
             })
+
     return segments
 
 
