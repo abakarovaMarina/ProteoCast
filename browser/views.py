@@ -444,7 +444,7 @@ def results_view(request):
     ### creating variant classes dataframes
     try:
         df_proteocast['Variant_class'] = df_proteocast['Variant_class'].replace({'uncertain': 'mild'})
-        df_classes = pd.DataFrame(np.array(df_proteocast['Variant_class'].replace({'neutral': 1, 'uncertain': 2, 'impactful': 3})).reshape(20, -1, order='F'))
+        df_classes = pd.DataFrame(np.array(df_proteocast['Variant_class'].replace({'neutral': 1, 'mild': 2, 'impactful': 3})).reshape(20, -1, order='F'))
         df_classesStr = pd.DataFrame(np.array(df_proteocast['Variant_class']).reshape(20, -1, order='F'))
     except Exception as e:
         df_classes = None
