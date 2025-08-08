@@ -147,7 +147,7 @@ def handle_upload(request, uploaded_file, pdb_file):
 #SBATCH --output=slurm_%j.out
 #SBATCH --error=slurm_%j.err
                          
-docker run --rm -v "/data/jobs/{job_id}:/opt/job" marinaabakarova/proteocast /bin/bash -c "cd / && bash run.sh {uploaded_file.name} {chain} {uniprot_id}"
+docker run --rm -v "/data/jobs/{job_id}:/opt/job" marinaabakarova/proteocast /bin/bash -c "cd / && bash run.sh \\"{uploaded_file.name}\\" {chain} {uniprot_id}"
 ## contact {email}
 """)
         os.chmod(run_docker_script, 0o755)
@@ -310,7 +310,9 @@ def results_view(request):
                 message = 'The submitted MSA contains too few sequences. For reliable predictions, the MSA should contain at least a couple of hundred sequences.'
                 return render(request, 'browser/error.html', {'message': message}, status=500)
         else:
-            return HttpResponse(f"MSA lecture:{msa_path}", status=404)
+            message='The submitted MSA has a wrong format, please check the documentation'
+            return render(request, 'browser/error.html', {'message': message}, status=500)
+
 
     ## drosophila db
     else:
