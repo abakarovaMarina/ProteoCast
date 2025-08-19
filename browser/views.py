@@ -292,8 +292,8 @@ def results_view(request):
         for file_name in files:
             if "ProteoCast" in file_name:
                 prot_id = '_'.join(file_name.split('.')[1].split('_')[:-1])  # Extract protein ID 
-            if ('10.' in file_name): #and ('ResClass' not in file_name or 'Sensitivity' not in file_name): #10. in filname
-                pdb_id = file_name.split('.')[1]
+            if ('10.' in file_name): 
+                pdb_id = file_name[:-4]
             if ('a3m' in file_name or 'a2m' in file_name):
                 a3mtag=file_name[-3:]
             if ('2.ali' in file_name):
@@ -314,7 +314,7 @@ def results_view(request):
             return render(request, 'browser/error.html', {'message': message}, status=500)
 
 
-    ## drosophila db
+    ### Drosophila DB
     else:
         # Only for the fly
         data_path = '/data/Drosophila_ProteoCast/'
