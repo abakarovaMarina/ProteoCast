@@ -198,7 +198,7 @@
 
         <!--Mutational Landscape-->
         <div class="form-row" style="display: flex; align-items: flex-start;">
-            <div class="heatmap" style="flex: 1; autosize: true;">
+            <div class="heatmap" style="flex: 1 1 auto; min-width: 0;">
                 <h2>Mutational Landscape</h2>
                 <p> The heatmap gives the predicted effects of all 19-times-the-protein-length possible amino acid substitutions. 
                     You can switch between raw scores (the darker the more negative), variant classification (impactful in red, uncertain in pink, neutral in blue), {% if query|slice:":4" != "2025" %} and SNPs (DEST2/DGRP polymorphisms in blue, lethal in red) {% else %} and structure-informed raw scores.{%endif%} The horizontal bar below gives binary confidence scores, blue for reliable predictions, white otherwise.</p>
@@ -225,7 +225,6 @@
                           RAW SCORES
                    </label>
                    {% endif %}
-
                    {% if heatmapClasses_html %}
                    <label style="display: inline-block; margin-right: 20px;">
                        <input type="radio" name="heatmapToggle" value="heatmapClasses_html" >
@@ -240,7 +239,7 @@
                    {% endif %}
                 </div>
                 {% endif %}
-                <div class="heatmap-container" style="max-height: 600px; overflow: hidden; border: 1px solid #ddd; padding: 10px;">
+                <div class="heatmap-container" style="max-height: 600px; overflow-x: auto; border: 1px solid #ddd; padding: 10px;">
 
                     {% if heatmap_html %}
                     <div id="heatmap_html" style="display: block; max-width: 100%;">
