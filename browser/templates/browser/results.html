@@ -354,7 +354,7 @@
                 The color bar on top displays pLDDT confidence scores when the provided structure originates from AlphaFold2, whether retrieved via UniProt ID or uploaded manually. Orange and yellow indicate very low to low confidence, while light and dark blue represent high to very high confidence regions.
                 {% endif %} 
             </p>
-            <div class="heatmap-container">
+            <div class="heatmap-container" style='overflow-x: auto;'>
             {% if fig_segmentation %}
             <div id="fig_segmentation" style="display: block; max-width: 100%;">
                 {{ fig_segmentation|safe }}
