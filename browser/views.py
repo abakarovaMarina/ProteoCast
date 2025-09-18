@@ -527,7 +527,7 @@ def results_view(request):
             showscale=False,
             customdata=df_mut.values[::-1],
             hovertemplate=("Mutation: %{customdata}<br>"
-                           "Score: %{z:.2f}<extra></extra>")
+                           "Score: %{-z:.2f}<extra></extra>")
         )
         fig.add_trace(heatmap_main, row=1, col=1)
         
