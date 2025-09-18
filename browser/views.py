@@ -479,14 +479,38 @@ def results_view(request):
 
 
     ## colorscale for mutland
-    greys = px.colors.sequential.Greys
-    oranges = px.colors.sequential.Oranges
+    # --- 80-step ramps sampled from Plotly’s built-ins
+    greys80   = px.colors.sample_colorscale(px.colors.sequential.Greys,   [i/79 for i in range(80)])
+    oranges80 = px.colors.sample_colorscale(px.colors.sequential.Oranges, [i/79 for i in range(80)])
 
-    # manually slice/merge like you did in R
-    my_colors = greys[:10] + oranges[2:8] + greys[-3:]
+    # R: Greys[1:10], Oranges[11:70], Greys[61:70]  (1-indexed)
+    my_colors = greys80[:10] + oranges80[10:70] + greys80[60:70]   # total 80 colors
+
+
     ## GENERATING HEATMAPS
         #--- GEMME heatmap
     if df is not None:
+        # Your matrix as in R (they do -t(pred[20:1, sel]))
+        # Here: reverse rows and negate to match R’s sign flip
+        Z = -df.values[::-1]
+
+        # Compute the same stats as in R
+        pred = df.to_numpy()
+        minVal = np.floor(pred.min())
+        maxVal = np.ceil(pred.max())
+        prop=99
+        p = (100 - prop) / 100.0                   # prop is your % parameter from R
+        cutVal = np.quantile(pred, p)
+        # Fraction of the domain covered by the first segment [-maxVal, -cutVal]
+        r = (maxVal - cutVal) / (maxVal - minVal)  # in [0,1]
+
+        # Positions for 80 colors:
+        #  - first 79 colors spread uniformly over [0, r]
+        #  - last (80th) color sits at the end 1.0 (covers [-cutVal, -minVal])
+        positions = [(i/79.0) * r for i in range(79)] + [1.0]
+
+        colorscale_custom = list(zip(positions, my_colors))
+
         fig = make_subplots(
             rows=2, cols=1,
             shared_xaxes=True,
@@ -494,10 +518,10 @@ def results_view(request):
             vertical_spacing=0.02,
         )
         heatmap_main = go.Heatmap(
-            z=df.values[::-1],
+            z=Z, #df.values[::-1],
             x=list(range(1, df.shape[1])),
             y=alph,
-            colorscale=my_colors, #px.colors.sequential.Oranges[::-1],
+            colorscale=colorscale_custom, #px.colors.sequential.Oranges[::-1],
             showscale=False,
             customdata=df_mut.values[::-1],
             hovertemplate=("Mutation: %{customdata}<br>"
