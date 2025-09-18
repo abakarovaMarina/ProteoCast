@@ -477,6 +477,13 @@ def results_view(request):
     pdb_url_3 = ""
     pdb_url_4 = ""
 
+
+    ## colorscale for mutland
+    greys = px.colors.sequential.Greys
+    oranges = px.colors.sequential.Oranges
+
+    # manually slice/merge like you did in R
+    my_colors = greys[:10] + oranges[2:8] + greys[-3:]
     ## GENERATING HEATMAPS
         #--- GEMME heatmap
     if df is not None:
@@ -490,7 +497,7 @@ def results_view(request):
             z=df.values[::-1],
             x=list(range(1, df.shape[1])),
             y=alph,
-            colorscale=px.colors.sequential.Oranges[::-1],
+            colorscale=my_colors, #px.colors.sequential.Oranges[::-1],
             showscale=False,
             customdata=df_mut.values[::-1],
             hovertemplate=("Mutation: %{customdata}<br>"
