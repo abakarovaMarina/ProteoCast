@@ -491,7 +491,7 @@ def results_view(request):
         #--- GEMME heatmap
     if df is not None:
         # Here: reverse rows and negate to match R’s sign flip
-        Z = df.values[::-1]
+        Z = -df.values[::-1]
 
         # Compute the same stats as in R
         pred = df.to_numpy()
