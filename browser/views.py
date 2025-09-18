@@ -490,9 +490,8 @@ def results_view(request):
     ## GENERATING HEATMAPS
         #--- GEMME heatmap
     if df is not None:
-        # Your matrix as in R (they do -t(pred[20:1, sel]))
         # Here: reverse rows and negate to match R’s sign flip
-        Z = -df.values[::-1]
+        Z = df.values[::-1]
 
         # Compute the same stats as in R
         pred = df.to_numpy()
@@ -502,7 +501,8 @@ def results_view(request):
         p = (100 - prop) / 100.0                   # prop is your % parameter from R
         cutVal = np.quantile(pred, p)
         # Fraction of the domain covered by the first segment [-maxVal, -cutVal]
-        r = (maxVal - cutVal) / (maxVal - minVal)  # in [0,1]
+        #r = (maxVal - cutVal) / (maxVal - minVal)  # in [0,1]
+        r = (cutVal - minVal) / (maxVal - minVal)
 
         # Positions for 80 colors:
         #  - first 79 colors spread uniformly over [0, r]
@@ -522,6 +522,7 @@ def results_view(request):
             x=list(range(1, df.shape[1])),
             y=alph,
             colorscale=colorscale_custom, #px.colors.sequential.Oranges[::-1],
+            zmin=minVal, zmax=maxVal,
             showscale=False,
             customdata=df_mut.values[::-1],
             hovertemplate=("Mutation: %{customdata}<br>"
