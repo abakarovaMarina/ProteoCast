@@ -522,7 +522,6 @@ def results_view(request):
             x=list(range(1, df.shape[1])),
             y=alph,
             colorscale=colorscale_custom, #px.colors.sequential.Oranges[::-1],
-            zmin=minVal, zmax=maxVal,
             showscale=False,
             customdata=df_mut.values[::-1],
             hovertemplate=("Mutation: %{customdata}<br>"
