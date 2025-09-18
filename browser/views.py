@@ -525,7 +525,7 @@ def results_view(request):
             colorscale=colorscale_custom, #px.colors.sequential.Oranges[::-1],
             zmin=zmin, zmax=zmax,
             showscale=False,
-            customdata=np.dstack(df_mut.values[::-1], df.values[::-1]),
+            customdata=np.dstack([df_mut.values[::-1], df.values[::-1]]),
             hovertemplate=("Mutation: %{customdata[0]}<br>"
                            "Score: %{customdata[1]:.2f}<extra></extra>")
         )
