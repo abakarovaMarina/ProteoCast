@@ -525,9 +525,9 @@ def results_view(request):
             colorscale=colorscale_custom, #px.colors.sequential.Oranges[::-1],
             zmin=zmin, zmax=zmax,
             showscale=False,
-            customdata=df_mut.values[::-1],
-            hovertemplate=("Mutation: %{customdata}<br>"
-                           "Score: %{-z:.2f}<extra></extra>")
+            customdata=np.dstack(df_mut.values[::-1], df.values[::-1]),
+            hovertemplate=("Mutation: %{customdata[0]}<br>"
+                           "Score: %{customdata[1]:.2f}<extra></extra>")
         )
         fig.add_trace(heatmap_main, row=1, col=1)
         
