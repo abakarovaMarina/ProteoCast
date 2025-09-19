@@ -910,8 +910,8 @@ def results_view(request):
             height=600,
             plot_bgcolor="white",  # Set the background color to white
             paper_bgcolor="white",
-            xaxis2=dict(title="Residue", tickfont=dict(size=14)),
-            yaxis2=dict(title="Mutational sensitivity", range=[0, 1], tickfont=dict(size=14)),
+            xaxis2=dict(title="Residue",titlefont=dict(size=15),tickfont=dict(size=14)),
+            yaxis2=dict(title="Mutational sensitivity", range=[0, 1], titlefont=dict(size=15), tickfont=dict(size=14)),
             hovermode="x unified"
         )
         # Generate HTML for Django
