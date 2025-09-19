@@ -498,16 +498,12 @@ def results_view(request):
         minVal = np.floor(pred.min())
         maxVal = np.ceil(pred.max())
         prop=99
-        p = (100 - prop) / 100.0                   # prop is your % parameter from R
+        p = (100 - prop) / 100.0                 
         cutVal = np.quantile(pred, p)
         # Fraction of the domain covered by the first segment [-maxVal, -cutVal]
         zmin = -maxVal; zmax = -minVal
         r = (maxVal - cutVal) / (maxVal - minVal)  # in [0,1]
-        #r = (cutVal - minVal) / (maxVal - minVal)
 
-        # Positions for 80 colors:
-        #  - first 79 colors spread uniformly over [0, r]
-        #  - last (80th) color sits at the end 1.0 (covers [-cutVal, -minVal])
         positions = [(i/79.0) * r for i in range(79)] + [1.0]
 
         colorscale_custom = list(zip(positions, my_colors))
@@ -556,6 +552,17 @@ def results_view(request):
     # --- RSA * Gemme heatmap
 
     if df_rsa is not None:
+        Z_rsa = -df_rsa.values[::-1]; pred_rsa = df_rsa.to_numpy()
+        minVal_rsa = np.floor(pred_rsa.min())
+        maxVal_rsa = np.ceil(pred_rsa.max())
+        prop=99; p = (100 - prop) / 100.0                  
+        cutVal_rsa = np.quantile(pred_rsa, p)
+        zmin_rsa = -maxVal_rsa; zmax_rsa = -minVal_rsa
+        r = (maxVal_rsa - cutVal_rsa) / (maxVal_rsa - minVal_rsa)
+        positions = [(i/79.0) * r for i in range(79)] + [1.0]
+        colorscaleRSA_custom = list(zip(positions, my_colors))
+
+
         fig_rsa = make_subplots(
             rows=2, cols=1,
             shared_xaxes=True,
@@ -563,14 +570,15 @@ def results_view(request):
             vertical_spacing=0.02,
         )
         heatmap_rsa = go.Heatmap(
-            z=df_rsa.values[::-1],
+            z=Z_rsa, #df_rsa.values[::-1],
             x=list(range(1, df_rsa.shape[1])),
             y=alph,
-            colorscale=px.colors.sequential.Oranges[::-1],
+            zmin=zmin_rsa, zmax=zmax_rsa,
+            colorscale=colorscaleRSA_custom, #px.colors.sequential.Oranges[::-1],
             showscale=False,
-            customdata=df_mut.values[::-1],
-            hovertemplate=("Mutation: %{customdata}<br>"
-                           "Score: %{z:.2f}<extra></extra>")
+            customdata=np.dstack([df_mut.values[::-1], df_rsa.values[::-1]]),
+            hovertemplate=("Mutation: %{customdata[0]}<br>"
+                           "Score: %{customdata[1]:.2f}<extra></extra>")
         )
         fig_rsa.add_trace(heatmap_rsa, row=1, col=1)
 
@@ -903,7 +911,7 @@ def results_view(request):
             plot_bgcolor="white",  # Set the background color to white
             paper_bgcolor="white",
             xaxis2=dict(title="Residue"),
-            yaxis2=dict(title="Average GEMME Score", range=[0, 1]),
+            yaxis2=dict(title="Mutational sensitivity", range=[0, 1]),
             hovermode="x unified"
         )
         # Generate HTML for Django
