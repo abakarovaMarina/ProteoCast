@@ -910,7 +910,7 @@ def results_view(request):
             height=600,
             plot_bgcolor="white",  # Set the background color to white
             paper_bgcolor="white",
-            xaxis2=dict(title="Residue"),
+            xaxis2=dict(title="Residue", tickfont=dict(size=12),
             yaxis2=dict(title="Mutational sensitivity", range=[0, 1]),
             hovermode="x unified"
         )
