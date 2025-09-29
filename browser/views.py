@@ -857,7 +857,7 @@ def results_view(request):
             mode='lines',
             line=dict(color='#2777B4'),  # Changed color to green in hexadecimal
             showlegend=False,
-            hovertemplate="Residue %{x}<br>GEMME Score: %{y:.2f}<extra></extra>"
+            hovertemplate="Residue: %{x}<br>Score: %{y:.2f}<extra></extra>"
         )
         fig_Seg.add_trace(trace, row=2, col=1)
 
