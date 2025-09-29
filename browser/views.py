@@ -928,18 +928,19 @@ def results_view(request):
     ## unaligned residues 
     if (prot_name[:3] == 'job'):
         seg_unaligned = unaligned_residue_segments(f'{data_path}{id_folder}/rsa_values.csv') 
+        id_folder = 'job' +id_folder
     else:
         seg_unaligned=None 
 
     if a3mtag:
         msa_file_job = msa_file_job[:-5]+a3mtag
-
+        
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
         'heatmapClasses_html': heatmapClasses_html,
         'heatmapSNPs_html': heatmapSNPs_html,
         'heatmapRSA_html': heatmapRSA_html,
-        'query': id_folder,
+        'query': id_folder, 
         'prot_name': prot_id,
         'image_url_1': image_url_1,
         'pdb_url_1': pdb_url_1,
@@ -955,18 +956,18 @@ def results_view(request):
         'msa_file_job':msa_file_job
     })
 
-def download_folder(request, fbpp_id):
+def download_folder(request, query_id):
     # Path to the folder to be downloaded
-    if fbpp_id[:4] =='2025':
-        folder_path = os.path.join('/data/jobs', fbpp_id)
+    if query_id[:3] =='job':
+        folder_path = os.path.join('/data/jobs', query_id[3:])
     else:
-        folder_path = os.path.join('/data/Drosophila_ProteoCast', fbpp_id)
+        folder_path = os.path.join('/data/Drosophila_ProteoCast', query_id)
     
     if not os.path.exists(folder_path):
         return HttpResponse("Folder not found.", status=404)
     
     # Create a temporary ZIP file in the system's temporary directory
-    temp_zip_path = os.path.join('/tmp', f'{fbpp_id}.zip')
+    temp_zip_path = os.path.join('/tmp', f'{query_id}.zip')
     
     try:
         # Create a ZIP archive of the folder
@@ -974,7 +975,7 @@ def download_folder(request, fbpp_id):
         
         # Serve the ZIP file
         response = FileResponse(open(temp_zip_path, 'rb'), as_attachment=True)
-        response['Content-Disposition'] = f'attachment; filename="{fbpp_id}.zip"'
+        response['Content-Disposition'] = f'attachment; filename="{query_id}.zip"'
         
         return response
     except Exception as e:
