@@ -22,6 +22,7 @@ from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
+import tempfile
 
 def contact_us(request):
     return render(request, 'browser/contact_us.html')
@@ -978,6 +979,7 @@ def download_folder(request, query_id):
         response['Content-Disposition'] = f'attachment; filename="{query_id}.zip"'
         
         return response
+    
     except Exception as e:
         return HttpResponse(f"An error occurred: {e}", status=500)
     finally:
