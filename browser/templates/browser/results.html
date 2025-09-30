@@ -476,8 +476,14 @@
                         } else {
                             await viewerInstance.plugin.builders.structure.representation.addRepresentation(all, { type: 'cartoon', color: 'uncertainty'});
                             // Add representation for unaligned residues
+                            //if (unalignedResidues.length > 0) {
+                            //    viewerInstance.visual.select({ data: unalignedResidues });
+                            //}
                             if (unalignedResidues.length > 0) {
-                                viewerInstance.visual.select({ data: unalignedResidues });
+                                await viewerInstance.visual.select({ 
+                                    data: unalignedResidues,
+                                    nonSelectedColor: undefined  // Don't change color of non-selected residues
+                                });
                             }
                         }
                     }
@@ -490,7 +496,7 @@
                     addStructure(condition);
                 }
         
-                var checkbox = document.querySelector('input[name="segments"]');
+                /* var checkbox = document.querySelector('input[name="segments"]');
                 checkbox.addEventListener('change', function() {
                     if (this.checked) {
                         console.log("Checkbox is checked..");
@@ -503,6 +509,29 @@
                         viewerInstance.visual.clearSelection();
                         if (currentCondition !== 'bfactor' && unalignedResidues.length > 0) {
                             viewerInstance.visual.select({ data: unalignedResidues });
+                        }
+                    }
+                });*/
+
+                var checkbox = document.querySelector('input[name="segments"]');
+                checkbox.addEventListener('change', async function() {
+                    if (this.checked) {
+                        console.log("Checkbox is checked..");
+                        await viewerInstance.visual.select({data: selectSections});
+                        if (currentCondition !== 'bfactor' && unalignedResidues.length > 0) {
+                            await viewerInstance.visual.select({ 
+                                data: unalignedResidues,
+                                nonSelectedColor: undefined
+                            });
+                        }
+                    } else {
+                        console.log("Checkbox is not checked..");
+                        await viewerInstance.visual.clearSelection();
+                        if (currentCondition !== 'bfactor' && unalignedResidues.length > 0) {
+                            await viewerInstance.visual.select({ 
+                                data: unalignedResidues,
+                                nonSelectedColor: undefined
+                            });
                         }
                     }
                 });

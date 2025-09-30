@@ -248,10 +248,12 @@ def unaligned_residue_segments(path_aligned_file):
                     segments.append({
                         'start_residue_number': current_segment[0],
                         'end_residue_number': current_segment[-1],
-                        'chain_id': chain_id,
+                        'struct_asym_id': str(chain_id),
                         'color': grey_color,
                         'representation': 'cartoon',
-                        'transparency': transparency_value
+                        'sideChain': False,
+                        'transparency': transparency_value, 
+                        'focus': False
                     })
                     current_segment = []
             current_segment.append(res_id)
@@ -262,10 +264,11 @@ def unaligned_residue_segments(path_aligned_file):
             segments.append({
                 'start_residue_number': current_segment[0],
                 'end_residue_number': current_segment[-1],
-                'chain_id': chain_id,
+                'struct_asym_id': str(chain_id),  # Changed from 'chain_id'
                 'color': grey_color,
+                'sideChain': False,
                 'representation': 'cartoon',
-                'transparency': transparency_value
+                'focus': False
             })
 
     return segments
@@ -929,6 +932,7 @@ def results_view(request):
     ## unaligned residues 
     if (prot_name[:3] == 'job'):
         seg_unaligned = unaligned_residue_segments(f'{data_path}{id_folder}/rsa_values.csv') 
+        print("Unaligned segments:", seg_unaligned)
         id_folder = 'job' +id_folder
     else:
         seg_unaligned=None 
