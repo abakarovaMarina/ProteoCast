@@ -250,10 +250,7 @@ def unaligned_residue_segments(path_aligned_file):
                         'end_residue_number': current_segment[-1],
                         'struct_asym_id': str(chain_id),
                         'color': grey_color,
-                        'representation': 'cartoon',
-                        'sideChain': False,
-                        'transparency': transparency_value, 
-                        'focus': False
+                        'representation': 'cartoon'
                     })
                     current_segment = []
             current_segment.append(res_id)
@@ -266,9 +263,7 @@ def unaligned_residue_segments(path_aligned_file):
                 'end_residue_number': current_segment[-1],
                 'struct_asym_id': str(chain_id),  # Changed from 'chain_id'
                 'color': grey_color,
-                'sideChain': False,
-                'representation': 'cartoon',
-                'focus': False
+                'representation': 'cartoon'
             })
 
     return segments
