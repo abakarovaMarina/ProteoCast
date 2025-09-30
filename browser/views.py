@@ -968,12 +968,26 @@ def download_folder(request, query_id):
         return HttpResponse("Folder not found.", status=404)
     
     # Create a temporary ZIP file in the system's temporary directory
-    temp_zip_path = os.path.join('/tmp', f'{query_id}.zip')
-    
+    #temp_zip_path = os.path.join('/tmp', f'{query_id}.zip')
+
+    # Temporary working directory
+    temp_dir = tempfile.mkdtemp()
+    temp_copy = os.path.join(temp_dir, query_id)
+
+
     try:
         # Create a ZIP archive of the folder
-        shutil.make_archive(temp_zip_path.replace('.zip', ''), 'zip', folder_path)
-        
+        #shutil.make_archive(temp_zip_path.replace('.zip', ''), 'zip', folder_path)
+        shutil.copytree(folder_path, temp_copy)
+         # Clean files only in the temp copy
+        if query_id.startswith("job"):
+            for f in os.listdir(temp_copy):
+                if f.endswith('.out') or f.endswith('.err') or f.endswith('.sh') or f.endswith('.txt'):
+                    os.remove((os.path.join(temp_copy, f)))
+
+        temp_zip_path = os.path.join(temp_dir, f'{query_id}.zip')
+        shutil.make_archive(temp_zip_path.replace('.zip', ''), 'zip', temp_copy)
+
         # Serve the ZIP file
         response = FileResponse(open(temp_zip_path, 'rb'), as_attachment=True)
         response['Content-Disposition'] = f'attachment; filename="{query_id}.zip"'
@@ -984,8 +998,8 @@ def download_folder(request, query_id):
         return HttpResponse(f"An error occurred: {e}", status=500)
     finally:
         # Ensure the temporary ZIP file is deleted after serving
-        if os.path.exists(temp_zip_path):
-            os.remove(temp_zip_path)
+        if os.path.exists(temp_dir):
+            shutil.rmtree(temp_dir)
 
 
 def download_example(request):
