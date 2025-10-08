@@ -433,6 +433,9 @@ def results_view(request):
         message = 'ProteoCast has not found Variant_score or Mutation values in the ProteoCast.csv file.'
         return render(request, 'browser/error.html', {'message': message}, status=500)
     
+    if True: 
+        return render(request, 'browser/error.html', {'message': 'the problem is not here'}, status=500)
+    
     ### creating mutation and variant score dataframes
     try:
         df_rsa = pd.DataFrame(np.array(df_proteocast['RSA*Variant_score']).reshape(20, -1, order='F'))
