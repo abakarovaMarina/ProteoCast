@@ -550,8 +550,7 @@ def results_view(request):
         fig_VariantClasses.add_trace(heatmap_classes, row=1, col=1)
 
     # --- RSA * Gemme heatmap
-    if True: 
-        return render(request, 'browser/error.html', {'message': 'the problem is not here'}, status=500)
+    
     
     if df_rsa is not None:
         Z_rsa = -df_rsa.values[::-1]; pred_rsa = df_rsa.to_numpy()
@@ -584,6 +583,8 @@ def results_view(request):
         )
         fig_rsa.add_trace(heatmap_rsa, row=1, col=1)
 
+    if True: 
+        return render(request, 'browser/error.html', {'message': 'the problem is not here'}, status=500)
         # --- SNPs heatmap
     if df_snps is not None:
         df_snps = df_snps.loc[df_snps['Set_name']!='Hypomorphic'].copy()
