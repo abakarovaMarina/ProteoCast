@@ -433,8 +433,6 @@ def results_view(request):
         message = 'ProteoCast has not found Variant_score or Mutation values in the ProteoCast.csv file.'
         return render(request, 'browser/error.html', {'message': message}, status=500)
     
-    if True: 
-        return render(request, 'browser/error.html', {'message': 'the problem is not here'}, status=500)
     
     ### creating mutation and variant score dataframes
     try:
@@ -479,7 +477,8 @@ def results_view(request):
     pdb_url_3 = ""
     pdb_url_4 = ""
 
-
+    if True: 
+        return render(request, 'browser/error.html', {'message': 'the problem is not here'}, status=500)
     ## colorscale for mutland
     # --- 80-step ramps sampled from Plotly’s built-ins
     greys80   = px.colors.sample_colorscale(px.colors.sequential.Greys,   [i/79 for i in range(80)])
