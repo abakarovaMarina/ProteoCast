@@ -930,8 +930,8 @@ def results_view(request):
     ## unaligned residues 
     if (prot_name[:3] == 'job'):
         id_folder = 'job' +id_folder
-
-    if (df_rsa is not None):
+        
+    if (prot_name[:3] == 'job' and df_rsa is not None):
         seg_unaligned = unaligned_residue_segments(f'{data_path}{id_folder}/rsa_values.csv') 
         print("Unaligned segments:", seg_unaligned)
         
