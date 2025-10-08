@@ -24,6 +24,8 @@ from django.shortcuts import render
 from django.utils.safestring import mark_safe
 import tempfile
 
+from urllib3 import request
+
 def contact_us(request):
     return render(request, 'browser/contact_us.html')
 
@@ -583,8 +585,7 @@ def results_view(request):
         )
         fig_rsa.add_trace(heatmap_rsa, row=1, col=1)
 
-    if True: 
-        return render(request, 'browser/error.html', {'message': 'the problem is not here'}, status=500)
+    
         # --- SNPs heatmap
     if df_snps is not None:
         df_snps = df_snps.loc[df_snps['Set_name']!='Hypomorphic'].copy()
@@ -762,6 +763,7 @@ def results_view(request):
         pdb_check = pdb_url_1.replace(alias_dir, data_path)
         if not os.path.exists(pdb_check):
             pdb_url_1 = None
+    print(pdb_url_1)
     if pdb_url_2:
         pdb_check = pdb_url_2.replace(alias_dir, data_path)
         if not os.path.exists(pdb_check):
@@ -776,7 +778,8 @@ def results_view(request):
         pdb_check = pdb_url_4.replace(alias_dir, data_path)
         if not os.path.exists(pdb_check):
             pdb_url_4 = None
-
+    if True: 
+        return render(request, 'browser/error.html', {'message': 'the problem is not here'}, status=500)
     ###### SEGMENTATION ######
 
     if os.path.exists(f'{data_path}{id_folder}/14.{prot_id}_GEMME_pLDDT.csv'):
