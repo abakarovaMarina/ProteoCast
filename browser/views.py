@@ -763,7 +763,6 @@ def results_view(request):
         pdb_check = pdb_url_1.replace(alias_dir, data_path)
         if not os.path.exists(pdb_check):
             pdb_url_1 = None
-    print(pdb_url_1)
     if pdb_url_2:
         pdb_check = pdb_url_2.replace(alias_dir, data_path)
         if not os.path.exists(pdb_check):
@@ -778,8 +777,7 @@ def results_view(request):
         pdb_check = pdb_url_4.replace(alias_dir, data_path)
         if not os.path.exists(pdb_check):
             pdb_url_4 = None
-    if True: 
-        return render(request, 'browser/error.html', {'message': 'the problem is not here'}, status=500)
+    
     ###### SEGMENTATION ######
 
     if os.path.exists(f'{data_path}{id_folder}/14.{prot_id}_GEMME_pLDDT.csv'):
@@ -941,7 +939,8 @@ def results_view(request):
 
     if a3mtag:
         msa_file_job = msa_file_job[:-5]+a3mtag
-        
+    if True: 
+        return render(request, 'browser/error.html', {'message': 'the problem is not here'}, status=500)
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
         'heatmapClasses_html': heatmapClasses_html,
