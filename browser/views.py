@@ -921,9 +921,6 @@ def results_view(request):
         # Generate HTML for Django
         fig_segmentation = fig_Seg.to_html(full_html=False)
 
-    if True: 
-        return render(request, 'browser/error.html', {'message': 'the problem is not here'}, status=500)
-    
     warning_message = ''
     if set(confidence_values[0]) == {0}:
         warning_message = 'Unreliable Predictions Warning: Evolutionary information in the provided MSA is scarse (<200 sequences) and insufficient to provide reliable predictions.'
@@ -931,7 +928,7 @@ def results_view(request):
     ## segmentation data for 3D
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/14.{prot_id}_GEMME_pLDDT.csv') 
     ## unaligned residues 
-    if (prot_name[:3] == 'job'):
+    if (prot_name[:3] == 'job' and df_rsa is not None):
         seg_unaligned = unaligned_residue_segments(f'{data_path}{id_folder}/rsa_values.csv') 
         print("Unaligned segments:", seg_unaligned)
         id_folder = 'job' +id_folder
