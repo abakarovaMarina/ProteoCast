@@ -477,8 +477,7 @@ def results_view(request):
     pdb_url_3 = ""
     pdb_url_4 = ""
 
-    if True: 
-        return render(request, 'browser/error.html', {'message': 'the problem is not here'}, status=500)
+
     ## colorscale for mutland
     # --- 80-step ramps sampled from Plotly’s built-ins
     greys80   = px.colors.sample_colorscale(px.colors.sequential.Greys,   [i/79 for i in range(80)])
@@ -551,7 +550,9 @@ def results_view(request):
         fig_VariantClasses.add_trace(heatmap_classes, row=1, col=1)
 
     # --- RSA * Gemme heatmap
-
+    if True: 
+        return render(request, 'browser/error.html', {'message': 'the problem is not here'}, status=500)
+    
     if df_rsa is not None:
         Z_rsa = -df_rsa.values[::-1]; pred_rsa = df_rsa.to_numpy()
         minVal_rsa = np.floor(pred_rsa.min())
