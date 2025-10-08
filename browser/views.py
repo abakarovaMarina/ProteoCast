@@ -921,7 +921,8 @@ def results_view(request):
         # Generate HTML for Django
         fig_segmentation = fig_Seg.to_html(full_html=False)
 
-
+    if True: 
+        return render(request, 'browser/error.html', {'message': 'the problem is not here'}, status=500)
     
     warning_message = ''
     if set(confidence_values[0]) == {0}:
@@ -939,8 +940,7 @@ def results_view(request):
 
     if a3mtag:
         msa_file_job = msa_file_job[:-5]+a3mtag
-    if True: 
-        return render(request, 'browser/error.html', {'message': 'the problem is not here'}, status=500)
+    
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
         'heatmapClasses_html': heatmapClasses_html,
