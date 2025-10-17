@@ -625,7 +625,7 @@ def results_view(request):
             hovertemplate=("Mutation: %{customdata[0]}<br>"
                         "Score: %{z:.2f}<br>"
                         "Class: %{customdata[1]}<br>"
-                        "SNPs: %{customdata[2]}<extra></extra>")
+                        "Label: %{customdata[2]}<extra></extra>")
         )
 
         # Highlight heatmap (overlay with colors for specific SNPs)
