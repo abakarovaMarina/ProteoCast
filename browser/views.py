@@ -488,13 +488,11 @@ def results_view(request):
     # R: Greys[1:10], Oranges[11:70], Greys[61:70]  (1-indexed)
     my_colors = greys80[:10] + oranges80[10:70] + greys80[60:70]   # total 80 colors
 
-
     ## GENERATING HEATMAPS
         #--- GEMME heatmap
     if df is not None:
         # Here: reverse rows and negate to match R’s sign flip
         Z = -df.values[::-1]
-
         # Compute the same stats as in R
         pred = df.to_numpy()
         minVal = np.floor(pred.min())
@@ -528,7 +526,9 @@ def results_view(request):
                            "Score: %{customdata[1]:.2f}<extra></extra>")
         )
         fig.add_trace(heatmap_main, row=1, col=1)
-        
+
+
+
         #--- Variant classes heatmap
     if df_classes is not None:
         fig_VariantClasses = make_subplots(
@@ -561,8 +561,8 @@ def results_view(request):
         prop=99; p = (100 - prop) / 100.0                  
         cutVal_rsa = np.quantile(pred_rsa, p)
         zmin_rsa = -maxVal_rsa; zmax_rsa = -minVal_rsa
-        r = (maxVal_rsa - cutVal_rsa) / (maxVal_rsa - minVal_rsa)
-        positions = [(i/79.0) * r for i in range(79)] + [1.0]
+        r_rsa = (maxVal_rsa - cutVal_rsa) / (maxVal_rsa - minVal_rsa)
+        positions = [(i/79.0) * r_rsa for i in range(79)] + [1.0]
         colorscaleRSA_custom = list(zip(positions, my_colors))
 
 
