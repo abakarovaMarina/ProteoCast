@@ -649,12 +649,15 @@ def results_view(request):
 
 
     if confidence_values is not None:
+        hover_text = np.where(confidence_values == 1, "Reliable", "Unreliable")
+        
         heatmap_confidence = go.Heatmap(
             z=confidence_values,
             x=list(range(1, df.shape[1])),
+            text=hover_text,
             colorscale=confidence_colorscale,
             showscale=False,
-            hovertemplate="%{z}<extra></extra>",
+            hovertemplate="Residue: %{x}<br>%{text}<extra></extra>",
             xgap=0.2, 
             zmin=0, zmax=1
         )
