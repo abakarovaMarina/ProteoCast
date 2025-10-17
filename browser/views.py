@@ -554,111 +554,38 @@ def results_view(request):
     # --- RSA * Gemme heatmap
     
     
-    # if df_rsa is not None:
-    #     Z_rsa = -df_rsa.values[::-1]; pred_rsa = df_rsa.to_numpy()
-    #     minVal_rsa = np.floor(pred_rsa.min())
-    #     maxVal_rsa = np.ceil(pred_rsa.max())
-    #     prop=99; p = (100 - prop) / 100.0                  
-    #     cutVal_rsa = np.quantile(pred_rsa, p)
-    #     zmin_rsa = -maxVal_rsa; zmax_rsa = -minVal_rsa
-    #     r = (maxVal_rsa - cutVal_rsa) / (maxVal_rsa - minVal_rsa)
-    #     positions = [(i/79.0) * r for i in range(79)] + [1.0]
-    #     colorscaleRSA_custom = list(zip(positions, my_colors))
-
-
-    #     fig_rsa = make_subplots(
-    #         rows=2, cols=1,
-    #         shared_xaxes=True,
-    #         row_heights=[0.9, 0.1],
-    #         vertical_spacing=0.02,
-    #     )
-    #     heatmap_rsa = go.Heatmap(
-    #         z=Z_rsa, #df_rsa.values[::-1],
-    #         x=list(range(1, df_rsa.shape[1])),
-    #         y=alph,
-    #         zmin=zmin_rsa, zmax=zmax_rsa,
-    #         colorscale=colorscaleRSA_custom, #px.colors.sequential.Oranges[::-1],
-    #         showscale=False,
-    #         customdata=np.dstack([df_mut.values[::-1], df_rsa.values[::-1]]),
-    #         hovertemplate=("Mutation: %{customdata[0]}<br>"
-    #                        "Score: %{customdata[1]:.2f}<extra></extra>")
-    #     )
-    #     fig_rsa.add_trace(heatmap_rsa, row=1, col=1)
-
     if df_rsa is not None:
-        pred_rsa = df_rsa.to_numpy(dtype=float)         # may contain NaNs
-        mask = np.isfinite(pred_rsa)
-
-        # Edge case: all NaN → skip or set safe defaults
-        if not mask.any():
-            # You can skip drawing, or draw an empty panel
-            fig_rsa = make_subplots(
-                rows=2, cols=1, shared_xaxes=True,
-                row_heights=[0.9, 0.1], vertical_spacing=0.02,
-            )
-            # Optionally add an annotation:
-            fig_rsa.add_annotation(
-                text="No RSA data (all NaN)", xref="paper", yref="paper",
-                x=0.5, y=0.5, showarrow=False
-            )
-        else:
-            # Stats that ignore NaN
-            minVal_rsa = np.floor(np.nanmin(pred_rsa))
-            maxVal_rsa = np.ceil(np.nanmax(pred_rsa))
-            prop = 99
-            p = (100 - prop) / 100.0
-            cutVal_rsa = np.nanquantile(pred_rsa, p)
-
-            # Colorscale positions
-            zmin_rsa = -maxVal_rsa
-            zmax_rsa = -minVal_rsa
-            r = (maxVal_rsa - cutVal_rsa) / (maxVal_rsa - minVal_rsa) if (maxVal_rsa > minVal_rsa) else 1.0
-            positions = [(i/79.0) * r for i in range(79)] + [1.0]
-            colorscaleRSA_custom = list(zip(positions, my_colors))
-
-            # Flip vertically and keep NaNs
-            Z_rsa = -pred_rsa[::-1]
-
-            # Build hover text that prints "N/A" for NaNs
-            scores = df_rsa.values[::-1]
-            muts   = df_mut.values[::-1]
-            hover_text = np.empty(scores.shape, dtype=object)
-            finite_scores = np.isfinite(scores)
-            # format finite
-            hover_text[finite_scores] = (
-                "Mutation: " + muts[finite_scores].astype(str) +
-                "<br>Score: " + np.round(scores[finite_scores], 2).astype(str)
-            )
-            # format NaN
-            hover_text[~finite_scores] = (
-                "Mutation: " + muts[~finite_scores].astype(str) +
-                "<br>Score: N/A"
-            )
-
-            fig_rsa = make_subplots(
-                rows=2, cols=1,
-                shared_xaxes=True,
-                row_heights=[0.9, 0.1],
-                vertical_spacing=0.02,
-            )
-
-            heatmap_rsa = go.Heatmap(
-                z=Z_rsa,
-                x=list(range(1, df_rsa.shape[1])),
-                y=alph,
-                zmin=zmin_rsa, zmax=zmax_rsa,
-                colorscale=colorscaleRSA_custom,
-                showscale=False,
-                text=hover_text,  # use our crafted hover lines
-                hovertemplate="%{text}<extra></extra>"
-            )
-            fig_rsa.add_trace(heatmap_rsa, row=1, col=1)
+        Z_rsa = -df_rsa.values[::-1]; pred_rsa = df_rsa.to_numpy()
+        minVal_rsa = np.floor(pred_rsa.min())
+        maxVal_rsa = np.ceil(pred_rsa.max())
+        prop=99; p = (100 - prop) / 100.0                  
+        cutVal_rsa = np.quantile(pred_rsa, p)
+        zmin_rsa = -maxVal_rsa; zmax_rsa = -minVal_rsa
+        r = (maxVal_rsa - cutVal_rsa) / (maxVal_rsa - minVal_rsa)
+        positions = [(i/79.0) * r for i in range(79)] + [1.0]
+        colorscaleRSA_custom = list(zip(positions, my_colors))
 
 
+        fig_rsa = make_subplots(
+            rows=2, cols=1,
+            shared_xaxes=True,
+            row_heights=[0.9, 0.1],
+            vertical_spacing=0.02,
+        )
+        heatmap_rsa = go.Heatmap(
+            z=Z_rsa, #df_rsa.values[::-1],
+            x=list(range(1, df_rsa.shape[1])),
+            y=alph,
+            zmin=zmin_rsa, zmax=zmax_rsa,
+            colorscale=colorscaleRSA_custom, #px.colors.sequential.Oranges[::-1],
+            showscale=False,
+            customdata=np.dstack([df_mut.values[::-1], df_rsa.values[::-1]]),
+            hovertemplate=("Mutation: %{customdata[0]}<br>"
+                           "Score: %{customdata[1]:.2f}<extra></extra>")
+        )
+        fig_rsa.add_trace(heatmap_rsa, row=1, col=1)
 
-
-
-
+    
         # --- SNPs heatmap
     if df_snps is not None:
         df_snps = df_snps.loc[df_snps['Set_name']!='Hypomorphic'].copy()
