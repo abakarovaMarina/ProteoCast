@@ -552,8 +552,6 @@ def results_view(request):
         fig_VariantClasses.add_trace(heatmap_classes, row=1, col=1)
 
     # --- RSA * Gemme heatmap
-    
-    
     if df_rsa is not None:
         Z_rsa = -df_rsa.values[::-1]; pred_rsa = df_rsa.to_numpy()
         minVal_rsa = np.floor(pred_rsa.min())
