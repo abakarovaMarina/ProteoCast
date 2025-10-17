@@ -650,7 +650,7 @@ def results_view(request):
 
     if confidence_values is not None:
         hover_text = np.where(confidence_values == 1, "Reliable", "Unreliable")
-        
+
         heatmap_confidence = go.Heatmap(
             z=confidence_values,
             x=list(range(1, df.shape[1])),
@@ -827,12 +827,11 @@ def results_view(request):
                 customdata=(df_sefPrep['pLDDT'].values * 100).astype(int).reshape(1, -1),
                 x=list(range(1, len(bfactors) + 1)),
                 y=[''],
-                hovertemplate="Residue %{x}<br>pLDDT: %{customdata}<extra></extra>",
+                hovertemplate=("Residue %{x}<br>pLDDT: %{customdata}<extra></extra>"),
                 xgap=0.15, zmin=0, zmax=3
             )
             fig_Seg.add_trace(heatmapSeg, row=1, col=1)
 
-        
         
         # Prepare the trace plot data
         GEMME_mean = df_sefPrep['GEMME_mean'].tolist()
