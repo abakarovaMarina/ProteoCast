@@ -918,7 +918,7 @@ def results_view(request):
             paper_bgcolor="white",
             xaxis2=dict(title="Residue",titlefont=dict(size=15),tickfont=dict(size=14)),
             yaxis2=dict(title="Mutational sensitivity", range=[0, 1], titlefont=dict(size=15), tickfont=dict(size=14)),
-            #hovermode="x unified"
+            hovermode="x unified"
         )
         # Generate HTML for Django
         fig_segmentation = fig_Seg.to_html(full_html=False)
