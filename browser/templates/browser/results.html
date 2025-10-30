@@ -231,6 +231,12 @@
                           VARIANT CLASSES
                    </label>
                    {% endif %}
+                   {% if heatmapSNPs_html %}
+                   <label style="display: inline-block; margin-right: 20px;">
+                       <input type="radio" name="heatmapToggle" value="heatmapSNPs_html" >
+                          SNPs
+                   </label>
+                   {% endif %}
                    {% if heatmapRSA_html %}
                    <label style="display: inline-block; margin-right: 20px;">
                       <input type="radio" name="heatmapToggle" value="heatmapRSA_html">

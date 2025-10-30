@@ -87,16 +87,10 @@ def check_job_status(request):
                     numeric_id = match.group(1)
                     df_proteocast = pd.read_csv(proteocast_path)
                     df_mutants = pd.read_csv(mutants_path)
-                    df_filtered = pd.merge(
-                      df_proteocast,
-                      df_mutants[['Mutation', 'Set_name']],
-                      on='Mutation',
-                      how='left' 
-                    )
+                    df_filtered = df_proteocast[df_proteocast["Mutation"].isin(df_mutants["Mutation"])]
                     merged_filename = f"7.{numeric_id}_SNPs.csv"
                     merged_path = os.path.join(folder_path, merged_filename)
-                    df_filtered['Set_name'] = df_filtered['Set_name'].str.strip()
-                    df_filtered = df_filtered.dropna(subset=['Set_name'])
+                    df_filtered['Set_name'] = 'DGRP' #CHANGE
                     df_filtered = df_filtered.rename(columns={
                        'Variant_score': 'GEMME_score',
                        'LocalConfidence': 'GEMME_LocalConfidence'
@@ -153,55 +147,58 @@ def upload_file(request):
             return handle_upload(request, uploaded_file, pdb_file, mutants_file)
 
         elif input_option == 'uniprot':
-            uniprot_id = request.POST.get('uniprot_id')
-            if not uniprot_id:
+             uniprot_id = request.POST.get('uniprot_id')
+             if not uniprot_id:
                 return JsonResponse({'error': 'Missing UniProt ID.'}, status=400)
 
-            # No descargamos el archivo acá; solo pasamos el ID
-            return handle_upload(request, main_file=None, pdb_file=pdb_file, mutants_file=mutants_file, uniprot_id=uniprot_id)
+             fasta_url = f"https://alphafold.ebi.ac.uk/files/msa/AF-{uniprot_id}-F1-msa_v6.a3m"
+             response = requests.get(fasta_url)
 
+             if response.status_code != 200:
+                     return JsonResponse({'error': f"Could not retrieve MSA for UniProt ID {uniprot_id}."}, status=400)
+
+             from django.core.files.uploadedfile import InMemoryUploadedFile
+             import io
+
+             fasta_content = response.text.encode('utf-8')
+             fasta_stream = io.BytesIO(fasta_content)
+             fasta_file = InMemoryUploadedFile(
+               file=fasta_stream,
+               field_name='file',
+               name=f"AF-{uniprot_id}-F1-msa_v6.a3m",
+               content_type='text/plain',
+               size=len(fasta_content),
+               charset='utf-8'
+             )
         else:
             return JsonResponse({'error': 'Invalid input option.'}, status=400)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
-def handle_upload(request, main_file=None, pdb_file=None, mutants_file=None, uniprot_id=None):
+def handle_upload(request, main_file, pdb_file=None, mutants_file=None):
     try:
+        msa_uniprot_id = request.POST.get('uniprot_id', '') 
+        uniprot_id = request.POST.get('uniprotId') or ''
         email = request.POST.get('email') or ''
         chain = request.POST.get('customChain') or 'A'
-        uniprot_id_pdb = request.POST.get('uniprotId')
 
         now = datetime.now()
         job_id = now.strftime('%Y%m%d%H%M%S')
         folder_path = os.path.join('/data/jobs/', job_id)
         os.makedirs(folder_path, mode=0o755, exist_ok=True)
 
-        if uniprot_id and not main_file:
-            main_file = uniprot_id
-            prot_name = uniprot_id
-            main_file_path = uniprot_id
-
-        elif main_file:
-            main_file_path = os.path.join(folder_path, main_file.name)
-            with open(main_file_path, 'wb+') as dest:
-                for chunk in main_file.chunks():
-                    dest.write(chunk)
-            try:
-                with open(main_file_path, 'r', encoding='utf-8') as f:
-                    first_line = f.readline().strip()
-                prot_name = first_line.lstrip('>')
-            except Exception:
-                prot_name = uniprot_id or job_id
-        else:
-            raise Exception("No MSA file provided and no UniProt ID.")
+        main_file_path = os.path.join(folder_path, main_file.name)
+        with open(main_file_path, 'wb+') as dest:
+            for chunk in main_file.chunks():
+                dest.write(chunk)
 
         try:
             with open(main_file_path, 'r', encoding='utf-8') as f:
                 first_line = f.readline().strip()
             prot_name = first_line.lstrip('>')
         except Exception:
-            prot_name = uniprot_id or job_id
+            prot_name = job_id
 
         if pdb_file:
             pdb_file_path = os.path.join(folder_path, pdb_file.name)
@@ -210,15 +207,15 @@ def handle_upload(request, main_file=None, pdb_file=None, mutants_file=None, uni
                     dest.write(chunk)
 
         if mutants_file:
-            mutants_csv_path = os.path.join(folder_path, 'mutants.csv')
-            with open(mutants_csv_path, 'wb+') as dest:
-                for chunk in mutants_file.chunks():
-                    dest.write(chunk)
+           try:
+               if mutants_file:
+                  mutants_csv_path = os.path.join(folder_path, 'mutants.csv')
+                  with open(mutants_csv_path, 'wb+') as dest:
+                    for chunk in mutants_file.chunks():
+                        dest.write(chunk)
 
-        if main_file:
-            main_param = os.path.basename(main_file_path)
-        else:
-            main_param = uniprot_id
+           except Exception as e:
+              raise Exception(f"Error processing mutants file: {e}")
 
         run_docker_script = os.path.join(folder_path, 'run_docker.sh')
         with open(run_docker_script, 'w') as script:
@@ -233,32 +230,18 @@ def handle_upload(request, main_file=None, pdb_file=None, mutants_file=None, uni
 #SBATCH --output=slurm_%j.out
 #SBATCH --error=slurm_%j.err
 
-docker run --rm -v "{folder_path}:/opt/job" marinaabakarova/proteocast /bin/bash -c "cd / && bash run.sh {main_param} {chain} {uniprot_id_pdb or ''}"
+docker run --rm -v "{folder_path}:/opt/job" marinaabakarova/proteocast /bin/bash -c "cd / && bash run.sh \\"{main_file.name}\\" {chain} {uniprot_id}"
 """)
-
-        os.chmod(run_docker_script, 0o755)
-        os.chdir(folder_path)
-        subprocess.run(['sbatch', run_docker_script], check=True)
-
-        job_status_path = os.path.join(folder_path, 'status.txt')
-        with open(job_status_path, 'w') as status_file:
-            status_file.write('in_progress')
-
-        return JsonResponse({
-            'status': 'in_progress',
-            'job_id': job_id,
-            'redirect_url': f'/results/job_running/{job_id}'
-        })
+        os.chmod(run_docker_script, 0o755) 
+        os.chdir(folder_path) 
+        subprocess.run(['sbatch', run_docker_script], check=True) 
+        job_status_path = os.path.join(folder_path, 'status.txt') 
+        with open(job_status_path, 'w') as status_file: 
+           status_file.write('in_progress') 
+        return JsonResponse({ 'status': 'in_progress', 'job_id': job_id, 'redirect_url': f'/results/job_running/{job_id}'}) 
 
     except Exception as e:
-        import traceback
-        print("[ERROR] upload failed:", e)
-        traceback.print_exc()
-        return JsonResponse({
-            'status': 'error',
-            'message': str(e),
-            'traceback': traceback.format_exc()
-        }, status=500)
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 
 def serve_file(request, folder, filename):
