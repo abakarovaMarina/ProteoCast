@@ -94,12 +94,10 @@
     <div class="container" style="max-width:70%;">
       <form id="uploadForm" action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="form-row pt-4 pb-1">
-          <h4 class="form-text text-dark"><b>Input</b>: Multiple Sequence Alignment (MSA)</h4>
+        <div class="form-row pt-4 pb-0">
+          <h4 class="form-text text-dark"><b>Required Input</b>: Multiple Sequence Alignment (MSA)</h4>
         </div>
-        <div class="form-row">
-          <p>You may generate your alignment using <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2_mmseqs2.ipynb" target="_blank">ColabFold</a> or <a href="{% url 'download_example' %}">download an example MSA</a>.</p>
-        </div>
+      
 
     <!-- Choose MSA source -->
     <div class="form-row py-3">
@@ -119,10 +117,8 @@
 
     <!-- Contextual help (shown only for Upload) -->
     <div id="msaHelp" class="form-row">
-      <p class="mb-0">
-        Accepted formats: <b>FASTA</b>, <b>A3M</b>, <b>A2M</b>.<br>
-        Ensure the first sequence is the <b>ungapped query</b>.
-      </p>
+      <p class="mb-0"> Accepted formats: <b>FASTA</b>, <b>A3M</b>, <b>A2M</b>. Ensure the first sequence is the <b>ungapped query</b>.</p>
+      <p>You may generate your alignment using <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2_mmseqs2.ipynb" target="_blank">ColabFold</a> or <a href="{% url 'download_example' %}">download an example MSA</a>.</p>
     </div>
 
     <!-- Upload section (minimal; no frame) -->
