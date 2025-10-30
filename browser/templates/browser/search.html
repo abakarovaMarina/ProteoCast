@@ -95,7 +95,7 @@
       <form id="uploadForm" action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-row pt-4 pb-3">
-          <h4 class="form-text text-dark"><u><b>Input:</b></u>: Multiple Sequence Alignment (MSA)</h4>
+          <h4 class="form-text text-dark"><b>Input</b>: Multiple Sequence Alignment (MSA)</h4>
         </div>
         <div class="form-row">
           <p>
@@ -114,12 +114,15 @@
           <input class="form-check-input" type="radio" name="inputOption" id="optionUpload" value="upload" checked>
           <label class="form-check-label" for="optionUpload">Upload MSA file</label>
         </div>
+
         <div class="form-check">
           <input class="form-check-input" type="radio" name="inputOption" id="optionUniProt" value="uniprot">
           <label class="form-check-label" for="optionUniProt">Retrieve from UniProt ID</label>
         </div>
       </div>
     </div>
+
+
 
     <!-- Contextual help (shown only for Upload) -->
     <div id="msaHelp" class="form-row">
@@ -130,18 +133,22 @@
     </div>
 
     <!-- Upload section (minimal; no frame) -->
-    <div id="msaSection" class="form-row py-2">
+    <div id="msaSection" class="form-row py-2" style="display:none;">
+      <div class="form-group col-md-6">
       <input type="file" name="file" id="fileInput" accept=".a3m,.fasta,.a2m" class="form-control" required>
-    </div>
+    </div></div>
+
 
     <!-- UniProt section (hidden by default) -->
     <div id="uniprotSection" class="form-row py-2" style="display:none;">
-      <input type="text" name="uniprot_id" id="uniprotIdInput" class="form-control"
-            placeholder="UniProt ID (e.g., P69905)">
+      <div class="form-group col-md-6">
+        <input type="text" name="uniprot_id" id="uniprotIdInput" class="form-control"
+              placeholder="UniProt ID (e.g., P69905)">
+      </div>
     </div>
 
 
-"
+
     <!-- ========================================= -->
     <!-- upload MUTATIONS -->
     <!-- ========================================= -->
