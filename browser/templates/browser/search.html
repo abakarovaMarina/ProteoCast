@@ -114,11 +114,7 @@
       </div>
     </div>
 
-    <!-- Contextual help (shown only for Upload) -->
-    <div id="msaHelp" class="form-row">
-      <p class="mb-0"> Accepted formats: <b>FASTA</b>, <b>A3M</b>, <b>A2M</b>. Ensure the first sequence is the <b>ungapped query</b>.</p>
-      <p>You may generate your alignment using <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2_mmseqs2.ipynb" target="_blank">ColabFold</a> or <a href="{% url 'download_example' %}">download an example MSA</a>.</p>
-    </div>
+    
 
     <!-- Upload section (minimal; no frame) -->
     <div id="msaSection" class="form-row py-2">
@@ -141,6 +137,11 @@
         <input type="text" name="uniprot_id" id="uniprotIdInput" class="form-control"
               placeholder="UniProt ID (e.g., P69905)">
       </div>
+    </div>
+    <!-- Contextual help (shown only for Upload) -->
+    <div id="msaHelp" class="form-row">
+      <p class="mb-0"> Accepted formats: <b>FASTA</b>, <b>A3M</b>, <b>A2M</b>. Ensure the first sequence is the <b>ungapped query</b>.</p>
+      <p>You may generate your alignment using <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2_mmseqs2.ipynb" target="_blank">ColabFold</a> or <a href="{% url 'download_example' %}">download an example MSA</a>.</p>
     </div>
 
     <!-- ========================================= -->
