@@ -101,7 +101,6 @@
 
     <!-- Choose MSA source -->
     <div class="form-row py-3">
-      <label class="text-dark h5 mb-0 mr-3">MSA source:</label>
       <div class="d-flex align-items-center">
         <div class="form-check mr-4">
           <input class="form-check-input" type="radio" name="inputOption" id="optionUpload" value="upload" checked>
@@ -122,14 +121,14 @@
     </div>
 
     <!-- Upload section (minimal; no frame) -->
-    <div id="msaSection" class="form-row py-2" style="display:none;">
+    <div id="msaSection" class="form-row py-2">
       <div class="form-group col-md-6">
       <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
               <input type="file" name="file" id="fileInput" accept=".a3m,.fasta,.a2m" required
                     style="font-family: 'Montserrat', sans-serif;
                     color: #343a40; 
                     padding: 10px 20px;
-                    border-radius: 12px; 
+                    border-radius: 14px; 
                     border: none; 
                     cursor: pointer;
                     ">
