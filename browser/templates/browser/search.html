@@ -94,16 +94,11 @@
     <div class="container" style="max-width:70%;">
       <form id="uploadForm" action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="form-row pt-4 pb-3">
+        <div class="form-row pt-4 pb-1">
           <h4 class="form-text text-dark"><b>Input</b>: Multiple Sequence Alignment (MSA)</h4>
         </div>
         <div class="form-row">
-          <p>
-            You may generate your alignment using
-            <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2_mmseqs2.ipynb" target="_blank">ColabFold</a>
-            or
-            <a href="{% url 'download_example' %}">download an example MSA</a>.
-          </p>
+          <p>You may generate your alignment using <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2_mmseqs2.ipynb" target="_blank">ColabFold</a> or <a href="{% url 'download_example' %}">download an example MSA</a>.</p>
         </div>
 
     <!-- Choose MSA source -->
@@ -122,8 +117,6 @@
       </div>
     </div>
 
-
-
     <!-- Contextual help (shown only for Upload) -->
     <div id="msaHelp" class="form-row">
       <p class="mb-0">
@@ -135,9 +128,17 @@
     <!-- Upload section (minimal; no frame) -->
     <div id="msaSection" class="form-row py-2" style="display:none;">
       <div class="form-group col-md-6">
-      <input type="file" name="file" id="fileInput" accept=".a3m,.fasta,.a2m" class="form-control" required>
-    </div></div>
-
+      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+              <input type="file" name="file" id="fileInput" accept=".a3m,.fasta,.a2m" required
+                    style="font-family: 'Montserrat', sans-serif;
+                    color: #343a40; 
+                    padding: 10px 20px;
+                    border-radius: 12px; 
+                    border: none; 
+                    cursor: pointer;
+                    ">
+      </div>
+    </div>
 
     <!-- UniProt section (hidden by default) -->
     <div id="uniprotSection" class="form-row py-2" style="display:none;">
@@ -146,8 +147,6 @@
               placeholder="UniProt ID (e.g., P69905)">
       </div>
     </div>
-
-
 
     <!-- ========================================= -->
     <!-- upload MUTATIONS -->
