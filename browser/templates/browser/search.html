@@ -192,7 +192,7 @@
         <hr class="my-4">
         <!-- Section for 3D structure -->
          <div class="form-row pt-4 pb-0">
-          <h4 class="form-text text-dark"><b>Optional Input</b>: 3D structure </h4>
+          <h4 class="form-text text-dark"><b>Optional Input</b>: 3D structure used to compute structure-informed scores and enable prediction visualization.</h4>
         </div>
 
         <!-- Toggle: Enable 3D visualization -->
@@ -209,7 +209,7 @@
         </div> {% endcomment %}
 
         <!-- Structure source selection: radio buttons -->
-        <div id="structureOptions" style="display: none;">
+        {% comment %} <div id="structureOptions" style="display: none;"> {% endcomment %} 
         <div class="form-row py-2 px-4">
             <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="structureSource" id="radioAlphaFold" value="alphafold">
