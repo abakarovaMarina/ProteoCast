@@ -154,8 +154,8 @@
     </div>
     <!-- Contextual help (shown only for Upload) -->
     <div id="msaHelp" class="form-row">
-      <p class="mb-0"> Accepted formats: <b>FASTA</b>, <b>A3M</b>, <b>A2M</b>. Ensure the first sequence is the <b>ungapped query</b>.</p>
-      <p>You may generate your alignment using <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2_mmseqs2.ipynb" target="_blank">ColabFold</a> or <a href="{% url 'download_example' %}">download an example MSA</a>.</p>
+      <small class="form-text text-muted"> Accepted formats: <b>FASTA</b>, <b>A3M</b>, <b>A2M</b>. Ensure the first sequence is the <b>ungapped query</b>.<br>
+      You may generate your alignment using <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2_mmseqs2.ipynb" target="_blank">ColabFold</a> or <a href="{% url 'download_example' %}">download an example MSA</a>.</small>
     </div>
 
     <!-- ========================================= -->
@@ -193,7 +193,7 @@
       <div id="mutantsSection" class="form-row py-2 align-items-center" style="display:none;">
         <div class="form-group col-md-6">
           <label for="mutantsFile" class="upload-btn">Choose CSV file</label>
-          <input type="file" name="mutantsFile" id="mutantsFile" accept=".csv">       
+          <input type="file" name="mutantsFile" id="mutantsFile" accept=".csv" style="display:none;">       
           <small class="form-text text-muted">
             File must be a <b>.csv</b> with two columns: <b>Mutation</b> and <b>Set_name</b>.<br>
           </small>
