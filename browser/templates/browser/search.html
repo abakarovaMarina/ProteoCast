@@ -162,7 +162,7 @@
     <!-- upload MUTATIONS -->
     <!-- ========================================= -->
 
-       <div id="mutantsSection" class="form-row py-3 align-items-center">
+       {%comment%}<div id="mutantsSection" class="form-row py-3 align-items-center">
          <div class="form-group col-md-6">
            <label class="font-weight-bold text-dark">Upload list of mutants (optional):</label>
            <input
@@ -174,17 +174,31 @@
              style="font-family: 'Montserrat', sans-serif; color: #343a40;"
            >
            <small class="form-text text-muted">
-             File must be a <b>.csv</b> with two columns: <b>Mutation</b> and <b>Set_name</b>.<br>
-             Example:
-             <pre style="background-color:#f8f9fa; border:1px solid #dee2e6; padding:6px; border-radius:4px; margin-top:5px;">
-              Mutation,Set_name
-              R123T,Lethal
-              L456M,DEST2
-              G789A,DGRP
-             </pre>
+             File must be a <b>.csv</b> with two columns: <b>Mutation</b> and <b>Phenotype</b>.<br>
            </small>
          </div>
         </div>
+        {%endcomment%}
+
+      <div class="form-row py-3">
+        <div class="form-group col-md-6">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="toggleMutants">
+            <label class="form-check-label text-dark font-weight-bold" for="toggleMutants">
+            Add list of mutants</label>
+        </div>
+      </div>
+    </div>
+
+      <div id="mutantsSection" class="form-row py-2 align-items-center" style="display:none;">
+        <div class="form-group col-md-6">
+          <label for="mutantsFile" class="upload-btn">Choose CSV file</label>
+          <input type="file" name="mutantsFile" id="mutantsFile" accept=".csv">       
+          <small class="form-text text-muted">
+            File must be a <b>.csv</b> with two columns: <b>Mutation</b> and <b>Set_name</b>.<br>
+          </small>
+        </div>
+      </div>
 
         <!-- ========================================= -->
         <!-- Visualize predictions -->
@@ -363,6 +377,33 @@
 
     radioAlphaFold.addEventListener('change', function () { if(this.checked) selectAlphaFold(); });
     radioPDB.addEventListener('change', function () { if(this.checked) selectPDB(); });
+
+    // Mutation toggle 
+    const toggleMutants = document.getElementById('toggleMutants');
+    const mutantsSection = document.getElementById('mutantsSection');
+    const mutantsFile = document.getElementById('mutantsFile');
+
+    function showMutantsSection() {
+      mutantsSection.style.display = 'block';
+      mutantsFile.setAttribute('required', 'required');
+    }
+
+    function hideMutantsSection() {
+      mutantsSection.style.display = 'none';
+      mutantsFile.removeAttribute('required');
+      mutantsFile.value = ''; // reset file input if hidden
+    }
+
+    toggleMutants.addEventListener('change', function () {
+      if (this.checked) {
+        showMutantsSection();
+      } else {
+        hideMutantsSection();
+      }
+    });
+
+
+
 
     // AJAX Submit
     document.getElementById("uploadForm").addEventListener("submit", async function(e) {
