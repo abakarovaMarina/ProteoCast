@@ -192,49 +192,55 @@
         <!-- Visualize predictions -->
         <!-- ========================================= -->
         <hr class="my-4">
+        <!-- Section for 3D structure -->
+        <!-- Toggle: Enable 3D visualization -->
         <div class="form-row py-2 align-items-center">
-          <div class="form-group col-md-12">
+        <div class="form-group col-md-10">
             <div class="custom-control custom-switch mt-2">
-              <input type="checkbox" id="toggleVisualize" class="custom-control-input">
-              <label for="toggleVisualize" class="custom-control-label text-dark h5">
+            <input type="checkbox" id="toggleVisualize" class="custom-control-input">
+            <label for="toggleVisualize" class="custom-control-label text-dark h5">
                 Visualize predictions on the 3D structure and compute structure-informed scores
-              </label>
+            </label>
             </div>
-          </div>
+        </div>
         </div>
 
-        <!-- Structure selection -->
-        <div id="structureOptions" style="display:none;">
-          <div class="form-row py-2">
+        <!-- Structure source selection: radio buttons -->
+        <div id="structureOptions" style="display: none;">
+        <div class="form-row py-2 px-4">
             <div class="form-group col-md-12">
-              <label class="font-weight-bold">Choose structure source:</label><br>
-              <div class="form-check form-check-inline">
+        
+            <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="structureSource" id="radioAlphaFold" value="alphafold">
-                <label class="form-check-label" for="radioAlphaFold">Retrieve from AlphaFoldDB</label>
-              </div>
-              <div class="form-check form-check-inline">
+                <label class="form-check-label" for="radioAlphaFold" style="font-size: 1.1rem;">Retrieve from AlphaFoldDB</label>
+            </div>
+            <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="structureSource" id="radioPDB" value="pdb">
-                <label class="form-check-label" for="radioPDB">Upload custom PDB</label>
-              </div>
+                <label class="form-check-label" for="radioPDB" style="font-size: 1.1rem;">Upload custom PDB</label>
             </div>
-          </div>
+            </div>
 
-          <!-- AlphaFold input -->
-          <div id="alphaFoldSection" class="form-row py-2" style="display:none;">
-            <div class="form-group col-md-6">
-              <input type="text" id="uniprotId" name="uniprotId" class="form-control" placeholder="UniProt ID e.g., P12345">
+        <!-- AlphaFold input -->
+        <div id="alphaFoldSection" class="form-row py-2 align-items-center" style="display: none;">
+            <div class="form-group col-md-6 px-4">
+            <input type="text" id="uniprotId" name="uniprotId" class="form-control"
+                placeholder="UniProt ID e.g., P12345">
             </div>
-          </div>
+        </div>
 
-          <!-- PDB input -->
-          <div id="pdbSection" class="form-row py-2" style="display:none;">
+        <!-- Custom PDB input -->
+        <div id="pdbSection" style="display: none;">
+            <div class="form-row py-2 align-items-center">
             <div class="form-group col-md-6">
-              <input type="file" name="pdbFile" id="pdbFileInput" accept=".pdb" class="form-control">
+                <label for="fileInput" class="upload-btn">Choose PDB file</label>
+                <input type="file" name="pdbFile" id="pdbFileInput" accept=".pdb">
             </div>
+
             <div class="form-group col-md-6">
-              <input type="text" id="customChain" name="customChain" class="form-control" placeholder="Specify chain ID if needed (e.g., A)">
+                <input type="text" id="customChain" name="customChain" class="form-control"
+                placeholder="Specify chain ID if needed (e.g., A)">
             </div>
-          </div>
+            </div>
         </div>
 
         <!-- Upload status -->
