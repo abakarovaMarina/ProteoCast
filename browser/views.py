@@ -229,7 +229,7 @@ def handle_upload(request, main_file=None, pdb_file=None, mutants_file=None, uni
 #SBATCH --time=01:00:00
 #SBATCH --job-name={prot_name}
 #SBATCH --mail-type=END
-#SBATCH --mail-user={email}
+#SBATCH --mail-user=marina.abakarova@sorbonne-universite.fr
 #SBATCH --output=slurm_%j.out
 #SBATCH --error=slurm_%j.err
 
