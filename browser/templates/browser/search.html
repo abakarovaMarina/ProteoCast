@@ -137,8 +137,6 @@
       </div>
     </div>
 
-    
-
     <!-- Upload section (minimal; no frame) -->
     <div id="msaSection" class="form-row py-1">
       <div class="form-group col-md-6">
@@ -193,8 +191,13 @@
         <!-- ========================================= -->
         <hr class="my-4">
         <!-- Section for 3D structure -->
+         <div class="form-row pt-4 pb-0">
+          <h4 class="form-text text-dark"><b>Optional Input</b>: 3D structure </h4>
+        </div>
+
         <!-- Toggle: Enable 3D visualization -->
-        <div class="form-row py-2 align-items-center">
+         
+        {% comment %} <div class="form-row py-2 align-items-center">
         <div class="form-group col-md-10">
             <div class="custom-control custom-switch mt-2">
             <input type="checkbox" id="toggleVisualize" class="custom-control-input">
@@ -203,7 +206,7 @@
             </label>
             </div>
         </div>
-        </div>
+        </div> {% endcomment %}
 
         <!-- Structure source selection: radio buttons -->
         <div id="structureOptions" style="display: none;">
