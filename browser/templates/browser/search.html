@@ -182,7 +182,7 @@
 
      <div class="form-row py-3 align-items-center">
         <div class="form-group col-md-10">
-            <div class="custom-control custom-switch mt-2">
+            <div class="custom-control custom-switch mt-2" style="transform: scale(0.85); transform-origin: left center;">
             <input type="checkbox" id="toggleMutants" class="custom-control-input">
             <label for="toggleMutants" class="custom-control-label text-dark h6">
                 Add a list of mutations
@@ -196,11 +196,11 @@
           <label for="mutantsFile" class="upload-btn">Choose CSV file</label>
           <input type="file" name="mutantsFile" id="mutantsFile" accept=".csv" style="display:none;">       
           <small class="form-text text-muted">
-            File must be a <b>.csv</b> with two columns: <b>Mutation</b> and <b>Phenotype</b>.<br>
-            <it> Mutation, Phenotype<br>
+            File must be a <b>.csv</b> with two columns: <b>Mutation</b> and <b>Phenotype</b>, separated by a comma.<br>
+            <i> Mutation, Phenotype<br>
                  A23T, Increased Stability<br>
                  G45D, Decreased Activity<br>
-            </it>
+            </i>
           </small>
         </div>
       </div>
