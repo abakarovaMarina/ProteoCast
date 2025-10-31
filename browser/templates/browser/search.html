@@ -401,24 +401,30 @@
     });
 
 
+    document.getElementById("uploadForm").addEventListener("submit", async function (e) {
+        console.log("Submit event triggered");
+        e.preventDefault(); // Prevent default form submission
 
+        // Show loading message
+        document.getElementById("loading").style.display = "block";
 
-    // AJAX Submit
-    document.getElementById("uploadForm").addEventListener("submit", async function(e) {
-      e.preventDefault();
-      document.getElementById("loading").style.display = "block";
+        const formData = new FormData(this);
+        const response = await fetch(this.action, {
+            method: "POST",
+            body: formData,
+        });
 
-      const formData = new FormData(this);
-      const response = await fetch(this.action, { method:"POST", body: formData });
-      const result = await response.json();
+        const result = await response.json();
 
-      if(response.ok){
-        const jobId = result.job_id;
-        window.location.href = `/results/job_running/${jobId}`;
-      } else {
-        document.getElementById("loading").style.display = "none";
-        document.getElementById("uploadStatus").innerText = result.error || "An error occurred.";
-      }
+        // Handle response
+        if (response.ok) {
+          console.log("Response ok");
+            const jobId = result.job_id;  // El job_id debe estar en la respuesta del backend
+            window.location.href = `/results/job_running/${jobId}`;  // Redirige con job_id
+        } else {
+            document.getElementById("loading").style.display = "none"; // Hide loading
+            document.getElementById("uploadStatus").innerText = result.error || "An error occurred.";
+        }
     });
   </script>
 </body>
