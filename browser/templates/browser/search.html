@@ -180,22 +180,17 @@
         </div>
         {%endcomment%}
 
+     <div class="form-row py-2 align-items-center">
+        <div class="form-group col-md-10">
+            <div class="custom-control custom-switch mt-2">
+            <input type="checkbox" id="toggleMutants" class="custom-control-input">
+            <label for="toggleMutants" class="custom-control-label text-dark h5">
+                Add a list of mutations
+            </label>
+            </div>
+        </div>
+        </div>
     
-
-        <div class="form-row py-3">
-      <div class="form-group col-md-6 d-flex align-items-center">
-        <label class="switch mb-0 mr-3">
-          <input type="checkbox" id="toggleMutants">
-          <span class="slider round"></span>
-        </label>
-        <label for="toggleMutants" class="text-dark font-weight-bold mb-0">
-          Add list of mutants
-        </label>
-      </div>
-    </div>
-
-
-
       <div id="mutantsSection" class="form-row py-2 align-items-center" style="display:none;">
         <div class="form-group col-md-6">
           <label for="mutantsFile" class="upload-btn">Choose CSV file</label>
