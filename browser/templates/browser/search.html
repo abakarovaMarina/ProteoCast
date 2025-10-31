@@ -72,10 +72,16 @@
           transition: background-color 0.3s ease;
         }
         .upload-btn:hover {
-          background-color: #adb5bd;
+          background-color: #7E807C;
         }
         #fileInput {
           display: none; /* hide the native input */
+        }
+        #fileName {
+          margin-left: 15px;
+          font-family: 'Montserrat', sans-serif;
+          color: #6c757d;
+          font-size: 0.95rem;
         }
 
     </style>  
@@ -134,7 +140,7 @@
     
 
     <!-- Upload section (minimal; no frame) -->
-    <div id="msaSection" class="form-row py-2">
+    <div id="msaSection" class="form-row py-1">
       <div class="form-group col-md-6">
       <label for="fileInput" class="upload-btn">Choose MSA file</label>
       <input type="file" name="file" id="fileInput" accept=".a3m,.fasta,.a2m" required>
