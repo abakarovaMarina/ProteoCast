@@ -79,7 +79,7 @@ def check_job_status(request):
         mutants_path = os.path.join(folder_path, "mutants.csv")
 
         if os.path.exists(mutants_path):
-            proteocast_files = glob.glob(os.path.join(folder_path, "4.*_ProteoCast.csv"))
+            proteocast_files = glob.glob(os.path.join(folder_path, "4.*q.csv"))
             if proteocast_files:
                 proteocast_path = proteocast_files[0]
                 match = re.search(r"4\.(.*?)_ProteoCast\.csv", os.path.basename(proteocast_path))
@@ -89,26 +89,22 @@ def check_job_status(request):
                     df_mutants = pd.read_csv(mutants_path)
                     df_filtered = pd.merge(
                       df_proteocast,
-                      df_mutants[['Mutation', 'Set_name']],
+                      df_mutants[['Mutation', 'Phenotype']],
                       on='Mutation',
                       how='left' 
                     )
                     merged_filename = f"7.{numeric_id}_SNPs.csv"
                     merged_path = os.path.join(folder_path, merged_filename)
-                    df_filtered['Set_name'] = df_filtered['Set_name'].str.strip()
-                    df_filtered = df_filtered.dropna(subset=['Set_name'])
-                    df_filtered = df_filtered.rename(columns={
-                       'Variant_score': 'GEMME_score',
-                       'LocalConfidence': 'GEMME_LocalConfidence'
-                    })
+                    df_filtered['Phenotype'] = df_filtered['Phenotype'].str.strip()
+                    df_filtered = df_filtered.dropna(subset=['Phenotype'])
                     df_filtered = df_filtered[[
                        'Mutation', 
-                       'GEMME_score', 
-                       'Set_name', 
+                       'Variant_score', 
+                       'Phenotype', 
                        'Residue', 
                        'Variant_class', 
                        'Residue_class', 
-                       'GEMME_LocalConfidence'
+                       'LocalConfidence'
                     ]]
                     df_filtered.to_csv(merged_path, index=False)
                     print(f"[INFO] Merged file saved: {merged_path}")
@@ -372,12 +368,14 @@ def results_view(request):
     
     pdb_id = ''
     msa_file_job = '';a3mtag=None
+    column_snp = ''
     ## job
     if (prot_name[:3] == 'job'):
         data_path = '/data/jobs/'
         alias_dir = 'jobs'
         id_folder = prot_name[3:]
         files = os.listdir(f'/data/jobs/{id_folder}')
+        column_snp = 'Phenotype'
         if not os.path.exists(f'/data/jobs/{id_folder}'):
             message = 'Failed to retrieve the results for your job. Please check the Job ID.'
             return render(request, 'browser/error.html', {'message': message}, status=500) 
@@ -410,6 +408,7 @@ def results_view(request):
 
     ## drosophila db
     else:
+        column_snp = 'Set_name'
         # Only for the fly
         data_path = '/data/Drosophila_ProteoCast/'
         alias_dir = 'data'
@@ -680,7 +679,8 @@ def results_view(request):
     
         # --- SNPs heatmap
     if df_snps is not None:
-        df_snps = df_snps.loc[df_snps['Set_name']!='Hypomorphic'].copy()
+    
+        df_snps = df_snps.loc[df_snps[column_snp]!='Hypomorphic'].copy()
         fig_SNPs = make_subplots(
             rows=2, cols=1,
             shared_xaxes=True,
@@ -693,7 +693,7 @@ def results_view(request):
         for snp in df_snps['Mutation'].unique():
             ind_mut = alph.index(snp[-1])
             position = int(snp[1:-1])
-            df_snps_STR.loc[ind_mut, position - 1] = '/'.join(df_snps.loc[df_snps['Mutation'] == snp, 'Set_name'].tolist())
+            df_snps_STR.loc[ind_mut, position - 1] = '/'.join(df_snps.loc[df_snps['Mutation'] == snp, column_snp].tolist())
 
         df_snps_STR = df_snps_STR.fillna('-')
 
