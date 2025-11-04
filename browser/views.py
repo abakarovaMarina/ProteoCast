@@ -839,24 +839,9 @@ def results_view(request):
                 colorscale=colorscale,
                 showscale=False,
                 hoverinfo="skip",
-                #customdata=chosen_label[::-1],       # labels alignés à l’affichage
+                #customdata=chosen_label[::-1],       
                 zmin=0, zmax=max(1, K)
                 
-            )
-
-# Highlight heatmap (overlay with colors for specific Mutations)
-            highlight_layer = go.Heatmap(
-                z=highlight_mask,
-                x=list(range(1, df.shape[1] + 1)),
-                y=alph,
-                colorscale=[
-                    [0.0, "rgba(0,0,0,0)"],          # 0 -> transparent
-                    [0.5, "rgba(255,50,50,1)"],      # ~1 -> red
-                    [1.0, "rgba(0,0,255,0.7)"],      # ~2 -> blue
-                ],
-                showscale=False,
-                hoverinfo="skip",
-                zmin=0, zmax=2
             )
 
 
