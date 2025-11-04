@@ -64,7 +64,6 @@ def job_running(request,job_id):
 
 def check_job_status(request):
     job_id = request.GET.get('job_id')
-    mutants_file = request.FILES.get('mutantsFile')
 
     if not job_id:
         return JsonResponse({'status': 'error', 'message': 'No job_id provided.'}, status=400)
@@ -78,34 +77,30 @@ def check_job_status(request):
 
     if job_status == 'finished':
         folder_path = os.path.join('/data/jobs', job_id)
-        #mutants_path = os.path.join(folder_path, "mutants.csv")
-        if mutants_file:
-            mutants_path = os.path.join(folder_path, mutants_file.name)
+        mutants_path = os.path.join(folder_path, "mutants.csv")
 
-            if os.path.exists(mutants_path):
-                proteocast_files = glob.glob(os.path.join(folder_path, "4.*q.csv"))
-                if proteocast_files:
-                    proteocast_path = proteocast_files[0]
-                    match = re.search(r"4\.(.*?)_ProteoCast\.csv", os.path.basename(proteocast_path))
-                    if match:
-                        numeric_id = match.group(1)
-                        ## merging ProteoCast and mutants files
-                        df_proteocast = pd.read_csv(proteocast_path)
-                        df_mutants = pd.read_csv(mutants_path)
-                        df_filtered = pd.merge(df_proteocast, df_mutants[['Mutation', 'Phenotype']],on='Mutation', how='left')
-                        ## creating new file with mutations and the associated predictions
-                        merged_filename = f"7.{numeric_id}_SNPs.csv"
-                        merged_path = os.path.join(folder_path, merged_filename)
+        if os.path.exists(mutants_path):
+            #proteocast_files = glob.glob(os.path.join(folder_path, "4.*q.csv"))
+            proteocast_files = glob.glob(os.path.join(folder_path, "4.*_ProteoCast.csv"))
+            if proteocast_files:
+                proteocast_path = proteocast_files[0]
+                prot_id = '_'.join(os.path.basename(proteocast_path).split('.')[1].split('_')[:-1])
+                ## merging ProteoCast and mutants files
+                df_proteocast = pd.read_csv(proteocast_path)
+                df_mutants = pd.read_csv(mutants_path)
+                df_filtered = pd.merge(df_proteocast, df_mutants[['Mutation', 'Phenotype']],on='Mutation', how='left')
+                ## creating new file with mutations and the associated predictions
+                merged_filename = f"7.{prot_id}_SNPs.csv"
+                merged_path = os.path.join(folder_path, merged_filename)
 
-                        df_filtered['Phenotype'] = df_filtered['Phenotype'].str.strip()
-                        df_filtered = df_filtered.dropna(subset=['Phenotype'])
-                        df_filtered = df_filtered[['Mutation', 'Variant_score', 'Phenotype', 'Residue', 'Variant_class', 'Residue_class', 'LocalConfidence']]
-                        df_filtered.to_csv(merged_path, index=False)
-                        print(f"[INFO] Merged file saved: {merged_path}")
-                    else:
-                        print("[WARN] Could not extract numeric ID from ProteoCast file — skipping merge.")
-                else:
-                    print("[WARN] No 4.*_ProteoCast.csv found — skipping merge.")
+                df_filtered['Phenotype'] = df_filtered['Phenotype'].str.strip()
+                df_filtered = df_filtered.dropna(subset=['Phenotype'])
+                df_filtered = df_filtered[['Mutation', 'Variant_score', 'Phenotype', 'Residue', 'Variant_class', 'Residue_class', 'LocalConfidence']]
+                df_filtered.to_csv(merged_path, index=False)
+                print(f"[INFO] Merged file saved: {merged_path}")
+        
+            else:
+                print("[WARN] No 4.*_ProteoCast.csv found — skipping merge.")
         else:
             print("[INFO] No file with mutation provided, skipping merge.")
 
@@ -206,6 +201,14 @@ def handle_upload(request, main_file=None, pdb_file=None, mutants_file=None, uni
             with open(mutants_csv_path, 'wb+') as dest:
                 for chunk in mutants_file.chunks():
                     dest.write(chunk)
+
+            # also save under a fixed name
+            fixed_path = os.path.join(folder_path, "mutants.csv")
+            try:
+                os.replace(mutants_csv_path, fixed_path)  # atomic move on same FS
+            except Exception:
+                shutil.copy2(mutants_csv_path, fixed_path)
+            print("[INFO] Mutants saved as:", fixed_path)
 
         if main_file:
             main_param = os.path.basename(main_file_path)
