@@ -64,6 +64,8 @@ def job_running(request,job_id):
 
 def check_job_status(request):
     job_id = request.GET.get('job_id')
+    mutants_file = request.FILES.get('mutantsFile')
+
     if not job_id:
         return JsonResponse({'status': 'error', 'message': 'No job_id provided.'}, status=400)
 
@@ -76,44 +78,36 @@ def check_job_status(request):
 
     if job_status == 'finished':
         folder_path = os.path.join('/data/jobs', job_id)
-        mutants_path = os.path.join(folder_path, "mutants.csv")
+        #mutants_path = os.path.join(folder_path, "mutants.csv")
+        if mutants_file:
+            mutants_path = os.path.join(folder_path, mutants_file.name)
 
-        if os.path.exists(mutants_path):
-            proteocast_files = glob.glob(os.path.join(folder_path, "4.*q.csv"))
-            if proteocast_files:
-                proteocast_path = proteocast_files[0]
-                match = re.search(r"4\.(.*?)_ProteoCast\.csv", os.path.basename(proteocast_path))
-                if match:
-                    numeric_id = match.group(1)
-                    df_proteocast = pd.read_csv(proteocast_path)
-                    df_mutants = pd.read_csv(mutants_path)
-                    df_filtered = pd.merge(
-                      df_proteocast,
-                      df_mutants[['Mutation', 'Phenotype']],
-                      on='Mutation',
-                      how='left' 
-                    )
-                    merged_filename = f"7.{numeric_id}_SNPs.csv"
-                    merged_path = os.path.join(folder_path, merged_filename)
-                    df_filtered['Phenotype'] = df_filtered['Phenotype'].str.strip()
-                    df_filtered = df_filtered.dropna(subset=['Phenotype'])
-                    df_filtered = df_filtered[[
-                       'Mutation', 
-                       'Variant_score', 
-                       'Phenotype', 
-                       'Residue', 
-                       'Variant_class', 
-                       'Residue_class', 
-                       'LocalConfidence'
-                    ]]
-                    df_filtered.to_csv(merged_path, index=False)
-                    print(f"[INFO] Merged file saved: {merged_path}")
+            if os.path.exists(mutants_path):
+                proteocast_files = glob.glob(os.path.join(folder_path, "4.*q.csv"))
+                if proteocast_files:
+                    proteocast_path = proteocast_files[0]
+                    match = re.search(r"4\.(.*?)_ProteoCast\.csv", os.path.basename(proteocast_path))
+                    if match:
+                        numeric_id = match.group(1)
+                        ## merging ProteoCast and mutants files
+                        df_proteocast = pd.read_csv(proteocast_path)
+                        df_mutants = pd.read_csv(mutants_path)
+                        df_filtered = pd.merge(df_proteocast, df_mutants[['Mutation', 'Phenotype']],on='Mutation', how='left')
+                        ## creating new file with mutations and the associated predictions
+                        merged_filename = f"7.{numeric_id}_SNPs.csv"
+                        merged_path = os.path.join(folder_path, merged_filename)
+
+                        df_filtered['Phenotype'] = df_filtered['Phenotype'].str.strip()
+                        df_filtered = df_filtered.dropna(subset=['Phenotype'])
+                        df_filtered = df_filtered[['Mutation', 'Variant_score', 'Phenotype', 'Residue', 'Variant_class', 'Residue_class', 'LocalConfidence']]
+                        df_filtered.to_csv(merged_path, index=False)
+                        print(f"[INFO] Merged file saved: {merged_path}")
+                    else:
+                        print("[WARN] Could not extract numeric ID from ProteoCast file — skipping merge.")
                 else:
-                    print("[WARN] Could not extract numeric ID from ProteoCast file — skipping merge.")
-            else:
-                print("[WARN] No 4.*_ProteoCast.csv found — skipping merge.")
+                    print("[WARN] No 4.*_ProteoCast.csv found — skipping merge.")
         else:
-            print("[INFO] No mutants.csv found, skipping merge.")
+            print("[INFO] No file with mutation provided, skipping merge.")
 
         # Always redirect to results, merge optional
         job_id_url = 'job' + job_id
@@ -205,8 +199,10 @@ def handle_upload(request, main_file=None, pdb_file=None, mutants_file=None, uni
                 for chunk in pdb_file.chunks():
                     dest.write(chunk)
 
-        if mutants_file:
-            mutants_csv_path = os.path.join(folder_path, 'mutants.csv')
+        if mutants_file:   
+            #mutants_csv_path = os.path.join(folder_path, 'mutants.csv')
+            mutants_csv_path = os.path.join(folder_path, mutants_file.name)
+            print("mutants file is", mutants_csv_path)
             with open(mutants_csv_path, 'wb+') as dest:
                 for chunk in mutants_file.chunks():
                     dest.write(chunk)
@@ -362,7 +358,7 @@ def unaligned_residue_segments(path_aligned_file):
 
 def results_view(request):
     prot_name = request.GET.get('q').lower()
- 
+    
     if not prot_name:
         return HttpResponse(f'Please provide a protein name.')
     
@@ -676,68 +672,244 @@ def results_view(request):
         )
         fig_rsa.add_trace(heatmap_rsa, row=1, col=1)
 
+
+
+    """""
+        #     #highlighted_positions = (highlight_mask > 0)  # Cells with highlights (red or blue)
+        #     #df_modified = df.values[::-1].copy()  # Create a copy to avoid modifying the original dataframe
+        #     #df_modified[highlighted_positions] = 0
+            """
     
         # --- SNPs heatmap
     if df_snps is not None:
-    
-        df_snps = df_snps.loc[df_snps[column_snp]!='Hypomorphic'].copy()
-        fig_SNPs = make_subplots(
-            rows=2, cols=1,
-            shared_xaxes=True,
-            row_heights=[0.9, 0.1],
-            vertical_spacing=0.02,
-        )
 
-        # Prepare the SNPs data structure
-        df_snps_STR = pd.DataFrame(columns=df_classesStr.columns, index=df_classesStr.index)
-        for snp in df_snps['Mutation'].unique():
-            ind_mut = alph.index(snp[-1])
-            position = int(snp[1:-1])
-            df_snps_STR.loc[ind_mut, position - 1] = '/'.join(df_snps.loc[df_snps['Mutation'] == snp, column_snp].tolist())
+        # CASE 1: Mutation visualization for Drosophila DB: highlight Lethal and DEST/DGRP
+        if prot_name[:3] != 'job':
+            df_snps = df_snps.loc[df_snps[column_snp] != 'Hypomorphic'].copy()
 
-        df_snps_STR = df_snps_STR.fillna('-')
+            fig_SNPs = make_subplots(rows=2, cols=1, shared_xaxes=True,row_heights=[0.9, 0.1], vertical_spacing=0.02)
+            #Prepare the SNPs data structure
+            df_snps_STR = pd.DataFrame(columns=df_classesStr.columns, index=df_classesStr.index)
 
-        # Create a numerical mask for highlights
-        highlight_mask = np.zeros(df_snps_STR.shape)  # Default is no highlight (0)
-        highlight_mask[df_snps_STR.isin(['Lethal'])] = 1  # Red for Lethal
-        highlight_mask[df_snps_STR.isin(['DEST2', 'DGRP', 'DEST2/DGRP', 'DGRP/DEST2'])] = 2  # Blue for DEST or DGRP
+            for snp in df_snps['Mutation'].unique():
+                ind_mut = alph.index(snp[-1])         
+                position = int(snp[1:-1])             
+                labels = df_snps.loc[df_snps['Mutation'] == snp, column_snp].astype(str).tolist()
+                df_snps_STR.loc[ind_mut, position - 1] = '/'.join(labels)
 
-        #highlighted_positions = (highlight_mask > 0)  # Cells with highlights (red or blue)
-        #df_modified = df.values[::-1].copy()  # Create a copy to avoid modifying the original dataframe
-        #df_modified[highlighted_positions] = 0
+            df_snps_STR = df_snps_STR.fillna('-')
+
+            # Masque numérique 0 (transparent), 1 (Lethal, rouge), 2 (DEST/DGRP, bleu)
+            highlight_mask = np.zeros(df_snps_STR.shape, dtype=float) # Default is no highlight (0)
+            highlight_mask[df_snps_STR.isin(['Lethal'])] = 1 # Red for Lethal
+            highlight_mask[df_snps_STR.isin(['DEST2', 'DGRP', 'DEST2/DGRP', 'DGRP/DEST2'])] = 2 # Blue for DEST/DGRP
+
+            # Main heatmap (greyscale background)
+            heatmap_snps = go.Heatmap(
+                z=df.values[::-1],
+                x=list(range(1, df.shape[1] + 1)),
+                y=alph,
+                customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1], df_snps_STR.values]),
+                colorscale=px.colors.sequential.Greys[::-1][4:],
+                showscale=False,
+                hovertemplate=("Mutation: %{customdata[0]}<br>"
+                            "Score: %{z:.2f}<br>"
+                            "Class: %{customdata[1]}<br>"
+                            "Label: %{customdata[2]}<extra></extra>")
+            )
+
+            # Highlight heatmap (overlay with colors for specific Mutations)
+            highlight_layer = go.Heatmap(
+                z=highlight_mask,
+                x=list(range(1, df.shape[1] + 1)),
+                y=alph,
+                colorscale=[
+                    [0.0, "rgba(0,0,0,0)"],          # 0 -> transparent
+                    [0.5, "rgba(255,50,50,1)"],      # ~1 -> red
+                    [1.0, "rgba(0,0,255,0.7)"],      # ~2 -> blue
+                ],
+                showscale=False,
+                hoverinfo="skip",
+                zmin=0, zmax=2
+            )
+
+            fig_SNPs.add_trace(heatmap_snps, row=1, col=1)
+            fig_SNPs.add_trace(highlight_layer, row=1, col=1)
+
+        # CASE 2 — "job*" mutations submitted by the user: highlight up to 20 phenotypes with distinct colors
+        else:
         
-        # Main heatmap (greyscale background)
-        heatmap_snps = go.Heatmap(
-            z=df.values[::-1],
-            x=list(range(1, df.shape[1] + 1)),
-            y=alph,
-            customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1], df_snps_STR.values]),
-            colorscale=px.colors.sequential.Greys[::-1][4:],
-            showscale=False,
-            hovertemplate=("Mutation: %{customdata[0]}<br>"
-                        "Score: %{z:.2f}<br>"
-                        "Class: %{customdata[1]}<br>"
-                        "Label: %{customdata[2]}<extra></extra>")
-        )
+            fig_SNPs = make_subplots(rows=2, cols=1, shared_xaxes=True,row_heights=[0.9, 0.1], vertical_spacing=0.02)
 
-        # Highlight heatmap (overlay with colors for specific SNPs)
-        highlight_layer = go.Heatmap(
-            z=highlight_mask,  # Use the mask to determine colors
-            x=list(range(1, df.shape[1] + 1)),
-            y=alph,
-            colorscale=[
-                [0, "rgba(0,0,0,0)"],  # Transparent for no highlight
-                [ 1 / 2, "rgba(255,50,50,1)"],  # Red for 'Lethal'[2 / 3, "rgba(0,0,255,0.8)"],  # Blue for 'DEST2' or 'DGRP'
-                [1, "rgba(0,0,255,0.7)"],  # Blue continued
-            ],
-            showscale=False,
-            hoverinfo="skip",  # Skip hover info for the highlight layer
-            zmin=0, zmax=2
-        )
+            #Prepare the SNPs data structure
+            df_snps_STR = pd.DataFrame(columns=df_classesStr.columns, index=df_classesStr.index)
 
-        # Add traces to the figure
-        fig_SNPs.add_trace(heatmap_snps, row=1, col=1)
-        fig_SNPs.add_trace(highlight_layer, row=1, col=1)
+            for snp in df_snps['Mutation'].unique():
+                ind_mut = alph.index(snp[-1])
+                position = int(snp[1:-1])
+
+                labels = df_snps.loc[df_snps['Mutation'] == snp, column_snp].astype(str).tolist()
+                df_snps_STR.loc[ind_mut, position - 1] = '/'.join(labels)
+
+            df_snps_STR = df_snps_STR.fillna('-')
+
+            # Filter only 20 phenotypes and their colors
+            # List of 20 colors (example)
+            color_list = [
+                "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
+                "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
+                "#aec7e8", "#ffbb78", "#98df8a", "#ff9896", "#c5b0d5",
+                "#c49c94", "#f7b6d2", "#c7c7c7", "#dbdb8d", "#9edae5",
+            ]
+
+            # Count phenotypes (excluding NaN/'-'), limit to 20 most frequent
+            phenos = df_snps[column_snp].dropna().astype(str)
+            top20 = phenos.value_counts().index[:20].tolist()
+
+            # Mapping phenotype -> (id, color). id = 1..K ; 0 remains "transparent"
+            K = min(len(top20), 20)
+            phen2id = {p: i + 1 for i, p in enumerate(top20[:K])}
+            phen2color = {p: color_list[i] for i, p in enumerate(top20[:K])}
+
+            # Build the mask
+            highlight_mask = np.zeros(df_snps_STR.shape, dtype=float)  # 0 = transparent
+            chosen_label = np.full(df_snps_STR.shape, '', dtype=object)
+
+            # Priority: most frequent phenotypes first (order of top20)
+            rank = {p: r for r, p in enumerate(top20[:K])}
+
+            # Go through all cells and choose AT MOST ONE label (the best ranked)
+            for i in range(df_snps_STR.shape[0]):
+                for j in range(df_snps_STR.shape[1]):
+                    cell = df_snps_STR.iat[i, j]
+                    if cell == '-' or not isinstance(cell, str):
+                        continue
+
+                    # Une cellule peut contenir "A/B/C" ; on choisit celle la plus prioritaire
+                    cand = [t.strip() for t in cell.split('/') if t.strip() in phen2id]
+                    if not cand:
+                        continue
+
+                    # tri selon la fréquence (rank)
+                    cand.sort(key=lambda x: rank[x])
+                    best = cand[0]
+                    highlight_mask[i, j] = float(phen2id[best])
+                    chosen_label[i, j] = best
+
+            # create a discrete colorscale
+            def discrete_colorscale_from_list(K, colors):
+                """
+                Build a colorscale Plotly "discrete" for z in [0..K].
+                0 -> transparent ; 1..K -> given colors.
+                """
+                cs = [[0.0, "rgba(0,0,0,0)"]]  # 0 : transparent
+                if K == 0:
+                    cs.append([1.0, "rgba(0,0,0,0)"])
+                    return cs
+
+                # Normaliser l’axe z sur [0..K] -> [0..1]
+                for idx in range(1, K + 1):
+                    a = max(0.0, (idx - 0.5) / K)
+                    b = min(1.0, (idx + 0.5) / K)
+                    col = colors[idx - 1]
+                    cs.append([a, col])
+                    cs.append([b, col])
+                return cs
+
+            # Order colors according to ids 1..K
+            ordered_colors = [phen2color[p] for p in top20[:K]]
+            colorscale = discrete_colorscale_from_list(K, ordered_colors)
+
+            # Main heatmap (greyscale background)
+            heatmap_snps = go.Heatmap(
+                z=df.values[::-1],
+                x=list(range(1, df.shape[1] + 1)),
+                y=alph,
+                customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1], df_snps_STR.values]),
+                colorscale=px.colors.sequential.Greys[::-1][4:],
+                showscale=False,
+                hovertemplate=("Mutation: %{customdata[0]}<br>"
+                            "Score: %{z:.2f}<br>"
+                            "Class: %{customdata[1]}<br>"
+                            "Label: %{customdata[2]}<extra></extra>")
+            )
+
+            # Highlight heatmap (overlay with colors for specific Mutations)
+            highlight_layer = go.Heatmap(
+                z=highlight_mask,                    # 0..K
+                x=list(range(1, df.shape[1] + 1)),
+                y=alph,
+                colorscale=colorscale,
+                showscale=False,
+                hovertemplate=("Phenotype: %{customdata}<extra></extra>"),
+                customdata=chosen_label[::-1],       # labels alignés à l’affichage
+                zmin=0, zmax=max(1, K),
+                hoverinfo="text"
+            )
+
+            fig_SNPs.add_trace(heatmap_snps, row=1, col=1)
+            fig_SNPs.add_trace(highlight_layer, row=1, col=1)
+
+    ### old version
+    # if df_snps is not None:
+    #     df_snps = df_snps.loc[df_snps[column_snp]!='Hypomorphic'].copy()
+    #     fig_SNPs = make_subplots(
+    #         rows=2, cols=1,
+    #         shared_xaxes=True,
+    #         row_heights=[0.9, 0.1],
+    #         vertical_spacing=0.02,
+    #     )
+
+    #     # Prepare the SNPs data structure
+    #     df_snps_STR = pd.DataFrame(columns=df_classesStr.columns, index=df_classesStr.index)
+    #     for snp in df_snps['Mutation'].unique():
+    #         ind_mut = alph.index(snp[-1])
+    #         position = int(snp[1:-1])
+    #         df_snps_STR.loc[ind_mut, position - 1] = '/'.join(df_snps.loc[df_snps['Mutation'] == snp, column_snp].tolist())
+
+    #     df_snps_STR = df_snps_STR.fillna('-')
+
+    #     # Create a numerical mask for highlights
+    #     highlight_mask = np.zeros(df_snps_STR.shape)  # Default is no highlight (0)
+    #     highlight_mask[df_snps_STR.isin(['Lethal'])] = 1  # Red for Lethal
+    #     highlight_mask[df_snps_STR.isin(['DEST2', 'DGRP', 'DEST2/DGRP', 'DGRP/DEST2'])] = 2  # Blue for DEST or DGRP
+
+    #     #highlighted_positions = (highlight_mask > 0)  # Cells with highlights (red or blue)
+    #     #df_modified = df.values[::-1].copy()  # Create a copy to avoid modifying the original dataframe
+    #     #df_modified[highlighted_positions] = 0
+        
+    #     # Main heatmap (greyscale background)
+    #     heatmap_snps = go.Heatmap(
+    #         z=df.values[::-1],
+    #         x=list(range(1, df.shape[1] + 1)),
+    #         y=alph,
+    #         customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1], df_snps_STR.values]),
+    #         colorscale=px.colors.sequential.Greys[::-1][4:],
+    #         showscale=False,
+    #         hovertemplate=("Mutation: %{customdata[0]}<br>"
+    #                     "Score: %{z:.2f}<br>"
+    #                     "Class: %{customdata[1]}<br>"
+    #                     "Label: %{customdata[2]}<extra></extra>")
+    #     )
+
+    #     # Highlight heatmap (overlay with colors for specific SNPs)
+    #     highlight_layer = go.Heatmap(
+    #         z=highlight_mask,  # Use the mask to determine colors
+    #         x=list(range(1, df.shape[1] + 1)),
+    #         y=alph,
+    #         colorscale=[
+    #             [0, "rgba(0,0,0,0)"],  # Transparent for no highlight
+    #             [ 1 / 2, "rgba(255,50,50,1)"],  # Red for 'Lethal'[2 / 3, "rgba(0,0,255,0.8)"],  # Blue for 'DEST2' or 'DGRP'
+    #             [1, "rgba(0,0,255,0.7)"],  # Blue continued
+    #         ],
+    #         showscale=False,
+    #         hoverinfo="skip",  # Skip hover info for the highlight layer
+    #         zmin=0, zmax=2
+    #     )
+
+    #     # Add traces to the figure
+    #     fig_SNPs.add_trace(heatmap_snps, row=1, col=1)
+    #     fig_SNPs.add_trace(highlight_layer, row=1, col=1)
 
 
     if confidence_values is not None:
