@@ -676,12 +676,6 @@ def results_view(request):
         fig_rsa.add_trace(heatmap_rsa, row=1, col=1)
 
 
-
-    """""
-        #     #highlighted_positions = (highlight_mask > 0)  # Cells with highlights (red or blue)
-        #     #df_modified = df.values[::-1].copy()  # Create a copy to avoid modifying the original dataframe
-        #     #df_modified[highlighted_positions] = 0
-            """
     
         # --- SNPs heatmap
     if df_snps is not None:
@@ -844,11 +838,27 @@ def results_view(request):
                 y=alph,
                 colorscale=colorscale,
                 showscale=False,
-                hovertemplate=("Phenotype: %{customdata}<extra></extra>"),
-                customdata=chosen_label[::-1],       # labels alignés à l’affichage
-                zmin=0, zmax=max(1, K),
-                hoverinfo="text"
+                hoverinfo="skip",
+                #customdata=chosen_label[::-1],       # labels alignés à l’affichage
+                zmin=0, zmax=max(1, K)
+                
             )
+
+# Highlight heatmap (overlay with colors for specific Mutations)
+            highlight_layer = go.Heatmap(
+                z=highlight_mask,
+                x=list(range(1, df.shape[1] + 1)),
+                y=alph,
+                colorscale=[
+                    [0.0, "rgba(0,0,0,0)"],          # 0 -> transparent
+                    [0.5, "rgba(255,50,50,1)"],      # ~1 -> red
+                    [1.0, "rgba(0,0,255,0.7)"],      # ~2 -> blue
+                ],
+                showscale=False,
+                hoverinfo="skip",
+                zmin=0, zmax=2
+            )
+
 
             fig_SNPs.add_trace(heatmap_snps, row=1, col=1)
             fig_SNPs.add_trace(highlight_layer, row=1, col=1)
