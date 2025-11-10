@@ -141,11 +141,11 @@
     <div id="msaSection" class="form-row py-1 align-items-center">
       <div class="form-group col-md-12 d-flex align-items-center">
       <label for="fileInput" class="upload-btn">Choose MSA file</label>
+      <span id="msaFileName" class="ml-3" style="font-size:0.95rem; color:#6c757d;"></span>
       <input type="file" name="file" id="fileInput" accept=".a3m,.fasta,.a2m" required>
       <small class="form-text text-muted ml-3"> Accepted formats: <b>FASTA</b>, <b>A3M</b>, <b>A2M</b>. Ensure the first sequence is the <b>ungapped query</b>.<br>You may generate your alignment using <a href="https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2_mmseqs2.ipynb" target="_blank">ColabFold</a> or <a href="{% url 'download_example' %}">download an example MSA</a>.</small>
       </div>
     </div>
-
     <!-- UniProt section (hidden by default) -->
     <div id="uniprotSection" class="form-row py-2" style="display:none;">
       <div class="form-group col-md-6">
@@ -156,24 +156,6 @@
     <!-- ========================================= -->
     <!-- upload MUTATIONS -->
     <!-- ========================================= -->
-
-       {%comment%}<div id="mutantsSection" class="form-row py-3 align-items-center">
-         <div class="form-group col-md-6">
-           <label class="font-weight-bold text-dark">Upload list of mutants (optional):</label>
-           <input
-             type="file"
-             name="mutantsFile"
-             id="mutantsFile"
-             accept=".csv"
-             class="form-control"
-             style="font-family: 'Montserrat', sans-serif; color: #343a40;"
-           >
-           <small class="form-text text-muted">
-             File must be a <b>.csv</b> with two columns: <b>Mutation</b> and <b>Phenotype</b>.<br>
-           </small>
-         </div>
-        </div>
-        {%endcomment%}
 
      <div class="form-row py-3 align-items-center">
         <div class="form-group col-md-10">
@@ -426,6 +408,35 @@
             document.getElementById("uploadStatus").innerText = result.error || "An error occurred.";
         }
     });
+
+    // Helper to show selected filename (or clear if none)
+    function setFileName(el, targetId) {
+        const target = document.getElementById(targetId);
+        if (!target) return;
+        target.textContent = (el && el.files && el.files.length) ? el.files[0].name : '';
+      }
+
+    // Show filename when user chooses files
+    fileInput.addEventListener('change', function () { setFileName(this, 'msaFileName'); });
+    //mutantsFile.addEventListener('change', function () { setFileName(this, 'mutantsFileName'); });
+    //pdbFileInput.addEventListener('change', function () { setFileName(this, 'pdbFileName'); });
+
+    {% comment %} function hideMutantsSection() {
+      mutantsSection.style.display = 'none';
+      mutantsFile.removeAttribute('required');
+      mutantsFile.value = '';                    // reset file input
+      setFileName(mutantsFile, 'mutantsFileName'); // clear label
+    }
+
+    function resetStructureInputs() {
+      alphaFoldSection.style.display = 'none';
+      pdbSection.style.display = 'none';
+      uniprotId.removeAttribute('required');
+      pdbFileInput.removeAttribute('required');
+      pdbFileInput.value = '';                    // reset file input
+      setFileName(pdbFileInput, 'pdbFileName');   // clear label
+    } {% endcomment %}
+
   </script>
 </body>
 </html>
