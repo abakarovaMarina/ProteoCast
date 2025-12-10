@@ -1193,17 +1193,17 @@ def results_view(request):
     ## segmentation data for 3D
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/14.{prot_id}_GEMME_pLDDT.csv') 
     
-    if (prot_name[:3] == 'job'):
-        id_folder = 'job' +id_folder
+    
 
     ## retrieve unaligned residues 
     if (prot_name[:3] == 'job' and os.path.exists(f'{data_path}{id_folder}/rsa_values.csv')):
         seg_unaligned = unaligned_residue_segments(f'{data_path}{id_folder}/rsa_values.csv') 
         print("Unaligned segments:", seg_unaligned)
-        id_folder = 'job' +id_folder
     else:
         seg_unaligned=None 
 
+    if (prot_name[:3] == 'job'):
+        id_folder = 'job' + id_folder
 
     if a3mtag:
         msa_file_job = msa_file_job[:-5]+a3mtag
