@@ -645,35 +645,100 @@ def results_view(request):
 
     # --- RSA * Gemme heatmap
     if df_rsa is not None:
-        Z_rsa = -df_rsa.values[::-1]; pred_rsa = df_rsa.to_numpy()
-        minVal_rsa = np.floor(pred_rsa.min())
-        maxVal_rsa = np.ceil(pred_rsa.max())
-        prop=99; p = (100 - prop) / 100.0                  
-        cutVal_rsa = np.quantile(pred_rsa, p)
-        zmin_rsa = -maxVal_rsa; zmax_rsa = -minVal_rsa
-        r_rsa = (maxVal_rsa - cutVal_rsa) / (maxVal_rsa - minVal_rsa)
-        positions = [(i/79.0) * r_rsa for i in range(79)] + [1.0]
-        colorscaleRSA_custom = list(zip(positions, my_colors))
+        pred_rsa = df_rsa.to_numpy(dtype=float)         # contains NaN for missing
+        Z_rsa = -pred_rsa[::-1]                         # keep your inversion, preserves NaNs
+
+        # ---- stats ignoring NaNs ----
+        valid = pred_rsa[~np.isnan(pred_rsa)]
+        if valid.size == 0:
+            # nothing to plot meaningfully
+            # (you could skip plotting or show only grey mask)
+            pass
+        else:
+            minVal_rsa = np.floor(valid.min())
+            maxVal_rsa = np.ceil(valid.max())
+
+            prop = 99; p = (100 - prop) / 100.0
+            cutVal_rsa = np.quantile(valid, p)
+
+            zmin_rsa = -maxVal_rsa
+            zmax_rsa = -minVal_rsa
+
+            r_rsa = (maxVal_rsa - cutVal_rsa) / (maxVal_rsa - minVal_rsa) if (maxVal_rsa - minVal_rsa) != 0 else 1.0
+            positions = [(i / 79.0) * r_rsa for i in range(79)] + [1.0]
+            colorscaleRSA_custom = list(zip(positions, my_colors))
+
+            fig_rsa = make_subplots(
+                rows=2, cols=1,
+                shared_xaxes=True,
+                row_heights=[0.9, 0.1],
+                vertical_spacing=0.02,
+            )
+
+            # ---- 1) grey mask layer (underneath) ----
+            # 1 where missing, NaN where present
+            missing_mask = np.where(np.isnan(pred_rsa), 1.0, np.nan)[::-1]
+
+            heatmap_missing = go.Heatmap(
+                z=missing_mask,
+                x=list(range(1, df_rsa.shape[1] + 1)),   # +1 to include last column
+                y=alph,
+                colorscale=[[0.0, "lightgrey"], [1.0, "lightgrey"]],
+                showscale=False,
+                hoverinfo="skip"
+            )
+            fig_rsa.add_trace(heatmap_missing, row=1, col=1)
+
+            # ---- 2) real RSA heatmap (on top; NaNs become transparent) ----
+            custom = np.dstack([df_mut.values[::-1], pred_rsa[::-1]])
+
+            heatmap_rsa = go.Heatmap(
+                z=Z_rsa,
+                x=list(range(1, df_rsa.shape[1] + 1)),
+                y=alph,
+                zmin=zmin_rsa, zmax=zmax_rsa,
+                colorscale=colorscaleRSA_custom,
+                showscale=False,
+                customdata=custom,
+                hoverongaps=False,  # IMPORTANT: no hover for NaN cells
+                hovertemplate=("Mutation: %{customdata[0]}<br>"
+                            "Score: %{customdata[1]:.2f}<extra></extra>")
+            )
+            fig_rsa.add_trace(heatmap_rsa, row=1, col=1)
 
 
-        fig_rsa = make_subplots(
-            rows=2, cols=1,
-            shared_xaxes=True,
-            row_heights=[0.9, 0.1],
-            vertical_spacing=0.02,
-        )
-        heatmap_rsa = go.Heatmap(
-            z=Z_rsa, #df_rsa.values[::-1],
-            x=list(range(1, df_rsa.shape[1])),
-            y=alph,
-            zmin=zmin_rsa, zmax=zmax_rsa,
-            colorscale=colorscaleRSA_custom, #px.colors.sequential.Oranges[::-1],
-            showscale=False,
-            customdata=np.dstack([df_mut.values[::-1], df_rsa.values[::-1]]),
-            hovertemplate=("Mutation: %{customdata[0]}<br>"
-                           "Score: %{customdata[1]:.2f}<extra></extra>")
-        )
-        fig_rsa.add_trace(heatmap_rsa, row=1, col=1)
+
+    # # --- RSA * Gemme heatmap
+    # if df_rsa is not None:
+    #     Z_rsa = -df_rsa.values[::-1]; pred_rsa = df_rsa.to_numpy()
+    #     minVal_rsa = np.floor(pred_rsa.min())
+    #     maxVal_rsa = np.ceil(pred_rsa.max())
+    #     prop=99; p = (100 - prop) / 100.0                  
+    #     cutVal_rsa = np.quantile(pred_rsa, p)
+    #     zmin_rsa = -maxVal_rsa; zmax_rsa = -minVal_rsa
+    #     r_rsa = (maxVal_rsa - cutVal_rsa) / (maxVal_rsa - minVal_rsa)
+    #     positions = [(i/79.0) * r_rsa for i in range(79)] + [1.0]
+    #     colorscaleRSA_custom = list(zip(positions, my_colors))
+
+
+    #     fig_rsa = make_subplots(
+    #         rows=2, cols=1,
+    #         shared_xaxes=True,
+    #         row_heights=[0.9, 0.1],
+    #         vertical_spacing=0.02,
+    #     )
+    #     heatmap_rsa = go.Heatmap(
+    #         z=Z_rsa, #df_rsa.values[::-1],
+    #         x=list(range(1, df_rsa.shape[1])),
+    #         y=alph,
+    #         zmin=zmin_rsa, zmax=zmax_rsa,
+    #         colorscale=colorscaleRSA_custom, #px.colors.sequential.Oranges[::-1],
+    #         showscale=False,
+    #         customdata=np.dstack([df_mut.values[::-1], df_rsa.values[::-1]]),
+    #         hovertemplate=("Mutation: %{customdata[0]}<br>"
+    #                        "Score: %{customdata[1]:.2f}<extra></extra>")
+    #     )
+    #     fig_rsa.add_trace(heatmap_rsa, row=1, col=1)
 
 
     
