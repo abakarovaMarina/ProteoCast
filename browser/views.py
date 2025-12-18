@@ -678,6 +678,7 @@ def results_view(request):
             # ---- 1) grey mask layer (underneath) ----
             # 1 where missing, NaN where present
             missing_mask = np.where(np.isnan(pred_rsa), 1.0, np.nan)[::-1]
+            custom_missing = np.dstack([df_mut.values[::-1]])
 
             heatmap_missing = go.Heatmap(
                 z=missing_mask,
@@ -685,7 +686,10 @@ def results_view(request):
                 y=alph,
                 colorscale=[[0.0, "lightgrey"], [1.0, "lightgrey"]],
                 showscale=False,
-                hoverinfo="skip"
+                customdata=custom_missing,
+                hovertemplate=("Mutation: %{customdata[0]}<br>"
+                                "unaligned<extra></extra>"),
+                hoverongaps=False,
             )
             fig_rsa.add_trace(heatmap_missing, row=1, col=1)
 
