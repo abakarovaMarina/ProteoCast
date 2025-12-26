@@ -1325,6 +1325,8 @@ def download_folder(request, query_id):
             for f in os.listdir(temp_copy):
                 if f.endswith('.out') or f.endswith('.err') or f.endswith('.sh') or f.endswith('.txt'):
                     os.remove((os.path.join(temp_copy, f)))
+                    
+        shutil.copy("/data/jobs/README_static.md", temp_copy)
 
         temp_zip_path = os.path.join(temp_dir, f'{query_id}.zip')
         shutil.make_archive(temp_zip_path.replace('.zip', ''), 'zip', temp_copy)
