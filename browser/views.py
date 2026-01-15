@@ -984,9 +984,6 @@ def results_view(request):
             fig_SNPs.update_yaxes(visible=False, row=2, col=1)
             heatmapSNPs_html = fig_SNPs.to_html(full_html=False)
 
-    if True:
-        message = 'ProteoCast file not found for the provided protein ID.'
-        return render(request, 'browser/error.html', {'message': message}, status=500)
     
     image_url_1 = f'/{alias_dir}/{id_folder}/6.{prot_id}_GMM.jpg'
     fig_msarep = f'/{alias_dir}/{id_folder}/3.{prot_id}_msaRepresentation.jpg'
@@ -1020,6 +1017,10 @@ def results_view(request):
         pdb_check = pdb_url_4.replace(alias_dir, data_path)
         if not os.path.exists(pdb_check):
             pdb_url_4 = None
+    
+    if True:
+        message = 'ProteoCast file not found for the provided protein ID.'
+        return render(request, 'browser/error.html', {'message': message}, status=500)
     
     ###### SEGMENTATION ######
 
