@@ -506,15 +506,6 @@ def results_view(request):
     if not os.path.exists(proteocast_path):
         message = 'ProteoCast file not found for the provided protein ID.'
         return render(request, 'browser/error.html', {'message': message}, status=500)
-#        return HttpResponse(f"ProteoCast file not found: {proteocast_path}", status=404)
-
-    #rsa_path = f'{data_path}{id_folder}/4.{prot_id}_ProteoCast.csv'
-    #if os.path.exists(rsa_path):
-    #    df_rsa = pd.read_csv(rsa_path)
-    #    if not 'RSA*Variant_score' in df_rsa.columns:
-    #        df_rsa = None 
-    #else:
-    #    df_rsa = None
 
     try:
         df_proteocast = pd.read_csv(proteocast_path)
@@ -546,9 +537,7 @@ def results_view(request):
         df_rsa = pd.DataFrame(np.array(df_proteocast['RSA*Variant_score']).reshape(20, -1, order='F'))
     except Exception as e:
         df_rsa = None
-        ## rsa is not mandatory, so we do not return an error
-        #message = 'ProteoCast has not found Variant_score or Mutation values in the ProteoCast.csv file.'
-        #return render(request, 'browser/error.html', {'message': message}, status=500)
+        
     
     ### creating variant classes dataframes
     try:
@@ -592,7 +581,7 @@ def results_view(request):
 
     # R: Greys[1:10], Oranges[11:70], Greys[61:70]  (1-indexed)
     my_colors = greys80[:10] + oranges80[10:70] + greys80[60:70]   # total 80 colors
-
+    
     ## GENERATING HEATMAPS
         #--- GEMME heatmap
     if df is not None:
@@ -631,7 +620,10 @@ def results_view(request):
                            "Score: %{customdata[1]:.2f}<extra></extra>")
         )
         fig.add_trace(heatmap_main, row=1, col=1)
-
+        
+    if not os.path.exists(proteocast_path):
+        message = 'ProteoCast file not found for the provided protein ID.'
+        return render(request, 'browser/error.html', {'message': message}, status=500)
 
 
         #--- Variant classes heatmap
