@@ -620,8 +620,8 @@ def results_view(request):
                            "Score: %{customdata[1]:.2f}<extra></extra>")
         )
         fig.add_trace(heatmap_main, row=1, col=1)
-        
-    if not os.path.exists(proteocast_path):
+
+    if True:
         message = 'ProteoCast file not found for the provided protein ID.'
         return render(request, 'browser/error.html', {'message': message}, status=500)
 
