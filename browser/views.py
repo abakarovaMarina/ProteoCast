@@ -1183,6 +1183,7 @@ def results_view(request):
         msa_file_job = msa_file_job[:-5]+a3mtag
 
     if (prot_name[:3] == 'job'):
+        
         status_file = data_path+id_folder.replace('job','')+'/status.txt'
         print(status_file)
         if os.path.exists(status_file):
