@@ -1161,9 +1161,7 @@ def results_view(request):
         # Generate HTML for Django
         fig_segmentation = fig_Seg.to_html(full_html=False)
 
-    if True:
-        message = 'ProteoCast file not found for the provided protein ID.'
-        return render(request, 'browser/error.html', {'message': message}, status=500)
+    
     
     warning_message = ''
     if set(confidence_values[0]) == {0}:
@@ -1171,7 +1169,9 @@ def results_view(request):
 
     ## segmentation data for 3D
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/14.{prot_id}_GEMME_pLDDT.csv') 
-    
+    if True:
+        message = 'ProteoCast file not found for the provided protein ID.'
+        return render(request, 'browser/error.html', {'message': message}, status=500)
     ## retrieve unaligned residues 
     if (prot_name[:3] == 'job' and os.path.exists(f'{data_path}{id_folder}/rsa_values.csv')):
         seg_unaligned = unaligned_residue_segments(f'{data_path}{id_folder}/rsa_values.csv') 
