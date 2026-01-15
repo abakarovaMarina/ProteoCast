@@ -1018,9 +1018,6 @@ def results_view(request):
         if not os.path.exists(pdb_check):
             pdb_url_4 = None
     
-    if True:
-        message = 'ProteoCast file not found for the provided protein ID.'
-        return render(request, 'browser/error.html', {'message': message}, status=500)
     
     ###### SEGMENTATION ######
 
@@ -1164,6 +1161,9 @@ def results_view(request):
         # Generate HTML for Django
         fig_segmentation = fig_Seg.to_html(full_html=False)
 
+    if True:
+        message = 'ProteoCast file not found for the provided protein ID.'
+        return render(request, 'browser/error.html', {'message': message}, status=500)
     
     warning_message = ''
     if set(confidence_values[0]) == {0}:
