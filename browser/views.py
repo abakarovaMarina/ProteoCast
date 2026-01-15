@@ -621,11 +621,6 @@ def results_view(request):
         )
         fig.add_trace(heatmap_main, row=1, col=1)
 
-    if True:
-        message = 'ProteoCast file not found for the provided protein ID.'
-        return render(request, 'browser/error.html', {'message': message}, status=500)
-
-
         #--- Variant classes heatmap
     if df_classes is not None:
         fig_VariantClasses = make_subplots(
@@ -715,41 +710,6 @@ def results_view(request):
                             "Score: %{customdata[1]:.2f}<extra></extra>")
             )
             fig_rsa.add_trace(heatmap_rsa, row=1, col=1)
-
-
-
-    # # --- RSA * Gemme heatmap
-    # if df_rsa is not None:
-    #     Z_rsa = -df_rsa.values[::-1]; pred_rsa = df_rsa.to_numpy()
-    #     minVal_rsa = np.floor(pred_rsa.min())
-    #     maxVal_rsa = np.ceil(pred_rsa.max())
-    #     prop=99; p = (100 - prop) / 100.0                  
-    #     cutVal_rsa = np.quantile(pred_rsa, p)
-    #     zmin_rsa = -maxVal_rsa; zmax_rsa = -minVal_rsa
-    #     r_rsa = (maxVal_rsa - cutVal_rsa) / (maxVal_rsa - minVal_rsa)
-    #     positions = [(i/79.0) * r_rsa for i in range(79)] + [1.0]
-    #     colorscaleRSA_custom = list(zip(positions, my_colors))
-
-
-    #     fig_rsa = make_subplots(
-    #         rows=2, cols=1,
-    #         shared_xaxes=True,
-    #         row_heights=[0.9, 0.1],
-    #         vertical_spacing=0.02,
-    #     )
-    #     heatmap_rsa = go.Heatmap(
-    #         z=Z_rsa, #df_rsa.values[::-1],
-    #         x=list(range(1, df_rsa.shape[1])),
-    #         y=alph,
-    #         zmin=zmin_rsa, zmax=zmax_rsa,
-    #         colorscale=colorscaleRSA_custom, #px.colors.sequential.Oranges[::-1],
-    #         showscale=False,
-    #         customdata=np.dstack([df_mut.values[::-1], df_rsa.values[::-1]]),
-    #         hovertemplate=("Mutation: %{customdata[0]}<br>"
-    #                        "Score: %{customdata[1]:.2f}<extra></extra>")
-    #     )
-    #     fig_rsa.add_trace(heatmap_rsa, row=1, col=1)
-
 
     
         # --- SNPs heatmap
@@ -923,67 +883,9 @@ def results_view(request):
             fig_SNPs.add_trace(heatmap_snps, row=1, col=1)
             fig_SNPs.add_trace(highlight_layer, row=1, col=1)
 
-    ### old version
-    # if df_snps is not None:
-    #     df_snps = df_snps.loc[df_snps[column_snp]!='Hypomorphic'].copy()
-    #     fig_SNPs = make_subplots(
-    #         rows=2, cols=1,
-    #         shared_xaxes=True,
-    #         row_heights=[0.9, 0.1],
-    #         vertical_spacing=0.02,
-    #     )
-
-    #     # Prepare the SNPs data structure
-    #     df_snps_STR = pd.DataFrame(columns=df_classesStr.columns, index=df_classesStr.index)
-    #     for snp in df_snps['Mutation'].unique():
-    #         ind_mut = alph.index(snp[-1])
-    #         position = int(snp[1:-1])
-    #         df_snps_STR.loc[ind_mut, position - 1] = '/'.join(df_snps.loc[df_snps['Mutation'] == snp, column_snp].tolist())
-
-    #     df_snps_STR = df_snps_STR.fillna('-')
-
-    #     # Create a numerical mask for highlights
-    #     highlight_mask = np.zeros(df_snps_STR.shape)  # Default is no highlight (0)
-    #     highlight_mask[df_snps_STR.isin(['Lethal'])] = 1  # Red for Lethal
-    #     highlight_mask[df_snps_STR.isin(['DEST2', 'DGRP', 'DEST2/DGRP', 'DGRP/DEST2'])] = 2  # Blue for DEST or DGRP
-
-    #     #highlighted_positions = (highlight_mask > 0)  # Cells with highlights (red or blue)
-    #     #df_modified = df.values[::-1].copy()  # Create a copy to avoid modifying the original dataframe
-    #     #df_modified[highlighted_positions] = 0
-        
-    #     # Main heatmap (greyscale background)
-    #     heatmap_snps = go.Heatmap(
-    #         z=df.values[::-1],
-    #         x=list(range(1, df.shape[1] + 1)),
-    #         y=alph,
-    #         customdata=np.dstack([df_mut.values[::-1], df_classesStr.values[::-1], df_snps_STR.values]),
-    #         colorscale=px.colors.sequential.Greys[::-1][4:],
-    #         showscale=False,
-    #         hovertemplate=("Mutation: %{customdata[0]}<br>"
-    #                     "Score: %{z:.2f}<br>"
-    #                     "Class: %{customdata[1]}<br>"
-    #                     "Label: %{customdata[2]}<extra></extra>")
-    #     )
-
-    #     # Highlight heatmap (overlay with colors for specific SNPs)
-    #     highlight_layer = go.Heatmap(
-    #         z=highlight_mask,  # Use the mask to determine colors
-    #         x=list(range(1, df.shape[1] + 1)),
-    #         y=alph,
-    #         colorscale=[
-    #             [0, "rgba(0,0,0,0)"],  # Transparent for no highlight
-    #             [ 1 / 2, "rgba(255,50,50,1)"],  # Red for 'Lethal'[2 / 3, "rgba(0,0,255,0.8)"],  # Blue for 'DEST2' or 'DGRP'
-    #             [1, "rgba(0,0,255,0.7)"],  # Blue continued
-    #         ],
-    #         showscale=False,
-    #         hoverinfo="skip",  # Skip hover info for the highlight layer
-    #         zmin=0, zmax=2
-    #     )
-
-    #     # Add traces to the figure
-    #     fig_SNPs.add_trace(heatmap_snps, row=1, col=1)
-    #     fig_SNPs.add_trace(highlight_layer, row=1, col=1)
-
+    if True:
+        message = 'ProteoCast file not found for the provided protein ID.'
+        return render(request, 'browser/error.html', {'message': message}, status=500)
 
     if confidence_values is not None:
         hover_text = np.where(confidence_values == 1, "Reliable", "Unreliable")
