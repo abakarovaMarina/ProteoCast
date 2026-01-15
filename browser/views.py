@@ -883,9 +883,7 @@ def results_view(request):
             fig_SNPs.add_trace(heatmap_snps, row=1, col=1)
             fig_SNPs.add_trace(highlight_layer, row=1, col=1)
 
-    if True:
-        message = 'ProteoCast file not found for the provided protein ID.'
-        return render(request, 'browser/error.html', {'message': message}, status=500)
+    
 
     if confidence_values is not None:
         hover_text = np.where(confidence_values == 1, "Reliable", "Unreliable")
@@ -986,7 +984,10 @@ def results_view(request):
             fig_SNPs.update_yaxes(visible=False, row=2, col=1)
             heatmapSNPs_html = fig_SNPs.to_html(full_html=False)
 
-
+    if True:
+        message = 'ProteoCast file not found for the provided protein ID.'
+        return render(request, 'browser/error.html', {'message': message}, status=500)
+    
     image_url_1 = f'/{alias_dir}/{id_folder}/6.{prot_id}_GMM.jpg'
     fig_msarep = f'/{alias_dir}/{id_folder}/3.{prot_id}_msaRepresentation.jpg'
     #fig_segmentation = f'/{alias_dir}/{id_folder}/9.{prot_id}_SegProfile.png'
