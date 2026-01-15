@@ -407,7 +407,7 @@
             window.location.href = `/results/job_running/${jobId}`;  // Redirige con job_id
         } else {
             document.getElementById("loading").style.display = "none"; // Hide loading
-            document.getElementById("uploadStatus").innerText = result.error || "An error occurred.";
+            document.getElementById("uploadStatus").innerText = result.error || "An error occurred. ProteoCast requires at least 20 sequences to run.";
         }
     });
 

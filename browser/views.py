@@ -75,7 +75,7 @@ def check_job_status(request):
     with open(job_status_path, 'r') as file:
         job_status = file.read().strip()
 
-    if job_status == 'finished':
+    if job_status == 'finished' or job_status.startswith("warning:"):
         folder_path = os.path.join('/data/jobs', job_id)
         mutants_path = os.path.join(folder_path, "mutants.csv")
 
@@ -103,11 +103,25 @@ def check_job_status(request):
                 print("[WARN] No 4.*_ProteoCast.csv found — skipping merge.")
         else:
             print("[INFO] No file with mutation provided, skipping merge.")
+            # Determine if there was a warning
+        warning_message = ''
+        status_file = os.path.join(folder_path, "status.txt")
+        with open(status_file) as f:
+            job_status = f.read().strip()
 
-        # Always redirect to results, merge optional
+        if job_status.startswith("warning:"):
+            warning_message = job_status  # extraemos el texto del warning
+            job_status = "finished"  # Consideramos finished para que muestre los resultados
+
         job_id_url = 'job' + job_id
         results_url = f"{reverse('results')}?q={job_id_url}"
-        return JsonResponse({'status': 'finished', 'redirect_url': results_url})
+        print('WARNING: '+warning_message)
+
+        return JsonResponse({
+         'status': 'finished',  # el job terminó de todas formas
+         'redirect_url': results_url,
+         'warning_message': warning_message
+        })
 
     else:
         job_status_msg = 'computing conservation levels...'
@@ -1262,12 +1276,9 @@ def results_view(request):
     ## segmentation data for 3D
     seg_dico = segmentation_dico(f'{data_path}{id_folder}/8.{prot_id}_Segmentation.csv', f'{data_path}{id_folder}/14.{prot_id}_GEMME_pLDDT.csv') 
     
-    
-
     ## retrieve unaligned residues 
     if (prot_name[:3] == 'job' and os.path.exists(f'{data_path}{id_folder}/rsa_values.csv')):
         seg_unaligned = unaligned_residue_segments(f'{data_path}{id_folder}/rsa_values.csv') 
-        print("Unaligned segments:", seg_unaligned)
     else:
         seg_unaligned=None 
 
@@ -1276,7 +1287,17 @@ def results_view(request):
 
     if a3mtag:
         msa_file_job = msa_file_job[:-5]+a3mtag
-    
+
+    status_file = data_path+id_folder.replace('job','')+'/status.txt'
+    print(status_file)
+    if os.path.exists(status_file):
+        with open(status_file) as f:
+            job_status = f.read().strip()
+        if job_status.startswith("warning:"):
+            warning_message = "warning: The sequence identity between the query and the provided PDB structure is below 20%."
+            job_status = "finished"  
+       
+
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
         'heatmapClasses_html': heatmapClasses_html,
