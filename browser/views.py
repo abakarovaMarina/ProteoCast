@@ -1181,9 +1181,7 @@ def results_view(request):
 
     if a3mtag:
         msa_file_job = msa_file_job[:-5]+a3mtag
-    if True:
-        message = 'ProteoCast file not found for the provided protein ID.'
-        return render(request, 'browser/error.html', {'message': message}, status=500)
+    
     status_file = data_path+id_folder.replace('job','')+'/status.txt'
     print(status_file)
     if os.path.exists(status_file):
@@ -1192,7 +1190,9 @@ def results_view(request):
         if job_status.startswith("warning:"):
             warning_message = "warning: The sequence identity between the query and the provided PDB structure is below 20%."
             job_status = "finished"  
-       
+    if True:
+        message = 'ProteoCast file not found for the provided protein ID.'
+        return render(request, 'browser/error.html', {'message': message}, status=500)
 
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
