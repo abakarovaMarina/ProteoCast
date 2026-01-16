@@ -9,3 +9,6 @@ __pycache__
 **/*.pyc
 browser/static/jobs/
 documentation.key
+**/*bkp.py
+**/*bkp.html
+**/*BKP.html
