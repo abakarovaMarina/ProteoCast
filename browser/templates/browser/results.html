@@ -173,6 +173,11 @@
                     <span style="color: black; font-weight: bold;">&#x26A0;</span> {{ warning_message }}
                 </p>
             {% endif %}
+            {% if warning_messageSTRUCT %}
+                <p style="color: orange;">
+                    <span style="color: black; font-weight: bold;">&#x26A0;</span> {{ warning_messageSTRUCT }}
+                </p>
+            {% endif %}
             </div>
             <div class="form-group col-md-2 d-flex justify-content-end">
                 <a href="{% url 'download_folder' query_id=query %}" class="download-button">

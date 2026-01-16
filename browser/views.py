@@ -1182,15 +1182,16 @@ def results_view(request):
     if a3mtag:
         msa_file_job = msa_file_job[:-5]+a3mtag
 
+    warning_messageSTRUCT = ''
     if (prot_name[:3] == 'job'):
-        
+
         status_file = data_path+id_folder.replace('job','')+'/status.txt'
         print(status_file)
         if os.path.exists(status_file):
             with open(status_file) as f:
                 job_status = f.read().strip()
             if job_status.startswith("warning:"):
-                warning_message = "warning: The sequence identity between the query and the provided PDB structure is below 20%."
+                warning_messageSTRUCT = "warning: The sequence identity between the query and the provided PDB structure is below 20%."
                 job_status = "finished"  
 
 
@@ -1211,6 +1212,7 @@ def results_view(request):
         'select_segments': seg_dico,
         'unaligned_segments': seg_unaligned,
         'warning_message':warning_message,
+        'warning_messageSTRUCT':warning_messageSTRUCT,
         'pdb_file': pdb_id+'.pdb',
         'msa_file_job':msa_file_job
     })
