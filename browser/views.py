@@ -1176,24 +1176,23 @@ def results_view(request):
     else:
         seg_unaligned=None 
 
-    if (prot_name[:3] == 'job'):
-        id_folder = 'job' + id_folder
-
-    if a3mtag:
-        msa_file_job = msa_file_job[:-5]+a3mtag
 
     warning_messageSTRUCT = ''
     if (prot_name[:3] == 'job'):
+        id_folder = 'job' + id_folder
 
         status_file = data_path+id_folder.replace('job','')+'/status.txt'
         print(status_file)
         if os.path.exists(status_file):
             with open(status_file) as f:
                 job_status = f.read().strip()
-            if job_status.startswith("warning:"):
+            if job_status.startswith("warning"):
                 warning_messageSTRUCT = "warning: The sequence identity between the query and the provided PDB structure is below 20%."
-                job_status = "finished"  
+            
+    if a3mtag:
+        msa_file_job = msa_file_job[:-5]+a3mtag
 
+        
 
     return render(request, 'browser/results.html', {
         'heatmap_html': heatmap_html,
