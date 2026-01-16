@@ -75,7 +75,7 @@ def check_job_status(request):
     with open(job_status_path, 'r') as file:
         job_status = file.read().strip()
 
-    if job_status == 'finished' or job_status.startswith("warning:"):
+    if job_status == 'finished' or job_status.startswith("warning"):
         folder_path = os.path.join('/data/jobs', job_id)
         mutants_path = os.path.join(folder_path, "mutants.csv")
 
@@ -109,7 +109,7 @@ def check_job_status(request):
         with open(status_file) as f:
             job_status = f.read().strip()
 
-        if job_status.startswith("warning:"):
+        if job_status.startswith("warning"):
             warning_message = job_status  # extraemos el texto del warning
             job_status = "finished"  # Consideramos finished para que muestre los resultados
 
