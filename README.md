@@ -55,7 +55,8 @@ docker pull marinaabakarova/proteocast
 ## Key Components of the repository
 
 - **web_server/**: Full-featured Django web application for interactive predictions and result visualization
-- **ProteoCast_scripts/**: Standalone Python scripts for batch processing, benchmarking, and research analysis
+- **ProteoCast_Scripts/**: Python and R scripts for protein sequence analysis, variant effect prediction, segmentation, and  structural analysis that are part of the ProteoCast framework.
+- **ProteoCastAnalysis_scripts/**: Python scripts and notebooks for data curation, analysis and visualizations.
 
 
 ## Citation
