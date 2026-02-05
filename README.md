@@ -25,16 +25,19 @@ Built on the GEMME evolutionary model (Laine et *al.*), ProteoCast provides comp
 ---
 
 **Web Server:** [proteocast.ijm.fr/](https://proteocast.ijm.fr/)  
+
 **Drosophila Database:** [proteocast.ijm.fr/drosophiladb/](https://proteocast.ijm.fr/drosophiladb/)  
-**Docker Image:** [marinaabakarova/proteocast](https://hub.docker.com/r/marinaabakarova/proteocast) 
-**Bulk Download:** [Zenodo repository](https://zenodo.org/records/14871341)
+
+**Docker Image:** [marinaabakarova/proteocast](https://hub.docker.com/r/marinaabakarova/proteocast)   
+
+**Bulk Download:** [Zenodo repository](https://zenodo.org/records/14871341)  
 
 
 ## Usage
 
 ### Web Server
 
-The [web server](https://proteocast.ijm.fr/) provides an interactive interface for proteome-wide variant effect predictions. Simply provide:
+The [web server](https://proteocast.ijm.fr/) provides an interactive interface for variant effect predictions. Simply provide:
 - A **UniProt accession code** (e.g., P30542) for proteins available in [AlphaFold DB](https://alphafold.ebi.ac.uk/), or
 - A **Multiple Sequence Alignment** in FASTA or A3M format for any protein sequence
 
