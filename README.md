@@ -27,7 +27,7 @@ Built on the GEMME evolutionary model (Laine et *al.*), ProteoCast provides comp
 **Web Server:** [https://proteocast.ijm.fr/](https://proteocast.ijm.fr/)  
 **Drosophila Database:** [https://proteocast.ijm.fr/drosophiladb/](https://proteocast.ijm.fr/drosophiladb/)  
 **Docker Image:** [https://hub.docker.com/r/marinaabakarova/proteocast](https://hub.docker.com/r/marinaabakarova/proteocast)
-**Bulk Download:** [https://zenodo.org/records/14871341](Zenodo repository)
+**Bulk Download:** [https://zenodo.org/records/14871341] (Zenodo repository)
 
 
 ## Usage
