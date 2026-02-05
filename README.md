@@ -32,9 +32,16 @@ Built on the GEMME evolutionary model (Laine et *al.*), ProteoCast provides comp
 
 ## Usage
 
-### Docker (Recommended)
+### Web Server
 
-The easiest way to use ProteoCast is via [https://hub.docker.com/r/marinaabakarova/proteocast](Docker):
+The [web server](https://proteocast.ijm.fr/) provides an interactive interface for proteome-wide variant effect predictions. Simply provide:
+- A **UniProt accession code** (e.g., P30542) for proteins available in [AlphaFold DB](https://alphafold.ebi.ac.uk/), or
+- A **Multiple Sequence Alignment** in FASTA or A3M format for any protein sequence
+
+
+### Docker
+
+For large-scale predictions, use the [Docker image](https://hub.docker.com/r/marinaabakarova/proteocast):
 
 ```bash
 # Pull the latest image
@@ -42,17 +49,10 @@ docker pull marinaabakarova/proteocast
 ```
 
 
-### Web Server
-
-The [https://proteocast.ijm.fr/](web server) provides an interactive interface for running predictions by only providing a Multiple Sequence Alignment or simply a UniProt code if the reference exists on [https://alphafold.ebi.ac.uk](AlphaFoldDB)
-
-
 ## Key Components of the repository
 
 - **web_server/**: Full-featured Django web application for interactive predictions and result visualization
 - **ProteoCast_scripts/**: Standalone Python scripts for batch processing, benchmarking, and research analysis
-- **model/**: Complete model implementation including architecture, training procedures, and inference pipelines (extracted from Docker image)
-- **browser/**: Integration files for visualizing predictions in genome browsers
 
 
 ## Citation
@@ -60,11 +60,11 @@ The [https://proteocast.ijm.fr/](web server) provides an interactive interface f
 If you use ProteoCast in your research, please cite:
 
 ```bibtex
-@article{ProteoCast2024,
-  author    = {[Authors]},
-  title     = {ProteoCast: Deep Learning-based Prediction of Protein Post-translational Modifications},
-  journal   = {[Journal Name]},
-  year      = {2024},
+@article{ProteoCast2026,
+  author    = {[Abakarova M, Freiberger MI, Liehrmann A, Rera M, Laine E]},
+  title     = {Proteome-wide Prediction of the Functional Impact of Missense Variants},
+  journal   = {[Nature Communication]},
+  year      = {2026},
   volume    = {[Volume]},
   pages     = {[Pages]},
   doi       = {[DOI]}
