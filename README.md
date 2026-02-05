@@ -1,22 +1,33 @@
 # ProteoCast
 
-This repository provides the implementation and analysis tools for ProteoCast, an evolutionary-based method for variant effect prediction and functional sites identification in disordered regions.
+**Proteome-wide Prediction of the Functional Impact of Missense Variants**
 
-**Web Server for interactive predictions:** [https://proteocast.ijm.fr/](https://proteocast.ijm.fr/)  
-**Drosophila Database with pre-computed predictions for *Drosophila melanogaster*:** [https://proteocast.ijm.fr/drosophiladb/](https://proteocast.ijm.fr/drosophiladb/)  
+ProteoCast is a scalable and interpretable computational framework for proteome-wide classification of genetic variants and functional protein site identification. Leveraging evolutionary information from protein sequences across organisms, ProteoCast enables researchers to:
+
+- **Predict variant effects** across entire proteomes with high accuracy
+- **Classify mutations** as functionally neutral, mild, or impactful
+- **Identify sensitive residues** critical for protein function
+- **Discover regulatory sites** in unstructured protein regions
+- **Prioritize targets** for CRISPR genome editing experiments
+
+Built on the GEMME evolutionary model (Laine et *al.*), ProteoCast provides comprehensive mutational landscapes for all protein isoforms, complete with confidence metrics and 3D structural mapping. Originally developed and validated on *Drosophila melanogaster*, ProteoCast is applicable to any organism and has been benchmarked against human clinical variants (ClinVar), demonstrating strong performance in distinguishing pathogenic from benign mutations.
+
+**Publication:** Abakarova M, Freiberger MI, Liehrmann A, Rera M*, Laine E*. "Proteome-wide Prediction of the Functional Impact of Missense Variants with ProteoCast." *Nature Communications* (2026). [Link to paper coming soon]
+
+**Key Features:**
+- 🔬 Experimentally validated through CRISPR genome editing
+- 📊 293+ million variant predictions for *D. melanogaster*
+- 🎯 85% accuracy in detecting developmentally lethal mutations
+- 🧬 Identifies functional sites in disordered protein regions
+- ⚡ Fast and scalable
+- 🆓 Fully open-source with Docker deployment
+
+---
+
+**Web Server:** [https://proteocast.ijm.fr/](https://proteocast.ijm.fr/)  
+**Drosophila Database:** [https://proteocast.ijm.fr/drosophiladb/](https://proteocast.ijm.fr/drosophiladb/)  
 **Docker Image:** [https://hub.docker.com/r/marinaabakarova/proteocast](https://hub.docker.com/r/marinaabakarova/proteocast)
 
-## Table of Contents
-
-- [Usage](#usage)
-  - [Docker (Recommended)](#docker-recommended)
-  - [Web Server](#web-server)
-  - [Analysis Scripts](#analysis-scripts)
-- [Repository Structure](#repository-structure)
-- [Data and Predictions](#data-and-predictions)
-- [Citation](#citation)
-- [License](#license)
-- [Acknowledgements](#acknowledgements)
 
 ## Usage
 
@@ -32,101 +43,10 @@ docker pull marinaabakarova/proteocast
 
 ### Web Server
 
-The web server provides an interactive interface for PTM predictions:
+The [https://proteocast.ijm.fr/](web server) provides an interactive interface for running predictions by only providing a Multiple Sequence Alignment or simply a UniProt code if the reference exists on [https://alphafold.ebi.ac.uk](AlphaFoldDB)
 
-1. Navigate to `http://localhost:8000` (or your deployment URL)
-2. Upload protein sequences in FASTA format or enter sequences directly
-3. Select the organism and PTM types of interest
-4. Submit for prediction and view results
 
-#### API Access
-
-The web server also provides a REST API for programmatic access:
-
-```python
-import requests
-
-# Example: Submit a prediction job
-url = "http://localhost:8000/api/predict"
-data = {
-    "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQAPILSRVGDGTQDNLSGAEKAVQV",
-    "organism": "drosophila",
-    "ptm_types": ["phosphorylation", "acetylation"]
-}
-
-response = requests.post(url, json=data)
-result = response.json()
-```
-
-### Analysis Scripts
-
-The `ProteoCast_scripts/` directory contains tools for data analysis and benchmarking:
-
-#### PTM Prediction Analysis
-
-```bash
-python ProteoCast_scripts/analyze_ptm_predictions.py \
-    --input predictions.csv \
-    --output results/ \
-    --threshold 0.5
-```
-
-#### Benchmarking
-
-```bash
-python ProteoCast_scripts/benchmark.py \
-    --predictions predictions.csv \
-    --ground_truth validation_set.csv \
-    --output benchmark_results/
-```
-
-#### Data Collection and Preprocessing
-
-```bash
-python ProteoCast_scripts/collect_ptm_data.py \
-    --source uniprot \
-    --organism drosophila \
-    --output processed_data/
-```
-
-## Repository Structure
-
-```
-ProteoCast/
-├── web_server/              # Django-based web server implementation
-│   ├── templates/           # HTML templates for web interface
-│   ├── static/              # CSS, JavaScript, and assets
-│   ├── views.py             # View controllers
-│   ├── models.py            # Database models
-│   └── urls.py              # URL routing
-│
-├── ProteoCast_scripts/      # Analysis and data processing scripts
-│   ├── ptm_prediction/      # PTM prediction analysis tools
-│   ├── benchmarking/        # Benchmarking and validation scripts
-│   ├── data_collection/     # Data collection and preprocessing
-│   └── visualization/       # Result visualization tools
-│
-├── model/                   # Model architecture and weights (from Docker)
-│   ├── architecture/        # Neural network architecture definitions
-│   ├── training/            # Training scripts and configurations
-│   └── inference/           # Inference pipeline
-│
-├── browser/                 # Genome browser integration files
-│   └── tracks/              # Browser track configurations
-│
-├── csv/                     # Sample data and prediction outputs
-│   ├── examples/            # Example input files
-│   └── predictions/         # Pre-computed predictions
-│
-├── manage.py                # Django management script
-├── requirements.txt         # Python dependencies
-├── requirements-min.txt     # Minimal dependencies for core functionality
-├── Dockerfile               # Docker container configuration
-├── docker-compose.yml       # Docker Compose configuration
-└── README.md                # This file
-```
-
-### Key Components
+## Key Components of the repository
 
 - **web_server/**: Full-featured Django web application for interactive predictions and result visualization
 - **ProteoCast_scripts/**: Standalone Python scripts for batch processing, benchmarking, and research analysis
