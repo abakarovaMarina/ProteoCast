@@ -1,36 +1,13 @@
 # ProteoCast
 
+This repository provides the implementation and analysis tools for ProteoCast, an evolutionary-based method for variant effect prediction and functional sites identification in disordered regions.
 
-### You can find our web server at https://proteocast.ijm.fr/
-
-### And the database for *Drosophila melanogaster* at  https://proteocast.ijm.fr/drosophiladb/ 
-
-### Docker image at https://hub.docker.com/r/marinaabakarova/proteocast
-
-#### License
-
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
-
-# ProteoCast
-
-This repository provides the implementation and analysis tools for ProteoCast, a deep learning-based method for predicting protein post-translational modifications (PTMs) and their functional impacts.
-
-**Web Server:** [https://proteocast.ijm.fr/](https://proteocast.ijm.fr/)  
-**Drosophila Database:** [https://proteocast.ijm.fr/drosophiladb/](https://proteocast.ijm.fr/drosophiladb/)  
+**Web Server for interactive predictions:** [https://proteocast.ijm.fr/](https://proteocast.ijm.fr/)  
+**Drosophila Database with pre-computed predictions for *Drosophila melanogaster*:** [https://proteocast.ijm.fr/drosophiladb/](https://proteocast.ijm.fr/drosophiladb/)  
 **Docker Image:** [https://hub.docker.com/r/marinaabakarova/proteocast](https://hub.docker.com/r/marinaabakarova/proteocast)
-
-## Overview
-
-ProteoCast is a computational framework for predicting and analyzing protein post-translational modifications across multiple species. The repository includes:
-
-* A web server implementation for interactive predictions
-* Analysis scripts for PTM prediction evaluation and benchmarking
-* Data processing pipelines for proteomics data
-* Pre-computed predictions for *Drosophila melanogaster*
 
 ## Table of Contents
 
-- [Installation](#installation)
 - [Usage](#usage)
   - [Docker (Recommended)](#docker-recommended)
   - [Web Server](#web-server)
@@ -41,74 +18,17 @@ ProteoCast is a computational framework for predicting and analyzing protein pos
 - [License](#license)
 - [Acknowledgements](#acknowledgements)
 
-## Installation
-
-### Docker (Recommended)
-
-The easiest way to use ProteoCast is via Docker:
-
-```bash
-# Pull the latest image
-docker pull marinaabakarova/proteocast:latest
-
-# Run the container
-docker run -p 8000:8000 marinaabakarova/proteocast:latest
-```
-
-The web interface will be available at `http://localhost:8000`
-
-### Local Installation
-
-For development or custom deployments:
-
-1. **Clone the repository:**
-
-```bash
-git clone https://github.com/abakarovaMarina/ProteoCast.git
-cd ProteoCast
-```
-
-2. **Create a virtual environment:**
-
-```bash
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. **Install dependencies:**
-
-```bash
-pip install -r requirements.txt
-```
-
-4. **Run migrations (for web server):**
-
-```bash
-python manage.py migrate
-```
-
-5. **Start the development server:**
-
-```bash
-python manage.py runserver
-```
-
 ## Usage
 
 ### Docker (Recommended)
 
-For production deployment or reproducible environments:
+The easiest way to use ProteoCast is via [https://hub.docker.com/r/marinaabakarova/proteocast](Docker):
 
 ```bash
-# Build the image locally (optional)
-docker build -t proteocast:local .
-
-# Run with custom port
-docker run -p 8080:8000 marinaabakarova/proteocast:latest
-
-# Run with volume mounting for data persistence
-docker run -v $(pwd)/data:/app/data -p 8000:8000 marinaabakarova/proteocast:latest
+# Pull the latest image
+docker pull marinaabakarova/proteocast
 ```
+
 
 ### Web Server
 
