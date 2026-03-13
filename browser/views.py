@@ -775,13 +775,13 @@ def results_view(request):
 
             #Prepare the SNPs data structure
             df_snps_STR = pd.DataFrame(columns=df_classesStr.columns, index=df_classesStr.index)
-
+            SEP = "|||"
             for snp in df_snps['Mutation'].unique():
                 ind_mut = alph.index(snp[-1])
                 position = int(snp[1:-1])
 
                 labels = df_snps.loc[df_snps['Mutation'] == snp, column_snp].astype(str).tolist()
-                df_snps_STR.loc[ind_mut, position - 1] = '/'.join(labels)
+                df_snps_STR.loc[ind_mut, position - 1] = SEP.join(labels)
 
             df_snps_STR = df_snps_STR.fillna('-')
 
@@ -818,7 +818,7 @@ def results_view(request):
                         continue
 
                     # Une cellule peut contenir "A/B/C" ; on choisit celle la plus prioritaire
-                    cand = [t.strip() for t in cell.split('/') if t.strip() in phen2id]
+                    cand = [t.strip() for t in cell.split(SEP) if t.strip() in phen2id]                    
                     if not cand:
                         continue
 
