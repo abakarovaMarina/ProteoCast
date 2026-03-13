@@ -87,7 +87,7 @@ def check_job_status(request):
                 prot_id = '_'.join(os.path.basename(proteocast_path).split('.')[1].split('_')[:-1])
                 ## merging ProteoCast and mutants files
                 df_proteocast = pd.read_csv(proteocast_path)
-                df_mutants = pd.read_csv(mutants_path)
+                df_mutants = pd.read_csv(mutants_path, skipinitialspace=True)
                 df_filtered = pd.merge(df_proteocast, df_mutants[['Mutation', 'Phenotype']],on='Mutation', how='left')
                 ## creating new file with mutations and the associated predictions
                 merged_filename = f"7.{prot_id}_SNPs.csv"
