@@ -542,7 +542,7 @@ def results_view(request):
     ### creating variant classes dataframes
     try:
         #df_proteocast['Variant_class'] = df_proteocast['Variant_class'].replace({'uncertain': 'mild'})
-        df_classes = pd.DataFrame(np.array(df_proteocast['Variant_class'].replace({'neutral': 1, 'mild': 2, 'impactful': 3})).reshape(20, -1, order='F'))
+        df_classes = pd.DataFrame(np.array(df_proteocast['Variant_class'].map({'neutral': 1, 'mild': 2, 'impactful': 3}).astype(float)).reshape(20, -1, order='F'))
         df_classesStr = pd.DataFrame(np.array(df_proteocast['Variant_class']).reshape(20, -1, order='F'))
     except Exception as e:
         df_classes = None
@@ -1039,7 +1039,7 @@ def results_view(request):
             # Prepare the one-row heatmap data
             bfactors = df_sefPrep['pLDDT'].tolist()
             # Define palette and bin ranges
-            bins = [0, 0.5, 0.7, 0.9, 1]
+            bins = [0, 0.5, 0.7, 0.9, 1.001]
             df_plddt = pd.DataFrame(bfactors, columns=['value'])
 
             # Bin the values into groups
