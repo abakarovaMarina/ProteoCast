@@ -240,6 +240,18 @@
       </div>
       <hr class="my-4">
 
+        <!-- Optional email: notified when the job ends -->
+        <div class="form-row py-2 align-items-center">
+          <div class="form-group col-md-6">
+            <input type="email" name="email" id="emailInput" class="form-control" maxlength="254"
+                   placeholder="Email (optional) e.g., name@institute.org">
+          </div>
+          <div class="form-group col-md-6">
+            <small class="form-text text-muted">Optional: we send you an email when your job ends, with the link to the results (or the reason it failed). The address is used for nothing else and deleted after 30 days.</small>
+          </div>
+        </div>
+        <hr class="my-4">
+
         <!-- Upload status -->
         <div id="loading" class="text-center text-muted py-2" style="display:none;">Uploading... Please wait.</div>
         <div id="uploadStatus" class="text-center text-success py-2"></div>

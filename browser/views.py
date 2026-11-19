@@ -167,7 +167,17 @@ def upload_file(request):
 
 def handle_upload(request, main_file=None, pdb_file=None, mutants_file=None, uniprot_id=None):
     try:
-        email = request.POST.get('email') or ''
+        # optional address to notify when the job ends (kept outside /data/jobs, which Apache serves; deleted after 30 days)
+        email = (request.POST.get('email') or '').strip()
+        if email:
+            from django.core.validators import validate_email
+            from django.core.exceptions import ValidationError
+            try:
+                if len(email) > 254:
+                    raise ValidationError('too long')
+                validate_email(email)
+            except ValidationError:
+                return JsonResponse({'status': 'error', 'error': f'"{email[:80]}" is not a valid email address.'}, status=400)
         chain = request.POST.get('customChain') or 'A'
         uniprot_id_pdb = request.POST.get('uniprotId')
 
@@ -249,6 +259,7 @@ def handle_upload(request, main_file=None, pdb_file=None, mutants_file=None, uni
 #SBATCH --error=slurm_%j.err
 
 docker run --rm -v "{folder_path}:/opt/job" marinaabakarova/proteocast /bin/bash -c "cd / && bash run.sh {main_param} {chain} {uniprot_id_pdb or ''}"
+python3 /data/msa_store/notify_user.py {job_id} || true
 """ if not uniprot_id else f"""#!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
@@ -267,9 +278,15 @@ if CF_WAIT=1800 python3 /data/msa_store/get_msa.py "{uniprot_id}" "{folder_path}
 else
     sleep 5; echo finished > "{folder_path}/status.txt"
 fi
+python3 /data/msa_store/notify_user.py {job_id} || true
 """)
 
         os.chmod(run_docker_script, 0o755)
+        if email:
+            notify_path = os.path.join('/var/lib/proteocast-notify', job_id)
+            with open(notify_path, 'w') as f:
+                f.write(email + '\n')
+            os.chmod(notify_path, 0o640)
         os.chdir(folder_path)
         subprocess.run(['sbatch', run_docker_script], check=True)
 
