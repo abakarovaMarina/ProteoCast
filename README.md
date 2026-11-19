@@ -38,7 +38,7 @@ Built on the GEMME evolutionary model (Laine et *al.*), ProteoCast provides comp
 ### Web Server
 
 The [web server](https://proteocast.ijm.fr/) provides an interactive interface for variant effect predictions. Simply provide:
-- A **UniProt accession code** (e.g., P30542) for proteins available in [AlphaFold DB](https://alphafold.ebi.ac.uk/), or
+- A **UniProt accession code** (e.g., P30542): the alignment is taken from our proteome-wide ProteoCast runs or, if none matches the current UniProt sequence, built by the [ColabFold MMseqs2 server](https://github.com/sokrypton/ColabFold) (the AlphaFold Database stopped distributing its alignments in November 2026); the 3D model comes from [AlphaFold DB](https://alphafold.ebi.ac.uk/). The source of the alignment is shown on the results page and in `msa_source.txt`; or
 - A **Multiple Sequence Alignment** in FASTA or A3M format for any protein sequence
 
 

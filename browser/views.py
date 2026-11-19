@@ -229,6 +229,12 @@ def handle_upload(request, main_file=None, pdb_file=None, mutants_file=None, uni
         else:
             main_param = uniprot_id
 
+        # only letters, digits and dashes reach the job script (get_msa.py then checks the accession format)
+        uniprot_id = re.sub(r'[^A-Z0-9-]', '', (uniprot_id or '').strip().upper())
+        acc_file = uniprot_id + '.a3m'
+        if uniprot_id:   # UniProt job (main_file holds the accession then, so it can't tell the two apart)
+            chain = re.sub(r'[^A-Za-z0-9]', '', chain) or 'A'
+            uniprot_id_pdb = re.sub(r'[^A-Z0-9-]', '', (uniprot_id_pdb or '').strip().upper())
         run_docker_script = os.path.join(folder_path, 'run_docker.sh')
         with open(run_docker_script, 'w') as script:
             script.write(f"""#!/bin/bash
@@ -243,6 +249,24 @@ def handle_upload(request, main_file=None, pdb_file=None, mutants_file=None, uni
 #SBATCH --error=slurm_%j.err
 
 docker run --rm -v "{folder_path}:/opt/job" marinaabakarova/proteocast /bin/bash -c "cd / && bash run.sh {main_param} {chain} {uniprot_id_pdb or ''}"
+""" if not uniprot_id else f"""#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=8
+#SBATCH --time=02:00:00
+#SBATCH --job-name={uniprot_id or job_id}
+#SBATCH --mail-type=END
+#SBATCH --mail-user=marina.abakarova@sorbonne-universite.fr
+#SBATCH --output=slurm_%j.out
+#SBATCH --error=slurm_%j.err
+
+# UniProt accession: the AlphaFold Database no longer serves its MSAs (2026-11-19). get_msa.py writes {acc_file}
+# from our proteome runs' MSAs (/data/msa_store) or the ColabFold MMseqs2 server; run.sh then takes it as an uploaded MSA.
+if CF_WAIT=1800 python3 /data/msa_store/get_msa.py "{uniprot_id}" "{folder_path}"; then
+    docker run --rm -v "{folder_path}:/opt/job" marinaabakarova/proteocast /bin/bash -c "cd / && bash run.sh {acc_file} {chain} {uniprot_id_pdb or ''}"
+else
+    sleep 5; echo finished > "{folder_path}/status.txt"
+fi
 """)
 
         os.chmod(run_docker_script, 0o755)
@@ -381,6 +405,7 @@ def results_view(request):
     
     pdb_id = ''
     msa_file_job = '';a3mtag=None
+    msa_source = ''   # UniProt jobs: where get_msa.py took the MSA from (msa_source.txt)
     column_snp = ''
     ## job
     if (prot_name[:3] == 'job'):
@@ -389,6 +414,12 @@ def results_view(request):
         id_folder = prot_name[3:]
         files = os.listdir(f'/data/jobs/{id_folder}')
         column_snp = 'Phenotype'
+        if 'msa_error.txt' in files:   # UniProt job whose MSA could not be obtained (get_msa.py)
+            with open(f'/data/jobs/{id_folder}/msa_error.txt') as f:
+                return render(request, 'browser/error.html', {'message': f.read().strip()}, status=200)
+        if 'msa_source.txt' in files:
+            with open(f'/data/jobs/{id_folder}/msa_source.txt') as f:
+                msa_source = ', '.join(l.strip() for l in f if l.strip())
         if not os.path.exists(f'/data/jobs/{id_folder}'):
             message = 'Failed to retrieve the results for your job. Please check the Job ID.'
             return render(request, 'browser/error.html', {'message': message}, status=500) 
@@ -1213,7 +1244,8 @@ def results_view(request):
         'warning_message':warning_message,
         'warning_messageSTRUCT':warning_messageSTRUCT,
         'pdb_file': pdb_id+'.pdb',
-        'msa_file_job':msa_file_job
+        'msa_file_job':msa_file_job,
+        'msa_source':msa_source
     })
 
 def download_folder(request, query_id):
@@ -1241,7 +1273,7 @@ def download_folder(request, query_id):
          # Clean files only in the temp copy
         if query_id.startswith("job"):
             for f in os.listdir(temp_copy):
-                if f.endswith('.out') or f.endswith('.err') or f.endswith('.sh') or f.endswith('.txt'):
+                if f.endswith('.out') or f.endswith('.err') or f.endswith('.sh') or (f.endswith('.txt') and f != 'msa_source.txt'):
                     os.remove((os.path.join(temp_copy, f)))
                     
         shutil.copy("/data/jobs/README_static.md", temp_copy)
