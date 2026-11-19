@@ -166,6 +166,7 @@
             {% if query|slice:":3" == "job" %}
             Your job (ID: <code class="code">{{ query|slice:"3:" }}</code>) has used the MSA file <code class="code">{{ msa_file_job }}</code>
             {% if pdb_file and pdb_file != ".pdb" %} and the PDB file <code class="code">{{pdb_file}}</code>{% endif %}.
+            {% if msa_source %}<br>Source of the alignment: {{ msa_source }}.{% endif %}
             {% endif %}
         </h5>
             {% if warning_message %}
